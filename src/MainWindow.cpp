@@ -1,14 +1,17 @@
 #include "MainWindow.hpp"
 
+#include <gtkmm/enums.h>
+
 #include "md4c-html.h"
 
-#include <cerrno>       // errno
-#include <string>       // std::to_string<>()
-#include <cstring>      // std::strerror()
-#include <fstream>      // std::ifstream{}
-#include <iterator>     // std::istreambuf_iterator{}
-#include <exception>    // std::exception{}
-#include <stdexcept>    // std::runtime_error{}
+#include <cerrno>           // errno
+#include <string>           // std::to_string<>()
+#include <cstring>          // std::strerror()
+#include <fstream>          // std::ifstream{}
+#include <iterator>         // std::istreambuf_iterator{}
+#include <exception>        // std::exception{}
+#include <stdexcept>        // std::runtime_error{}
+#include <initializer_list> // std::initializer_list<>{}
 
 //============================================================================
 namespace { // unnamed
@@ -19,6 +22,15 @@ constexpr std::string progname = "mdview";
 void append_to_string( char const* const html_data, unsigned const html_size, void* const html_ptr )
 {
     static_cast< std::string* >( html_ptr )->append( html_data, html_size );
+}
+
+void wrap_html( std::string& html, std::initializer_list< std::string > const& elements )
+{
+    for ( auto const& element: elements )
+    {
+        html.insert( 0, "<" + element + ">" );
+        html.append( "</" + element + ">" );
+    }
 }
 
 constexpr unsigned parser_flags = 0
@@ -85,14 +97,15 @@ MainWindow::MainWindow( Arguments const& args )
     {
         htmlContent = e.what();
 
-        htmlContent.insert( 0, "<pre><code>" );
-        htmlContent.append( "</code></pre>" );
+        wrap_html( htmlContent, { "pre", "code" } );
     }
 
-    htmlContent.insert( 0, "<html><body>\n" );
-    htmlContent.append( "\n</body></html>" );
+    wrap_html( htmlContent, { "html", "body" } );
 
     webView.load_html( htmlContent );
-    set_child( webView );
+    scroller.set_child( webView );
+    scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
+    set_child( scroller );
+
     set_default_size( 1024, 768 );
 }

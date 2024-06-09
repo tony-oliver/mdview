@@ -4,6 +4,7 @@
 #include "WebView.hpp"
 
 #include <gtkmm/window.h>
+#include <gtkmm/scrolledwindow.h>
 
 #include <string>
 #include <vector>
@@ -20,6 +21,7 @@ public:
 
 private:
 
+    Gtk::ScrolledWindow scroller;
     WebView webView;
 };
 
