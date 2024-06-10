@@ -1,5 +1,6 @@
 TARGET =				mdview
 BUILDDIR = 				build
+TESTFILE =				README.md
 
 .PHONY:					all verbose cmake clean run install uninstall ${BUILDDIR}/install_manifest.txt
 
@@ -13,7 +14,7 @@ cmake:;					@cmake -B ${BUILDDIR}
 
 clean:;					@rm -rvf ${BUILDDIR}
 
-run: all;				@LD_LIBRARY_PATH=${BUILDDIR}/lib ${BUILDDIR}/src/${TARGET}
+run: all;				@LD_LIBRARY_PATH=${BUILDDIR}/lib ${BUILDDIR}/src/${TARGET} ${TESTFILE}
 
 install: all;			@sudo cmake --install ${BUILDDIR}
 

@@ -2,12 +2,13 @@
 
 #include <gtkmm/enums.h>
 
-#include "md4c-html.h"
+#include "cmark.h"
 
 #include <cerrno>           // errno
 #include <string>           // std::to_string<>()
 #include <cstring>          // std::strerror()
 #include <fstream>          // std::ifstream{}
+#include <iostream>         // std::cerr{}
 #include <iterator>         // std::istreambuf_iterator{}
 #include <exception>        // std::exception{}
 #include <stdexcept>        // std::runtime_error{}
@@ -19,39 +20,20 @@ namespace { // unnamed
 
 constexpr std::string progname = "mdview";
 
-void append_to_string( char const* const html_data, unsigned const html_size, void* const html_ptr )
-{
-    static_cast< std::string* >( html_ptr )->append( html_data, html_size );
-}
-
 void wrap_html( std::string& html, std::initializer_list< std::string > const& elements )
 {
+    std::string prefix, suffix;
+
     for ( auto const& element: elements )
     {
-        html.insert( 0, "<" + element + ">" );
-        html.append( "</" + element + ">" );
+        prefix.append( "<" + element + ">" );
+        suffix.insert( 0, "</" + element + ">" );
     }
+
+    html.reserve( prefix.length() + html.length() + suffix.length() );
+    html.insert( 0, prefix );
+    html.append( suffix );
 }
-
-constexpr unsigned parser_flags = 0
-| MD_FLAG_COLLAPSEWHITESPACE
-| MD_FLAG_TABLES
-| MD_FLAG_TASKLISTS
-| MD_FLAG_STRIKETHROUGH
-| MD_FLAG_PERMISSIVEURLAUTOLINKS
-| MD_FLAG_PERMISSIVEEMAILAUTOLINKS
-| MD_FLAG_PERMISSIVEWWWAUTOLINKS
-| MD_FLAG_LATEXMATHSPANS
-| MD_FLAG_WIKILINKS
-| MD_FLAG_UNDERLINE
-;
-
-constexpr unsigned renderer_flags = 0
-| MD_HTML_FLAG_DEBUG
-| MD_HTML_FLAG_VERBATIM_ENTITIES
-| MD_HTML_FLAG_SKIP_UTF8_BOM
-| MD_HTML_FLAG_XHTML
-;
 
 //----------------------------------------------------------------------------
 } // close unnamed namespace
@@ -59,7 +41,7 @@ constexpr unsigned renderer_flags = 0
 
 MainWindow::MainWindow( Arguments const& args )
 {
-    std::string htmlContent;
+    std::string html;
 
     try
     {
@@ -80,29 +62,26 @@ MainWindow::MainWindow( Arguments const& args )
 
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdownText{ Iterator{ markdownFile }, Iterator{} };
+        auto const result = cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 );
 
-        int const md_html_result = md_html( markdownText.data(),
-                                            markdownText.size(),
-                                            append_to_string,
-                                            &htmlContent,
-                                            parser_flags,
-                                            renderer_flags );
-
-        if ( md_html_result != 0 )
+        if ( result == nullptr )
         {
-            throw std::runtime_error( "Internal error: md_html() returned " + std::to_string( md_html_result ) );
+            throw std::runtime_error( "Internal error: cmark_markdown_to_html() returned nullptr." );
         }
+
+        html = result;
+        std::free( result );
     }
     catch ( std::exception const& e )
     {
-        htmlContent = e.what();
-
-        wrap_html( htmlContent, { "pre", "code" } );
+        html = e.what();
+        std::cerr << '\n' << html << '\n' << std::endl;
+        wrap_html( html, { "pre", "code" } );
     }
 
-    wrap_html( htmlContent, { "html", "body" } );
+    wrap_html( html, { "html", "body" } );
 
-    webView.load_html( htmlContent );
+    webView.load_html( html );
     scroller.set_child( webView );
     scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
     set_child( scroller );
