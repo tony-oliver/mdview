@@ -20,19 +20,51 @@ namespace { // unnamed
 
 constexpr std::string progname = "mdview";
 
+void check_just_one_arg_in( MainWindow::Arguments const& args )
+{
+    if ( args.size() != 1 )
+    {
+        throw std::runtime_error( "This program must be invoked with a single filename argument." );
+    }
+}
+
+void check_file_opened_ok( std::ifstream const& file, std::string const& filename )
+{
+    if ( !file.is_open() )
+    {
+        throw std::runtime_error( filename + ": error #" + std::to_string( errno ) + " (" + std::strerror( errno ) + ")" );
+    }
+}
+
+void check_converted_to_html_ok( char const* const converted_text )
+{
+    if ( !converted_text )
+    {
+        throw std::runtime_error( "Internal error: cmark_markdown_to_html() returned nullptr." );
+    }
+}
+
 void wrap_html( std::string& html, std::initializer_list< std::string > const& elements )
 {
     std::string prefix, suffix;
 
     for ( auto const& element: elements )
     {
-        prefix.append( "<" + element + ">" );
-        suffix.insert( 0, "</" + element + ">" );
+        prefix.append( "<" + element + ">\n" );
+        suffix.insert( 0, "</" + element + ">\n" );
     }
 
     html.reserve( prefix.length() + html.length() + suffix.length() );
     html.insert( 0, prefix );
     html.append( suffix );
+}
+
+std::string make_css()
+{
+    return R"(code { color: mediumblue; }
+pre { padding: 15px; background-color: whitesmoke; }
+h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; }
+)";
 }
 
 //----------------------------------------------------------------------------
@@ -45,32 +77,22 @@ MainWindow::MainWindow( Arguments const& args )
 
     try
     {
-        if ( args.size() != 1 )
-        {
-            throw std::runtime_error( "This program must be invoked with a single filename argument." );
-        }
-
+        check_just_one_arg_in( args );
         auto const filename{ args.front() };
-        std::ifstream markdownFile( filename );
 
-        if ( !markdownFile.is_open() )
-        {
-            throw std::runtime_error( filename + ": error #" + std::to_string( errno ) + " (" + std::strerror( errno ) + ")" );
-        }
+        std::ifstream markdownFile( filename );
+        check_file_opened_ok( markdownFile, filename );
 
         set_title( progname + " - " + filename );
 
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdownText{ Iterator{ markdownFile }, Iterator{} };
-        auto const result = cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 );
 
-        if ( result == nullptr )
-        {
-            throw std::runtime_error( "Internal error: cmark_markdown_to_html() returned nullptr." );
-        }
+        auto const converted_text = cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 );
+        check_converted_to_html_ok( converted_text );
 
-        html = result;
-        std::free( result );
+        html = converted_text;
+        std::free( converted_text );
     }
     catch ( std::exception const& e )
     {
@@ -79,7 +101,15 @@ MainWindow::MainWindow( Arguments const& args )
         wrap_html( html, { "pre", "code" } );
     }
 
-    wrap_html( html, { "html", "body" } );
+    wrap_html( html, { "body" } );
+
+    auto style = make_css();
+    wrap_html( style, { "head", "style" } );
+
+    html.insert( 0, style );
+    wrap_html( html, { "html" } );
+
+    std::cout << html << std::endl;
 
     webView.load_html( html );
     scroller.set_child( webView );
