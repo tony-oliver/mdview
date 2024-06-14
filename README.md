@@ -14,6 +14,11 @@ which parses the contents of the named file from markdown to HTML and displays t
 
 It also watches for file-content updates and reloads the file when they occur.
 
+## Background
+
+This was an ideal hobby project on which to learn the features and limitations of gtkmm-4, having used gtkmm-3
+on my last C++ GUI project. It also gave me a good look at how inotify monitors and reports changes to files.
+
 ## Packaging
 
 This project is available as a source tree in its own `git` repository.
