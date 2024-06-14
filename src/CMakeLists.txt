@@ -4,6 +4,9 @@ add_executable( mdview
 				mdview.cpp
 				MainWindow.cpp
 				WebView.cpp
+				ThreadLoop.cpp
+				FileWatcher.cpp
+				SignalHandler.cpp
 				)
 
 pkg_search_module( GTKMM REQUIRED gtkmm-4.0 )

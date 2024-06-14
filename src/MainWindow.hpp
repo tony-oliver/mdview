@@ -2,6 +2,8 @@
 #define INCLUDED_MDVIEW_MAIN_WINDOW_HPP
 
 #include "WebView.hpp"
+#include "FileWatcher.hpp"
+#include "SignalHandler.hpp"
 
 #include <gtkmm/window.h>
 #include <gtkmm/scrolledwindow.h>
@@ -17,12 +19,17 @@ public:
 
     using Arguments = std::vector< std::string >;
 
-    MainWindow( Arguments const& args );
+    explicit MainWindow( Arguments const& args );
 
 private:
 
     Gtk::ScrolledWindow scroller;
-    WebView webView;
+    WebView             webView;
+    std::string         filename;
+    FileWatcher         watcher;
+    SignalHandler       signalHandler;
+
+    void display( Arguments const& args = {} );
 };
 
 #endif // INCLUDED_MDVIEW_MAIN_WINDOW_HPP

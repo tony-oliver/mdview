@@ -32,13 +32,13 @@ void check_file_opened_ok( std::ifstream const& file, std::string const& filenam
 {
     if ( !file.is_open() )
     {
-        throw std::runtime_error( filename + ": error #" + std::to_string( errno ) + " (" + std::strerror( errno ) + ")" );
+        throw std::system_error( errno, std::generic_category(), filename );
     }
 }
 
-void check_converted_to_html_ok( char const* const converted_text )
+void check_converted_to_html_ok( char const* const converted_text_ptr )
 {
-    if ( !converted_text )
+    if ( !converted_text_ptr )
     {
         throw std::runtime_error( "Internal error: cmark_markdown_to_html() returned nullptr." );
     }
@@ -61,7 +61,7 @@ void wrap_html( std::string& html, std::initializer_list< std::string > const& e
 
 std::string make_css()
 {
-    return R"(code { color: mediumblue; }
+return R"(code { color: mediumblue; }
 pre { padding: 15px; background-color: whitesmoke; }
 h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; }
 )";
@@ -72,27 +72,44 @@ h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; }
 //============================================================================
 
 MainWindow::MainWindow( Arguments const& args )
+: signalHandler( { SIGINT, SIGTERM, SIGPWR, SIGHUP } )
+{
+    signalHandler.registerAction( [ & ]{ close(); } );
+
+    set_default_size( 1024, 768 );
+    scroller.set_child( webView );
+    scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
+    set_child( scroller );
+
+    display( args );
+}
+
+void MainWindow::display( Arguments const& args )
 {
     std::string html;
 
     try
     {
-        check_just_one_arg_in( args );
-        auto const filename{ args.front() };
+        if ( filename.empty() )
+        {
+            check_just_one_arg_in( args );
+            filename = args.front();
+
+            watcher.watchFile( filename, [ this ]{ std::clog << "MainWindow notified!" << std::endl; display(); } );
+            watcher.start();
+        }
 
         std::ifstream markdownFile( filename );
         check_file_opened_ok( markdownFile, filename );
 
-        set_title( progname + " - " + filename );
-
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdownText{ Iterator{ markdownFile }, Iterator{} };
 
-        auto const converted_text = cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 );
-        check_converted_to_html_ok( converted_text );
+        auto const converted_text_ptr = cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 );
+        check_converted_to_html_ok( converted_text_ptr );
 
-        html = converted_text;
-        std::free( converted_text );
+        html.assign( converted_text_ptr );
+        std::free( converted_text_ptr );
     }
     catch ( std::exception const& e )
     {
@@ -109,12 +126,7 @@ MainWindow::MainWindow( Arguments const& args )
     html.insert( 0, style );
     wrap_html( html, { "html" } );
 
-    std::cout << html << std::endl;
+    //std::cout << html << std::endl;
 
     webView.load_html( html );
-    scroller.set_child( webView );
-    scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
-    set_child( scroller );
-
-    set_default_size( 1024, 768 );
 }

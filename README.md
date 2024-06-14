@@ -12,6 +12,8 @@ $ mdview <filename>
 
 which parses the contents of the named file from markdown to HTML and displays the latter in an HTML widget.
 
+It also watches for file-content updates and reloads the file when they occur.
+
 ## Packaging
 
 This project is available as a source tree in its own `git` repository.
