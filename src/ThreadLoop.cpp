@@ -21,7 +21,7 @@ ThreadLoop::ThreadLoop()
     auto const pipe_result = pipe( stop_fds.data() );
     checkForPosixError( pipe_result, "pipe()" );
 
-    std::clog << "Pipe: read from fd " << stop_fds[ ReadEnd ]
+    std::clog << "Stop-pipe: read from fd " << stop_fds[ ReadEnd ]
               << ";  write to fd " << stop_fds[ WriteEnd ] << std::endl;
 }
 
@@ -53,15 +53,11 @@ void ThreadLoop::stop()
     auto const write_result = write( stop_fds[ WriteEnd ], buffer.data(), buffer.size() );
     checkForPosixError( write_result, "write()" );
 
-    std::clog << "Waiting for watcher thread to finish" << std::endl;
-    polling_thread.join();
-}
-
-void ThreadLoop::clearPipe()
-{
-    std::array< char, 1 > buffer{};
-    auto const read_result = read( stop_fds[ ReadEnd ], buffer.data(), buffer.size() );
-    checkForPosixError( read_result, "read()" );
+    if ( polling_thread.joinable() )
+    {
+        std::clog << "Waiting for polling-thread to finish" << std::endl;
+        polling_thread.join();
+    }
 }
 
 void ThreadLoop::registerActionForFD( int const fd, Action const& action )
@@ -82,7 +78,7 @@ void ThreadLoop::deregisterFD( int const fd )
 
     if ( !action_table.contains( fd ) )
     {
-        throw std::logic_error( "ThreadLoop::deregisterFD( fd = " + std::to_string( fd ) + ", action ) - fd wasn't registered." );
+        throw std::logic_error( "ThreadLoop::deregisterFD( fd = " + std::to_string( fd ) + " ) - fd wasn't registered." );
     }
 
     action_table.erase( fd );
@@ -94,11 +90,8 @@ void ThreadLoop::executeActionForFD( int const fd )
 
     if ( action_table.contains( fd ) )
     {
-        // Lookup the registered action for the given fd...
-        auto const& action = action_table.at( fd );
-
-        // ...and execute that action
-        action();
+        // Lookup the registered action for the given fd and execute it
+        std::invoke( action_table.at( fd ) );
     }
 }
 
@@ -112,7 +105,7 @@ void ThreadLoop::pollingLoop()
     {
         // Loop, waiting for events to occur and servicing them.
 
-        while ( !stopping )
+        do
         {
             std::clog << std::endl;
 
@@ -149,15 +142,9 @@ void ThreadLoop::pollingLoop()
 
                         // This pollfd has read-events to be serviced.
 
-                        // If it's the stop-pipe, clear it and exit this loop.
-                        // (This will then cause the main loop to re-examine the 'stopping' flag).
-
                         if ( pollfd.fd == stop_fds[ ReadEnd ] )
                         {
-                            clearPipe();
-
-                            // Halt this loop so that 'stopping' flag can be re-checked
-                            break;
+                            break; // Halt this loop so the 'stopping' flag can be re-checked
                         }
 
                         executeActionForFD( pollfd.fd );
@@ -165,6 +152,7 @@ void ThreadLoop::pollingLoop()
                 }
             }
         }
+        while ( !stopping );
     }
     catch ( std::exception const& e )
     {
@@ -212,19 +200,19 @@ std::string ThreadLoop::eventsToString( int const events )
 #undef  MAPPING
     };
 
-    return valueToString( events, mappings );
+    return bitmaskToString( events, mappings );
 }
 
-std::string ThreadLoop::valueToString( int value, Mappings const& mappings )
+std::string ThreadLoop::bitmaskToString( int value, Mappings const& mappings )
 {
     std::ostringstream oss;
     std::string delimiter;
 
-    for ( auto const& [ bitmask, name ]: mappings )
+    for ( auto const& [ mappedBitmask, name ]: mappings )
     {
-        if ( ( value & bitmask ) == bitmask )
+        if ( ( value & mappedBitmask ) == mappedBitmask )
         {
-            value ^= bitmask;
+            value ^= mappedBitmask;
             oss << delimiter << name;
             if ( delimiter.empty() ) delimiter = " | ";
         }

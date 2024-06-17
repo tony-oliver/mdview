@@ -12,12 +12,20 @@ $ mdview <filename>
 
 which parses the contents of the named file from markdown to HTML and displays the latter in an HTML widget.
 
-It also watches for file-content updates and reloads the file when they occur.
+It also watches for file-content updates and keeps the displayed image in sync when they occur.
 
 ## Background
 
-This was an ideal hobby project on which to learn the features and limitations of gtkmm-4, having used gtkmm-3
-on my last C++ GUI project. It also gave me a good look at how inotify monitors and reports changes to files.
+Some few years ago, as `github` become immensely popular, I found that project sources (either git repos or
+tarballs) carried a `README.md` file, instead of the traditional plaintext `README` file.
+
+It frustrated me that there was no standard tool to render and display such markdown files (apart from editors,
+showing the rendered version side-by-side with the marked-down source text).
+
+Finally, I got around to developing such a tool - this program, `mdview`.
+
+This was an ideal hobby project on which to learn the features and limitations of `gtkmm-4`, having previously used `gtkmm-3`
+on my last C++ GUI project. It also gave me a good look at how `inotify` monitors and reports changes to files.
 
 ## Packaging
 

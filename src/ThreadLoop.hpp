@@ -32,7 +32,7 @@ protected:
 
     // Provision to convert int bitmasks to strings of manifest constant name(s)
     using Mappings = std::vector< std::pair< int, std::string > >;
-    std::string valueToString( int value, Mappings const& mappings );
+    std::string bitmaskToString( int bitmask, Mappings const& mappings );
 
 private:
 

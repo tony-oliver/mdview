@@ -76,10 +76,10 @@ MainWindow::MainWindow( Arguments const& args )
 {
     signalHandler.registerAction( [ & ]{ close(); } );
 
-    set_default_size( 1024, 768 );
     scroller.set_child( webView );
     scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
     set_child( scroller );
+    set_default_size( 1024, 768 );
 
     display( args );
 }
@@ -114,7 +114,7 @@ void MainWindow::display( Arguments const& args )
     catch ( std::exception const& e )
     {
         html = e.what();
-        std::cerr << '\n' << html << '\n' << std::endl;
+        std::cerr << "\n* " << html << '\n' << std::endl;
         wrap_html( html, { "pre", "code" } );
     }
 

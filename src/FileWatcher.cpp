@@ -148,5 +148,5 @@ std::string FileWatcher::event_mask_to_string( int const event_mask )
 #undef  MAPPING
     };
 
-    return valueToString( event_mask, mappings );
+    return bitmaskToString( event_mask, mappings );
 }
