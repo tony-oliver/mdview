@@ -4,6 +4,8 @@
 #include <set>
 #include <functional>
 
+namespace awo {
+
 class SignalHandler
 {
 public:
@@ -20,5 +22,7 @@ private:
 
     static void handleSignal( int signo );
 };
+
+} // close namespace awo
 
 #endif // INCLUDED_AWO_SIGNAL_HANDLER_HPP

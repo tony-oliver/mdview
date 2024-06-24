@@ -9,4 +9,4 @@ set( CMAKE_CXX_STANDARD 20 )
 set( CMAKE_CXX_EXTENSIONS Off )
 add_compile_options( -pedantic -Wall -Wextra -O3 -g3 )
 
-add_subdirectory( src )
+add_subdirectory( app )

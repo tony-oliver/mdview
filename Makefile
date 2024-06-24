@@ -14,7 +14,7 @@ cmake:;					@cmake -B ${BUILDDIR}
 
 clean:;					@rm -rvf ${BUILDDIR}
 
-run: all;				@LD_LIBRARY_PATH=${BUILDDIR}/lib ${BUILDDIR}/src/${TARGET} ${TESTFILE}
+run: all;				@LD_LIBRARY_PATH=${BUILDDIR}/lib ${BUILDDIR}/app/${TARGET} ${TESTFILE}
 
 install: all;			@sudo cmake --install ${BUILDDIR}
 

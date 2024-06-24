@@ -20,14 +20,6 @@ namespace { // unnamed
 
 constexpr std::string progname = "mdview";
 
-void check_just_one_arg_in( MainWindow::Arguments const& args )
-{
-    if ( args.size() != 1 )
-    {
-        throw std::runtime_error( "This program must be invoked with a single filename argument." );
-    }
-}
-
 void check_file_opened_ok( std::ifstream const& file, std::string const& filename )
 {
     if ( !file.is_open() )
@@ -71,8 +63,11 @@ h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; }
 } // close unnamed namespace
 //============================================================================
 
-MainWindow::MainWindow( Arguments const& args )
-: signalHandler( { SIGINT, SIGTERM, SIGPWR, SIGHUP } )
+MainWindow::MainWindow( Options const& options )
+: options{ options }
+, threadsafe_logger( options.get_logger(), options.get_use_colour() )
+, watcher( options )
+, signalHandler( { SIGINT, SIGTERM, SIGPWR, SIGHUP } )
 {
     signalHandler.registerAction( [ & ]{ close(); } );
 
@@ -81,26 +76,25 @@ MainWindow::MainWindow( Arguments const& args )
     set_child( scroller );
     set_default_size( 1024, 768 );
 
-    display( args );
+    display();
 }
 
-void MainWindow::display( Arguments const& args )
+void MainWindow::display()
 {
     std::string html;
 
     try
     {
-        if ( filename.empty() )
-        {
-            check_just_one_arg_in( args );
-            filename = args.front();
-
-            watcher.watchFile( filename, [ this ]{ std::clog << "MainWindow notified!" << std::endl; display(); } );
-            watcher.start();
-        }
+        auto const& filename = options.get_filename();
 
         std::ifstream markdownFile( filename );
         check_file_opened_ok( markdownFile, filename );
+
+        if ( !watcher.isWatching( filename ) )
+        {
+            watcher.watchFile( filename, [ this ]{ display(); } );
+            watcher.start();
+        }
 
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdownText{ Iterator{ markdownFile }, Iterator{} };
@@ -115,6 +109,7 @@ void MainWindow::display( Arguments const& args )
     {
         html = e.what();
         std::cerr << "\n* " << html << '\n' << std::endl;
+
         wrap_html( html, { "pre", "code" } );
     }
 
@@ -126,7 +121,10 @@ void MainWindow::display( Arguments const& args )
     html.insert( 0, style );
     wrap_html( html, { "html" } );
 
-    //std::cout << html << std::endl;
+    if ( options.get_dump_html() )
+    {
+        std::cout << html << std::flush;
+    }
 
     webView.load_html( html );
 }

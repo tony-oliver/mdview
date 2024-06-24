@@ -2,6 +2,7 @@
 #define INCLUDED_MDVIEW_FILE_WATCHER_HPP
 
 #include "ThreadLoop.hpp"
+#include "Options.hpp"
 
 #include <map>          // std::map<>{}
 #include <array>        // std::array<>{}
@@ -11,21 +12,18 @@
 #include <utility>      // std::pair<>{}
 #include <functional>   // std::function<>{}
 
-class FileWatcher: public ThreadLoop
+class FileWatcher: public awo::ThreadLoop
 {
 public:
 
-    FileWatcher();
+    explicit FileWatcher( Options const& options );
     ~FileWatcher();
 
     using Action = std::function< void() >;
 
     void watchFile( std::string const& filename, Action const& action );
     void ignoreFile( std::string const& filename );
-
-protected:
-
-    void handleINotification();
+    bool isWatching( std::string const& filename );
 
 private:
 
@@ -33,11 +31,11 @@ private:
 
     using WDAction = std::pair< int, Action >;
 
+    void handleINotification();
+
     std::map< std::string, WDAction > file_watchers;
     std::recursive_mutex file_watchers_mutex; // file_watchers is accessed from our thread and the host
     void executeActionForWD( int event_wd );
-
-    std::string event_mask_to_string( int event_mask );
 };
 
 #endif // INCLUDED_MDVIEW_FILE_WATCHER_HPP

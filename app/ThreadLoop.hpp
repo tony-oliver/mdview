@@ -7,9 +7,12 @@
 #include <atomic>       // std::atomic_bool
 #include <string>       // std::string{}
 #include <thread>       // std::thread{}
-#include <cstdint>      // std::maxint_t
+#include <ostream>      // std::ostream<>{}
+#include <cstdint>      // std::intmax_t
 #include <utility>      // std::pair<>{}
 #include <functional>   // std::function<>{}
+
+namespace awo {
 
 class ThreadLoop
 {
@@ -17,7 +20,7 @@ class ThreadLoop
 
 public:
 
-    ThreadLoop();
+    explicit ThreadLoop( std::ostream& logger );
     ~ThreadLoop();
 
     void start();
@@ -25,14 +28,12 @@ public:
 
 protected:
 
+    std::ostream& logger;
+
     void registerActionForFD( int fd, Action const& action );
     void deregisterFD( int fd );
 
     bool checkForPosixError( std::intmax_t value, std::string const& what );
-
-    // Provision to convert int bitmasks to strings of manifest constant name(s)
-    using Mappings = std::vector< std::pair< int, std::string > >;
-    std::string bitmaskToString( int bitmask, Mappings const& mappings );
 
 private:
 
@@ -43,14 +44,12 @@ private:
     enum PipeFDTypes { ReadEnd, WriteEnd, NumPipeFDs };
     using PipeFDs = std::array< int, NumPipeFDs >;
     PipeFDs stop_fds;
-    void clearPipe();
 
     std::atomic_bool stopping = false;
     std::thread polling_thread;
     void pollingLoop();
-
-    // Conversion to string of 'events' / 'revents' fields of pollfd structures
-    std::string eventsToString( int value );
 };
+
+} // close namespace awo
 
 #endif // INCLUDED_AWO_THREAD_LOOP_HPP

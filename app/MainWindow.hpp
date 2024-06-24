@@ -1,10 +1,10 @@
 #ifndef INCLUDED_MDVIEW_MAIN_WINDOW_HPP
 #define INCLUDED_MDVIEW_MAIN_WINDOW_HPP
 
+#include "Options.hpp"
 #include "WebView.hpp"
 #include "FileWatcher.hpp"
 #include "SignalHandler.hpp"
-
 #include <gtkmm/window.h>
 #include <gtkmm/scrolledwindow.h>
 
@@ -13,23 +13,24 @@
 #include <cstddef>
 #include <string_view>
 
+#include "ThreadSafeOStream.hpp"
+
 class MainWindow: public Gtk::Window
 {
 public:
 
-    using Arguments = std::vector< std::string >;
-
-    explicit MainWindow( Arguments const& args );
+    explicit MainWindow( Options const& options );
 
 private:
 
+    Options const&      options;
     Gtk::ScrolledWindow scroller;
     WebView             webView;
-    std::string         filename;
+    ThreadSafeOStream   threadsafe_logger;
     FileWatcher         watcher;
-    SignalHandler       signalHandler;
+    awo::SignalHandler  signalHandler;
 
-    void display( Arguments const& args = {} );
+    void display();
 };
 
 #endif // INCLUDED_MDVIEW_MAIN_WINDOW_HPP
