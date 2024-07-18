@@ -1,18 +1,18 @@
 #include "ThreadSafeOStream.hpp"
 
 #include <unistd.h>
-#include <ncurses/term.h>
+#include <ncurses/term.h>   // tparm(), tigetstr()
+#include <ncurses/curses.h> // COLOR_GREEN, etc.
 
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 
 //============================================================================
 namespace { // unnamed
 //----------------------------------------------------------------------------
 
 constexpr bool debug = true;
-
-constexpr std::size_t max_num_colours = 7;
 
 bool is_attached_to_terminal( std::streambuf const* const stream_buffer )
 {
@@ -103,8 +103,8 @@ void ThreadSafeOStream::flushBuffer( std::thread::id const thread_id, std::strin
         auto const colour_no = get_colour_no_for( thread_id );
 
         std::string terminal_str;
-        terminal_str += tparm( tigetstr( "bold" ) );
         terminal_str += tparm( tigetstr( "setaf" ), colour_no );
+        terminal_str += tparm( tigetstr( "bold" ) );
         underlying_streambuf->sputn( terminal_str.data(), terminal_str.size() );
     }
 
@@ -124,7 +124,8 @@ void ThreadSafeOStream::flushBuffer( std::thread::id const thread_id, std::strin
 
 std::size_t ThreadSafeOStream::get_colour_no_for( std::thread::id const thread_id )
 {
-    int colour_no = 0;
+    int colour_no;
+
     auto const p = colours_in_use.find( thread_id );
 
     if ( p != colours_in_use.end() )
@@ -135,15 +136,28 @@ std::size_t ThreadSafeOStream::get_colour_no_for( std::thread::id const thread_i
     {
         auto const num_colours_used = colours_in_use.size();
 
+        constexpr int colours[] =
+        {
+            COLOR_CYAN,
+            COLOR_MAGENTA,
+            COLOR_GREEN,
+            COLOR_BLUE,
+            COLOR_YELLOW,
+            COLOR_RED,
+            COLOR_WHITE,
+        };
+
+        constexpr auto max_num_colours = std::size( colours );
+
         if ( num_colours_used < max_num_colours )
         {
-            colour_no = num_colours_used + 1;
+            colour_no = colours[ num_colours_used ];
         }
         else
         {
             auto const hash = std::hash< std::thread::id >{}( thread_id );
-
-            colour_no = ( hash % max_num_colours ) + 1;
+            auto const colour_index = hash % max_num_colours;
+            colour_no = colours[ colour_index ];
         }
 
         colours_in_use[ thread_id ] = colour_no;

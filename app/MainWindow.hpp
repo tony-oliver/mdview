@@ -5,7 +5,9 @@
 #include "WebView.hpp"
 #include "FileWatcher.hpp"
 #include "SignalHandler.hpp"
-#include <gtkmm/window.h>
+#include "ThreadSafeOStream.hpp"
+
+#include <gtkmm/applicationwindow.h>
 #include <gtkmm/scrolledwindow.h>
 
 #include <string>
@@ -13,9 +15,7 @@
 #include <cstddef>
 #include <string_view>
 
-#include "ThreadSafeOStream.hpp"
-
-class MainWindow: public Gtk::Window
+class MainWindow: public Gtk::ApplicationWindow
 {
 public:
 

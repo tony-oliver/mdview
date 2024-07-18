@@ -16,13 +16,13 @@ It also watches for file-content updates and keeps the displayed image in sync w
 
 ## Background
 
-Some few years ago, as `github` become immensely popular, I found that project sources (either git repos or
+Some few years ago, as `github` became immensely popular, I found that project sources (either git repos or
 tarballs) carried a `README.md` file, instead of the traditional plaintext `README` file.
 
 It frustrated me that there was no standard tool to render and display such markdown files (apart from editors,
 clumsily showing the rendered version side-by-side with the marked-down source text).
 
-Finally, I got around to developing such a tool - this program, `mdview`.
+Finally, I got around to developing such a tool: this program, `mdview`.
 
 This was an ideal hobby project on which to learn the features and limitations of `gtkmm-4`, having previously used `gtkmm-3`
 on my last C++ GUI-based projects. It also gave me a good look at how `inotify` monitors and reports changes to files.
@@ -41,7 +41,8 @@ See the **Building** section, below, for the location of that repository.
 
 ### Compiler
 
-The default C++ compiler must be capable of supporting the C++20 standard.
+The default C++ compiler must be capable of supporting the C++20 standard (through the options
+`-std=c++20 -pedantic`).
 
 ### Packages
 
@@ -58,7 +59,7 @@ $ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel
 ```
 
 (For other flavours of Linux, the appropriate package management tool should
-be used instead of `dnf`, *e.g.* `yum`, `apt`, `pkg` *etc.*).
+be used instead of `dnf`, *e.g.* `yum`, `apt`, `pkg`, *etc.*).
 
 ## Building
 

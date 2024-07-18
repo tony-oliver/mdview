@@ -56,8 +56,8 @@ ThreadLoop::ThreadLoop( std::ostream& logger )
     auto const pipe_result = pipe( stop_fds.data() );
     checkForPosixError( pipe_result, "pipe()" );
 
-    logger << "Stop-pipe: read from fd " << stop_fds[ ReadEnd ]
-              << ";  write to fd " << stop_fds[ WriteEnd ] << std::endl;
+    logger << "Stop-pipe: reading fd = " << stop_fds[ ReadEnd ]
+              << ";  writing fd = " << stop_fds[ WriteEnd ] << std::endl;
 }
 
 ThreadLoop::~ThreadLoop()

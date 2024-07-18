@@ -25,7 +25,7 @@ target_compile_options( mdview PUBLIC ${LIBCMARK_CFLAGS} )
 target_link_libraries( mdview PUBLIC ${LIBCMARK_LDFLAGS} )
 
 pkg_search_module( TERMINFO REQUIRED tinfo )
-target_compile_options( mdview PUBLIC ${TERMIFO_CFLAGS} )
+target_compile_options( mdview PUBLIC ${TERMINFO_CFLAGS} )
 target_link_libraries( mdview PUBLIC ${TERMINFO_LDFLAGS} )
 
 install( TARGETS mdview RUNTIME DESTINATION bin )

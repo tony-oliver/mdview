@@ -3,8 +3,11 @@
 #include <iostream>
 
 namespace {
-std::ostream nullstream{ nullptr };
-}
+
+struct NullStreamBuf: std::streambuf {} buf;
+struct NullStream: std::ostream { NullStream(): std::ostream{ &buf } {} } nullstream;
+
+} // close unnamed namespace
 
 Options::Options( int const argc, char** const argv )
 : logger_ptr{ &nullstream }
