@@ -71,7 +71,7 @@ MainWindow::MainWindow( Options const& options )
 {
     signalHandler.registerAction( [ & ]{ close(); } );
 
-    scroller.set_child( webView );
+    scroller.set_child( webViewWidget );
     scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
     set_child( scroller );
     set_default_size( 1024, 768 );
@@ -126,5 +126,5 @@ void MainWindow::display()
         std::cout << html << std::flush;
     }
 
-    webView.load_html( html );
+    webViewWidget.load_html( html );
 }

@@ -4,8 +4,8 @@
 #include <unistd.h>         // pipe(), close()
 #include <poll.h>           // poll_fd{}, poll()
 
-#include <array>            // std::array<>{}
 #include <cerrno>           // errno
+#include <string>           // std::string{}
 #include <vector>           // std::vector<>{}
 #include <iomanip>          // std::setfill()
 #include <ostream>          // std::endl, operator<<()
@@ -56,8 +56,8 @@ ThreadLoop::ThreadLoop( std::ostream& logger )
     auto const pipe_result = pipe( stop_fds.data() );
     checkForPosixError( pipe_result, "pipe()" );
 
-    logger << "Stop-pipe: reading fd = " << stop_fds[ ReadEnd ]
-              << ";  writing fd = " << stop_fds[ WriteEnd ] << std::endl;
+    logger << "Stop-pipe: writing fd = " << stop_fds[ WriteEnd ]
+           << "; reading fd = " << stop_fds[ ReadEnd ] << std::endl;
 }
 
 ThreadLoop::~ThreadLoop()
@@ -83,9 +83,10 @@ void ThreadLoop::stop()
     logger << "Setting stopping = true" << std::endl;
     stopping = true;
 
+    static std::string const stop_data{ "x" };
+
     logger << "Writing 'x' to fd " << stop_fds[ WriteEnd ] << std::endl;
-    std::array< char, 1 > const buffer{ 'x' };
-    auto const write_result = write( stop_fds[ WriteEnd ], buffer.data(), buffer.size() );
+    auto const write_result = write( stop_fds[ WriteEnd ], stop_data.data(), stop_data.size() );
     checkForPosixError( write_result, "write()" );
 
     if ( polling_thread.joinable() )
@@ -132,15 +133,13 @@ void ThreadLoop::executeActionForFD( int const fd )
 
 void ThreadLoop::pollingLoop()
 {
-    logger << __FUNCTION__ << "() function now executing" << std::endl;
+    logger << "Function " << __FUNCTION__ << "() now executing" << std::endl;
 
     constexpr int no_timeout = -1;
 
     try
     {
-        // Loop, waiting for events to occur and servicing them.
-
-        do
+        do // Loop, waiting for events to occur and servicing them.
         {
             std::vector< pollfd > pollfds;
 
@@ -156,15 +155,9 @@ void ThreadLoop::pollingLoop()
             logger << "Calling poll()" << std::endl;
             auto const poll_result = poll( pollfds.data(), pollfds.size(), no_timeout );
 
-            if ( checkForPosixError( poll_result, "poll()" ) )
-            {
-                continue; // loop again if we got an EINTR "error"
-            }
+            if ( checkForPosixError( poll_result, "poll()" ) ) continue; // loop again if we got an EINTR "error"
 
-            if ( stopping )
-            {
-                break;
-            }
+            if ( stopping ) break;
 
             // Now go through the pollfds to see which one(s) triggered the poll() to return
 
@@ -180,10 +173,7 @@ void ThreadLoop::pollingLoop()
 
                         // This pollfd has read-events to be serviced.
 
-                        if ( pollfd.fd == stop_fds[ ReadEnd ] )
-                        {
-                            break; // Halt this loop so the 'stopping' flag can be re-checked
-                        }
+                        if ( pollfd.fd == stop_fds[ ReadEnd ] ) break; // Halt this loop so the 'stopping' flag can be re-checked
 
                         executeActionForFD( pollfd.fd );
                     }
@@ -200,16 +190,13 @@ void ThreadLoop::pollingLoop()
     logger << "Function " << __FUNCTION__ << "() now exiting" << std::endl;
 }
 
-bool ThreadLoop::checkForPosixError( std::intmax_t value, std::string const& what )
+bool ThreadLoop::checkForPosixError( std::intmax_t const value, std::string const& what )
 {
     logger << what << " returned " << value << std::endl;
 
     if ( value == -1 )
     {
-        if ( errno == EINTR )
-        {
-            return true;
-        }
+        if ( errno == EINTR ) return true;
 
         throw std::system_error( errno, std::generic_category(), what );
     }

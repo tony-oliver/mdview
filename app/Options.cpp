@@ -1,11 +1,12 @@
 #include "Options.hpp"
 
 #include <iostream>
+#include <streambuf>
 
-namespace {
+namespace { // unnamed
 
-struct NullStreamBuf: std::streambuf {} buf;
-struct NullStream: std::ostream { NullStream(): std::ostream{ &buf } {} } nullstream;
+struct NullBuffer: std::streambuf {} nullbuffer;
+struct NullStream: std::ostream { NullStream(): std::ostream{ &nullbuffer } {} } nullstream;
 
 } // close unnamed namespace
 
@@ -23,9 +24,9 @@ Options::Options( int const argc, char** const argv )
 
     static argp_option const options[] =
     {
-        { "dump-html",  'd', nullptr, 0, "Dump HTML to stdout", 0 },
-        { "colour",     'c', nullptr, 0, "Distinguish verbose output by colours", 0 },
         { "verbose",    'v', nullptr, 0, "Produce verbose output on stderr", 0 },
+        { "colour",     'c', nullptr, 0, "Distinguish verbose output by colours", 0 },
+        { "dump-html",  'd', nullptr, 0, "Dump HTML to stdout", 0 },
         {}
     };
 

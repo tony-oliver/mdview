@@ -2,9 +2,9 @@
 #define INCLUDED_MDVIEW_MAIN_WINDOW_HPP
 
 #include "Options.hpp"
-#include "WebView.hpp"
 #include "FileWatcher.hpp"
 #include "SignalHandler.hpp"
+#include "WebViewWidget.hpp"
 #include "ThreadSafeOStream.hpp"
 
 #include <gtkmm/applicationwindow.h>
@@ -25,7 +25,7 @@ private:
 
     Options const&      options;
     Gtk::ScrolledWindow scroller;
-    WebView             webView;
+    WebViewWidget       webViewWidget;
     ThreadSafeOStream   threadsafe_logger;
     FileWatcher         watcher;
     awo::SignalHandler  signalHandler;

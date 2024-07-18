@@ -4,11 +4,11 @@ add_executable( mdview
 				mdview.cpp
 				Options.cpp
 				MainWindow.cpp
-				WebView.cpp
 				ThreadLoop.cpp
 				FileWatcher.cpp
-				SignalHandler.cpp
 				StringUtils.cpp
+				SignalHandler.cpp
+				WebViewWidget.cpp
 				ThreadSafeOStream.cpp
 				)
 
