@@ -53,10 +53,11 @@ For the HTML-viewing widget in that framework, it uses the WebKit-GTK bindings.
 
 For the markdown-to-HTML parser it uses the `cmark` package.
 
+For tidying-up the generated HTML, `libtidy` gets the job.
 Installation of these packages is as simple as
 
 ```
-$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel
+$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel
 ```
 
 (For other flavours of Linux, the appropriate package management tool should
@@ -113,7 +114,7 @@ $ make clean
 ### Quick build
 
 ```
-$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel
+$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel
 $ git clone https://github.com/tony-oliver/mdview && cd mdview
 $ make install
 $ cd .. && rm -rf mdview

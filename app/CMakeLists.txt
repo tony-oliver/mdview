@@ -3,6 +3,7 @@ project( mdview )
 add_executable( mdview
 				mdview.cpp
 				Options.cpp
+				LibTidy.cpp
 				MainWindow.cpp
 				ThreadLoop.cpp
 				FileWatcher.cpp
@@ -27,5 +28,9 @@ target_link_libraries( mdview PUBLIC ${LIBCMARK_LDFLAGS} )
 pkg_search_module( TERMINFO REQUIRED tinfo )
 target_compile_options( mdview PUBLIC ${TERMINFO_CFLAGS} )
 target_link_libraries( mdview PUBLIC ${TERMINFO_LDFLAGS} )
+
+pkg_search_module( TIDY REQUIRED tidy )
+target_compile_options( mdview PUBLIC ${TIDY_CFLAGS} )
+target_link_libraries( mdview PUBLIC ${TIDY_LDFLAGS} )
 
 install( TARGETS mdview RUNTIME DESTINATION bin )

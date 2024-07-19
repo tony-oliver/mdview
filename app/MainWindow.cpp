@@ -1,4 +1,5 @@
 #include "MainWindow.hpp"
+#include "LibTidy.hpp"
 
 #include <gtkmm/enums.h>
 
@@ -36,16 +37,10 @@ void check_converted_to_html_ok( char const* const converted_text_ptr )
     }
 }
 
-void wrap_html( std::string& html, std::initializer_list< std::string > const& elements )
+void wrap_html( std::string& html, std::string const& tag )
 {
-    std::string prefix, suffix;
-
-    for ( auto const& element: elements )
-    {
-        prefix.append( "<" + element + ">\n" );
-        suffix.insert( 0, "</" + element + ">\n" );
-    }
-
+    std::string const prefix = "\n<" + tag + ">\n";
+    std::string const suffix = "\n</" + tag + ">\n";
     html.reserve( prefix.length() + html.length() + suffix.length() );
     html.insert( 0, prefix );
     html.append( suffix );
@@ -55,8 +50,7 @@ std::string make_css()
 {
 return R"(code { color: mediumblue; }
 pre { padding: 15px; background-color: whitesmoke; }
-h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; }
-)";
+h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; })";
 }
 
 //----------------------------------------------------------------------------
@@ -74,6 +68,10 @@ MainWindow::MainWindow( Options const& options )
     scroller.set_child( webViewWidget );
     scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
     set_child( scroller );
+
+    auto const filename = options.get_filename();
+    if ( !filename.empty() ) set_title( "mdview - " + filename );
+
     set_default_size( 1024, 768 );
 
     display();
@@ -110,16 +108,29 @@ void MainWindow::display()
         html = e.what();
         std::cerr << "\n* " << html << '\n' << std::endl;
 
-        wrap_html( html, { "pre", "code" } );
+        wrap_html( html, "code" );
+        wrap_html( html, "pre" );
     }
 
-    wrap_html( html, { "body" } );
+    auto body = html;
+    wrap_html( body, "body" );
+
+    std::string title = options.get_filename();
+    wrap_html( title, "title" );
 
     auto style = make_css();
-    wrap_html( style, { "head", "style" } );
+    wrap_html( style, "style" );
 
-    html.insert( 0, style );
-    wrap_html( html, { "html" } );
+    std::string header = title + style;
+    wrap_html( header, "head" );
+
+    html = header + body;
+    wrap_html( html, "html" );
+
+    html.insert( 0, "<!DOCTYPE html>\n" );
+
+    LibTidy const libTidy( options.get_logger() );
+    html = libTidy.tidyHtml( html );
 
     if ( options.get_dump_html() )
     {
