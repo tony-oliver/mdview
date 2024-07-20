@@ -10,9 +10,11 @@
 #include <gtkmm/applicationwindow.h>
 #include <gtkmm/scrolledwindow.h>
 
+#include <memory>
 #include <string>
 #include <vector>
 #include <cstddef>
+#include <cstdlib>
 #include <string_view>
 
 class MainWindow: public Gtk::ApplicationWindow
@@ -30,6 +32,7 @@ private:
     FileWatcher         watcher;
     awo::SignalHandler  signalHandler;
 
+    void postProcess( std::string& html );
     void display();
 };
 

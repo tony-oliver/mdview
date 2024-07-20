@@ -1,12 +1,12 @@
 #include "MainWindow.hpp"
-#include "LibTidy.hpp"
-
 #include <gtkmm/enums.h>
 
 #include "cmark.h"
 
 #include <cerrno>           // errno
+#include <memory>           // std::unique_ptr<>{}
 #include <string>           // std::to_string<>()
+#include <cstdlib>          // std::free()
 #include <cstring>          // std::strerror()
 #include <fstream>          // std::ifstream{}
 #include <iostream>         // std::cerr{}
@@ -14,6 +14,7 @@
 #include <exception>        // std::exception{}
 #include <stdexcept>        // std::runtime_error{}
 #include <initializer_list> // std::initializer_list<>{}
+#include "HTMLTidier.hpp"
 
 //============================================================================
 namespace { // unnamed
@@ -53,6 +54,9 @@ pre { padding: 15px; background-color: whitesmoke; }
 h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; })";
 }
 
+
+using auto_free_ptr = std::unique_ptr< char, decltype( std::free )* >;
+
 //----------------------------------------------------------------------------
 } // close unnamed namespace
 //============================================================================
@@ -77,6 +81,20 @@ MainWindow::MainWindow( Options const& options )
     display();
 }
 
+void MainWindow::postProcess( std::string& html )
+{
+    std::string title = options.get_filename();
+    wrap_html( title, "title" );
+
+    auto style = make_css();
+    wrap_html( style, "style" );
+
+    html = title + style + html;
+
+    HTMLTidier tidier( options.get_logger() );
+    html = tidier.tidyup( html );
+}
+
 void MainWindow::display()
 {
     std::string html;
@@ -97,11 +115,11 @@ void MainWindow::display()
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdownText{ Iterator{ markdownFile }, Iterator{} };
 
-        auto const converted_text_ptr = cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 );
-        check_converted_to_html_ok( converted_text_ptr );
+        auto html_ptr = cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 );
+        check_converted_to_html_ok( html_ptr );
 
-        html.assign( converted_text_ptr );
-        std::free( converted_text_ptr );
+        html.assign( html_ptr );
+        free( html_ptr );
     }
     catch ( std::exception const& e )
     {
@@ -112,25 +130,7 @@ void MainWindow::display()
         wrap_html( html, "pre" );
     }
 
-    auto body = html;
-    wrap_html( body, "body" );
-
-    std::string title = options.get_filename();
-    wrap_html( title, "title" );
-
-    auto style = make_css();
-    wrap_html( style, "style" );
-
-    std::string header = title + style;
-    wrap_html( header, "head" );
-
-    html = header + body;
-    wrap_html( html, "html" );
-
-    html.insert( 0, "<!DOCTYPE html>\n" );
-
-    LibTidy const libTidy( options.get_logger() );
-    html = libTidy.tidyHtml( html );
+    postProcess( html );
 
     if ( options.get_dump_html() )
     {

@@ -3,7 +3,7 @@ project( mdview )
 add_executable( mdview
 				mdview.cpp
 				Options.cpp
-				LibTidy.cpp
+				HTMLTidier.cpp
 				MainWindow.cpp
 				ThreadLoop.cpp
 				FileWatcher.cpp
