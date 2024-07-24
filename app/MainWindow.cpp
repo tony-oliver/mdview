@@ -89,10 +89,13 @@ void MainWindow::postProcess( std::string& html )
     auto style = make_css();
     wrap_html( style, "style" );
 
-    html = title + style + html;
-
     HTMLTidier tidier( options.get_logger() );
-    html = tidier.tidyup( html );
+    html = tidier.tidyup( title + style + html );
+
+    if ( options.get_show_diagnostics() )
+    {
+        std::cout << "LIBTIDY DIAGNOSTICS:\n" << tidier.getDiagnostics() << std::endl;
+    }
 }
 
 void MainWindow::display()

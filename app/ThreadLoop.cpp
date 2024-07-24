@@ -53,15 +53,21 @@ namespace awo {
 ThreadLoop::ThreadLoop( std::ostream& logger )
 : logger{ logger }
 {
+    logger << "ThreadLoop ctor entered..." << std::endl;
+
     auto const pipe_result = pipe( stop_fds.data() );
     checkForPosixError( pipe_result, "pipe()" );
 
     logger << "Stop-pipe: writing-fd = " << stop_fds[ WriteEnd ]
            << "; reading-fd = " << stop_fds[ ReadEnd ] << std::endl;
+
+    logger << "ThreadLoop ctor done." << std::endl;
 }
 
 ThreadLoop::~ThreadLoop()
 {
+    logger << "ThreadLoop dtor entered..." << std::endl;
+
     stop();
 
     for ( auto const stop_fd: stop_fds )
@@ -70,6 +76,8 @@ ThreadLoop::~ThreadLoop()
         auto const close_result = close( stop_fd );
         checkForPosixError( close_result, "close()" );
     }
+
+    logger << "ThreadLoop dtor done." << std::endl;
 }
 
 void ThreadLoop::start()
@@ -84,8 +92,7 @@ void ThreadLoop::stop()
     stopping = true;
 
     static std::string const stop_data{ "stop" };
-
-    logger << "Writing " << stop_data << " to fd " << stop_fds[ WriteEnd ] << std::endl;
+    logger << "Writing " << std::quoted( stop_data ) << " to fd " << stop_fds[ WriteEnd ] << std::endl;
     auto const write_result = write( stop_fds[ WriteEnd ], stop_data.data(), stop_data.size() );
     checkForPosixError( write_result, "write()" );
 
@@ -93,6 +100,7 @@ void ThreadLoop::stop()
     {
         logger << "Waiting for polling-thread to finish" << std::endl;
         polling_thread.join();
+        logger << "Polling-thread has joined" << std::endl;
     }
 }
 

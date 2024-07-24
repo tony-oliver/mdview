@@ -10,6 +10,7 @@ class Options
 {
     std::string filename;
     bool dump_html = false;
+    bool show_diagnostics = false;
     bool use_colour = false;
     std::ostream* logger_ptr;
 
@@ -19,6 +20,7 @@ public:
 
     std::string const& get_filename() const;
     bool get_dump_html() const;
+    bool get_show_diagnostics() const;
     bool get_use_colour() const;
     std::ostream& get_logger() const;
 

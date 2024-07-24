@@ -24,9 +24,10 @@ Options::Options( int const argc, char** const argv )
 
     static argp_option const options[] =
     {
-        { "verbose",    'v', nullptr, 0, "Produce verbose output on stderr", 0 },
-        { "colour",     'c', nullptr, 0, "Distinguish verbose output by colours", 0 },
-        { "dump-html",  'd', nullptr, 0, "Dump HTML to stdout", 0 },
+        { "verbose",        'v', nullptr, 0, "Produce verbose output on stderr", 0 },
+        { "html",           'h', nullptr, 0, "Dump HTML to stdout", 0 },
+        { "diagnostics",    'd', nullptr, 0, "Show diagnostics from LibTidy", 0 },
+        { "colour",         'c', nullptr, 0, "Distinguish verbose output by colours", 0 },
         {}
     };
 
@@ -55,8 +56,9 @@ error_t Options::parse_option( int const key, char* const arg, argp_state* const
 
     switch ( key )
     {
-    case 'd': dump_html  = true;        break;
-    case 'c': use_colour = true;        break;
+    case 'h': dump_html         = true; break;
+    case 'd': show_diagnostics  = true; break;
+    case 'c': use_colour        = true; break;
     case 'v': logger_ptr = &std::clog;  break;
 
     case ARGP_KEY_ARG:
@@ -65,7 +67,7 @@ error_t Options::parse_option( int const key, char* const arg, argp_state* const
         break;
 
     case ARGP_KEY_END:
-        if ( arg_num == 0 ) argp_usage( state ); // Insufficient arguments.
+        if ( arg_num < 1 ) argp_usage( state ); // Insufficient arguments.
         break;
 
     default:
@@ -88,6 +90,11 @@ bool Options::get_dump_html() const
 bool Options::get_use_colour() const
 {
     return use_colour;
+}
+
+bool Options::get_show_diagnostics() const
+{
+    return show_diagnostics;
 }
 
 std::ostream& Options::get_logger() const

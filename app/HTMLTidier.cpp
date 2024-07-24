@@ -60,9 +60,6 @@ std::string HTMLTidier::tidyup( std::string const& html )
 {
     std::string tidiedHtml;
 
-    Buffer output;
-    Buffer errbuf;
-
     setErrorBuffer( errbuf );                       // Capture diagnostics rather than displaying them
 
     setBooleanOption( TidyMark, no );
@@ -79,8 +76,14 @@ std::string HTMLTidier::tidyup( std::string const& html )
     saveToBuffer( output );                         // Pretty-print to the output buffer
 
     auto const outstr = reinterpret_cast< char const* >( output.bp );
-
     if ( outstr != nullptr ) tidiedHtml = outstr;
-
     return tidiedHtml;
+}
+
+std::string HTMLTidier::getDiagnostics() const
+{
+    std::string diagnostics;
+    auto const errstr = reinterpret_cast< char const* >( errbuf.bp );
+    if ( errstr != nullptr ) diagnostics = errstr;
+    return diagnostics;
 }

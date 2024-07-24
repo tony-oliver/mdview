@@ -17,6 +17,10 @@ class HTMLTidier
         Buffer();
         ~Buffer();
     };
+
+    Buffer output;
+    Buffer errbuf;
+
 public:
 
     HTMLTidier( std::ostream& logger );
@@ -34,6 +38,7 @@ public:
     // High-level operations
 
     std::string tidyup( std::string const& untidyHtml );
+    std::string getDiagnostics() const;
 };
 
 #endif // INCLUDED_HTML_TIDIER_HPP
