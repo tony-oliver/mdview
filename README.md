@@ -16,7 +16,7 @@ It also watches for file-content updates and keeps the displayed image in sync w
 
 ## Background
 
-Some few years ago, as `github` became immensely popular, I found that project sources (either git repos or
+Some few years ago, as `github` became immensely popular, I found that project sources (either `git` repos or
 tarballs) carried a `README.md` file, instead of the traditional ASCII `README` file.
 
 It frustrated me that there was no standard tool to render and display such markdown files (apart from editors,
@@ -30,20 +30,18 @@ as well as how to make the displayed HTML use the visual style adopted by GitHub
 
 ## Packaging
 
-This project is available as a source tree in its own `git` repository.
+This project is available from its own `git` [repository](https://github.com/tony-oliver/mdview).
 
 It has been tested (so far) on the following platform(s):
 
-* Fedora 39 (using `g++ v13`).
-
-See the **Building** section, below, for the location of that repository.
+* Fedora 39 (built using `g++ v13`).
 
 ## Dependencies
 
 ### Compiler
 
 The default C++ compiler must be capable of supporting the C++20 standard (through the options
-`-std=c++20 -pedantic`).
+``-std=c++20 -pedantic``).
 
 ### Packages
 
@@ -120,5 +118,5 @@ $ make install
 $ cd .. && rm -rf mdview
 ```
 
-(Again, use `apt`, `yum`, `pkg`, *etc.* instead of `dnf`, according to the
-package manager installed for your particular flavour of Linux.)
+(Again, use `apt`, `yum`, `pkg`, *etc.* instead of `dnf`, according as to which of these
+package managers is supplied with for your particular flavour of Linux.)

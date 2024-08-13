@@ -165,7 +165,11 @@ void FileWatcher::handleINotification()
     logger << "inotifyEvent.mask = " << inotifyEventMaskToString( inotifyEvent.mask ) << std::endl;
     logger << "inotifyEvent.cookie = " << inotifyEvent.cookie << std::endl;
     logger << "inotifyEvent.len = " << inotifyEvent.len << std::endl;
-    logger << "inotifyEvent.name = " << std::quoted( static_cast< char const* >( nullptr ) ) << std::endl;// std::string_view( inotifyEvent.name, inotifyEvent.len ) ) << std::endl;
+
+    if ( inotifyEvent.len > 0 )
+    {
+        logger << "inotifyEvent.name = " << std::quoted( std::string_view( inotifyEvent.name, inotifyEvent.len ) ) << std::endl;
+    }
 
     // Lookup which action to execute for this wd and execute it
     executeActionForWD( inotifyEvent.wd );
