@@ -14,9 +14,9 @@ cmake:;					@cmake -B ${BUILDDIR}
 
 clean:;					@rm -rvf ${BUILDDIR}
 
-run: all;				@${BUILDDIR}/app/${TARGET} ${TESTFILE}
+run: all;				@${BUILDDIR}/src/${TARGET} ${TESTFILE}
 
-strip: all;				@strip -s ${BUILDDIR}/app/${TARGET}
+strip: all;				@strip -s ${BUILDDIR}/src/${TARGET}
 
 install: strip;			@sudo cmake --install ${BUILDDIR}
 
