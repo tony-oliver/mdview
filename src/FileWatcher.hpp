@@ -18,7 +18,7 @@ class FileWatcher: public awo::ThreadLoop
 
 public:
 
-    explicit FileWatcher( Options const& options );
+    explicit FileWatcher( std::ostream& logger );
     virtual ~FileWatcher();
 
     void watchFile( std::string const& filename, Action const& action );

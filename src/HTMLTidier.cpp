@@ -41,7 +41,7 @@ bool HTMLTidier::setBooleanOption( TidyOptionId const optionID, Bool const newVa
     return tidyOptSetBool( tidyDoc, optionID, newValue );
 }
 
-int HTMLTidier::parseString( std::string const& string )
+int HTMLTidier::ingestMarkdown( std::string const& string )
 {
     return tidyParseString( tidyDoc, string.c_str() );
 }
@@ -56,7 +56,7 @@ int HTMLTidier::saveToBuffer( Buffer& buffer )
     return tidySaveBuffer( tidyDoc, &buffer );
 }
 
-std::string HTMLTidier::tidyup( std::string const& html )
+std::string HTMLTidier::tidyupHTML( std::string const& html )
 {
     std::string tidiedHtml;
 
@@ -71,7 +71,7 @@ std::string HTMLTidier::tidyup( std::string const& html )
     setIntegerOption( TidyIndentSpaces, 2 );
     setIntegerOption( TidyWrapLen, 132 );
 
-    parseString( html );                            // Parse the input into the document
+    ingestMarkdown( html );                            // Parse the input into the document
     cleanAndRepair();                               // Fix errors and re-format the document
     saveToBuffer( output );                         // Pretty-print to the output buffer
 

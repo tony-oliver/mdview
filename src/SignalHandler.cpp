@@ -33,9 +33,9 @@ void SignalHandler::handleSignal( int const signo )
         std::ofstream( "/dev/tty" ) << std::endl;
     }
 
-    if ( auto const callable{ std::exchange( action, {} ) } )
+    if ( auto const signal_handler{ std::exchange( action, {} ) } )
     {
-        std::invoke( callable );
+        std::invoke( signal_handler );
     }
 }
 

@@ -1,21 +1,18 @@
 #include "FileWatcher.hpp"
 #include "StringUtils.hpp"
 
-#include <sys/inotify.h>
-
-#include <unistd.h>         // pipe(), close()
-#include <poll.h>           // poll_fd{}, poll()
+#include <poll.h>           // poll()
+#include <unistd.h>         // close()
+#include <sys/inotify.h>    // inotify_add_watch(), inotify_rm_watch()
 
 #include <array>            // std::array<>{}
 #include <cerrno>           // errno
 #include <vector>           // std::vector<>{}
 #include <iomanip>          // std::quoted<>{}
-#include <ostream>          // std::endl, operator<<()
-#include <iterator>         // std::data<>(), std::size<>()
+#include <ostream>          // std::endl(), operator<<()
 #include <algorithm>        // std::find_if<>()
 #include <stdexcept>        // std::logic_error{}
 #include <string_view>      // std::string_view{}
-#include <system_error>     // std::system_error{}
 
 //============================================================================
 namespace { // unnamed
@@ -59,8 +56,8 @@ std::string inotifyEventMaskToString( int const event_mask )
 } // close unnamed namespace
 //============================================================================
 
-FileWatcher::FileWatcher( Options const& options )
-: ThreadLoop( options.get_logger() )
+FileWatcher::FileWatcher( std::ostream& logger )
+: ThreadLoop( logger )
 , inotify_fd{ inotify_init() }
 {
     checkForPosixError( inotify_fd, "inotify_init()" );

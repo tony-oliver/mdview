@@ -26,19 +26,18 @@ public:
     HTMLTidier( std::ostream& logger );
     ~HTMLTidier();
 
-    // Low-level operations
+    std::string tidyupHTML( std::string const& untidyHtml );
+    std::string getDiagnostics() const;
+
+private:
 
     int setErrorBuffer( Buffer& buffer );
     int setIntegerOption(  TidyOptionId optionID, int newValue );
     bool setBooleanOption( TidyOptionId optionID, Bool newValue );
-    int parseString( std::string const& string );
+
+    int ingestMarkdown( std::string const& string );
     int cleanAndRepair();
     int saveToBuffer( Buffer& buffer );
-
-    // High-level operations
-
-    std::string tidyup( std::string const& untidyHtml );
-    std::string getDiagnostics() const;
 };
 
 #endif // INCLUDED_HTML_TIDIER_HPP

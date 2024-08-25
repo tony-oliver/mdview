@@ -10,9 +10,9 @@ Once installed, it is invoked thus:
 $ mdview <filename>
 ```
 
-which parses the contents of the named file from markdown to HTML and displays the latter in an HTML widget.
+which parses the contents of the named file from markdown. converts it to HTML and displays the latter in an HTML widget.
 
-It also watches for file-content updates and keeps the displayed image in sync when they occur.
+It also watches for file-content updates and keeps the rendered content in sync when they occur.
 
 ## Background
 

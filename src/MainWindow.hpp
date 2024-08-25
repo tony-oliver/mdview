@@ -25,15 +25,19 @@ public:
 
 private:
 
-    Options const&      options;
-    Gtk::ScrolledWindow scroller;
-    WebViewWidget       webViewWidget;
-    ThreadSafeOStream   threadsafe_logger;
-    FileWatcher         watcher;
     awo::SignalHandler  signalHandler;
 
+    Options const&      options;
+    std::string const&  filename;
+    std::ostream&       logger;
+
+    Gtk::ScrolledWindow scroller;
+    WebViewWidget       webViewWidget;
+    ThreadSafeOStream   makeThreadSafe;
+    FileWatcher         watcher;
+
     void postProcess( std::string& html );
-    void display();
+    void displayMarkdownFile();
 };
 
 #endif // INCLUDED_MDVIEW_MAIN_WINDOW_HPP

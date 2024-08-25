@@ -108,26 +108,14 @@ void ThreadLoop::registerActionForFD( int const fd, Action const& action )
 {
     std::lock_guard const locker( action_table_mutex );
 
-    auto const [ _, inserted ] = action_table.try_emplace( fd, action );
-
-    if ( !inserted )
-    {
-        throw std::logic_error( "ThreadLoop::registerFD( fd = " + std::to_string( fd ) + ", action ) - fd was already registered." );
-    }
+    action_table[ fd ] = action;
 }
 
 void ThreadLoop::deregisterFD( int const fd )
 {
     std::lock_guard const locker( action_table_mutex );
 
-    if ( action_table.contains( fd ) )
-    {
-        action_table.erase( fd );
-    }
-    else
-    {
-        throw std::logic_error( "ThreadLoop::deregisterFD( fd = " + std::to_string( fd ) + " ) - fd wasn't registered." );
-    }
+    action_table.erase( fd );
 }
 
 void ThreadLoop::executeActionForFD( int const fd )

@@ -21,7 +21,10 @@ class ThreadLoop
 public:
 
     explicit ThreadLoop( std::ostream& logger );
-    ~ThreadLoop();
+    virtual ~ThreadLoop();
+
+    void registerActionForFD( int fd, Action const& action );
+    void deregisterFD( int fd );
 
     void start();
     void stop();
@@ -30,15 +33,13 @@ protected:
 
     std::ostream& logger;
 
-    void registerActionForFD( int fd, Action const& action );
-    void deregisterFD( int fd );
-
     bool checkForPosixError( std::intmax_t value, std::string const& what );
 
 private:
 
     std::map< int, Action > action_table;
-    std::recursive_mutex action_table_mutex; // action_table is accessed from our thread and the host
+    std::recursive_mutex action_table_mutex;
+
     void executeActionForFD( int fd );
 
     enum PipeFDTypes { ReadEnd, WriteEnd, NumPipeFDs };
@@ -47,6 +48,7 @@ private:
 
     std::atomic_bool stopping = false;
     std::thread polling_thread;
+
     void pollingLoop();
 };
 

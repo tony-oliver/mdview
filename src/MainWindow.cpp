@@ -20,7 +20,7 @@
 namespace { // unnamed
 //----------------------------------------------------------------------------
 
-constexpr std::string progname = "mdview";
+constexpr std::string appname = "mdview";
 
 void check_file_opened_ok( std::ifstream const& file, std::string const& filename )
 {
@@ -59,35 +59,35 @@ h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; })";
 //============================================================================
 
 MainWindow::MainWindow( Options const& options )
-: options{ options }
-, threadsafe_logger( options.get_logger(), options.get_use_colour() )
-, watcher( options )
-, signalHandler( { SIGINT, SIGTERM, SIGPWR, SIGHUP } )
+: signalHandler( { SIGINT, SIGTERM, SIGPWR, SIGHUP } )
+, options{ options }
+, filename{ options.get_filename() }
+, logger{ options.get_logger() }
+, makeThreadSafe( logger, options.get_use_colour() )
+, watcher( logger )
 {
     signalHandler.registerAction( [ & ]{ close(); } );
 
-    scroller.set_child( webViewWidget );
     scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
+    scroller.set_child( webViewWidget );
     set_child( scroller );
 
-    auto const filename = options.get_filename();
-    if ( !filename.empty() ) set_title( "mdview - " + filename );
+    auto title = appname;
+    if ( !filename.empty() ) title += " - " + filename;
+    set_title( title );
 
     set_default_size( 1024, 768 );
 
-    display();
+    displayMarkdownFile();
 }
 
 void MainWindow::postProcess( std::string& html )
 {
-    std::string title = options.get_filename();
-    wrap_html( title, "title" );
-
     auto style = make_css();
     wrap_html( style, "style" );
 
-    HTMLTidier tidier( options.get_logger() );
-    html = tidier.tidyup( title + style + html );
+    HTMLTidier tidier( logger );
+    html = tidier.tidyupHTML( style + html );
 
     if ( options.get_show_diagnostics() )
     {
@@ -95,29 +95,26 @@ void MainWindow::postProcess( std::string& html )
     }
 }
 
-void MainWindow::display()
+void MainWindow::displayMarkdownFile()
 {
     std::string html;
 
     try
     {
-        auto const& filename = options.get_filename();
-
         std::ifstream markdownFile( filename );
         check_file_opened_ok( markdownFile, filename );
 
         if ( !watcher.isWatching( filename ) )
         {
-            watcher.watchFile( filename, [ this ]{ display(); } );
+            watcher.watchFile( filename, [ this ]{ displayMarkdownFile(); } );
             watcher.start();
         }
 
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdownText{ Iterator{ markdownFile }, Iterator{} };
 
-        auto html_ptr = cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 );
+        auto const html_ptr{ cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 ) };
         check_converted_to_html_ok( html_ptr );
-
         html.assign( html_ptr );
         free( html_ptr );
     }
