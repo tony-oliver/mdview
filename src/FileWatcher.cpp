@@ -63,10 +63,7 @@ FileWatcher::FileWatcher( Options const& options )
 : ThreadLoop( options.get_logger() )
 , inotify_fd{ inotify_init() }
 {
-    if ( inotify_fd == -1 )
-    {
-        throw std::system_error( errno, std::generic_category(), "inotify_init()" );
-    }
+    checkForPosixError( inotify_fd, "inotify_init()" );
 
     registerActionForFD( inotify_fd, [ this ]{ handleINotification(); } );
 }
@@ -91,8 +88,11 @@ void FileWatcher::watchFile( std::string const& filename, Action const& action )
 
     if ( !file_watchers.contains( filename ) )
     {
-        logger << "Calling inotify_add_watch( inotify_fd = " << inotify_fd
-                << ", filename = " << std::quoted( filename ) << ", IN_MODIFY )" << std::endl;
+        logger << "Calling inotify_add_watch"           << "( "
+                "fd = " << inotify_fd                   << ", "
+                "name = " << std::quoted( filename )    << ", "
+                "mask = IN_MODIFY"                      << " )"
+                << std::endl;
 
         auto const wd = inotify_add_watch( inotify_fd, filename.c_str(), IN_MODIFY );
         checkForPosixError( wd, "inotify_add_watch()" );
@@ -111,7 +111,11 @@ void FileWatcher::ignoreFile( std::string const& filename )
     {
         auto const& [ wd, action ] = p->second;
 
-        logger << "Calling inotify_rm_watch( inotify_fd = " << inotify_fd << ", wd = " << wd << " )";
+        logger << "Calling inotify_rm_watch"    << "( "
+                "fd = " << inotify_fd           << ", "
+                "wd = " << wd                   << " )"
+                << std::endl;
+
         auto const result = inotify_rm_watch( inotify_fd, wd );
         checkForPosixError( result, "inotify_rm_watch()" );
 

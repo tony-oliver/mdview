@@ -62,7 +62,7 @@ std::string HTMLTidier::tidyup( std::string const& html )
 
     setErrorBuffer( errbuf );                       // Capture diagnostics rather than displaying them
 
-    setBooleanOption( TidyMark, no );
+    setBooleanOption( TidyMark, no );               // Don't add LibTidy-specific comments to HTML
     setBooleanOption( TidyHtmlOut, yes );           // Convert to HTML
     setBooleanOption( TidyForceOutput, yes );       // Even if there were errors
     setIntegerOption( TidyIndentAttributes, yes );

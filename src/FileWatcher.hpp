@@ -14,12 +14,12 @@
 
 class FileWatcher: public awo::ThreadLoop
 {
+    using Action = std::function< void() >;
+
 public:
 
     explicit FileWatcher( Options const& options );
-    ~FileWatcher();
-
-    using Action = std::function< void() >;
+    virtual ~FileWatcher();
 
     void watchFile( std::string const& filename, Action const& action );
     void ignoreFile( std::string const& filename );
@@ -30,11 +30,10 @@ private:
     int const inotify_fd;
 
     using WDAction = std::pair< int, Action >;
+    std::map< std::string, WDAction > file_watchers;
+    std::recursive_mutex file_watchers_mutex;
 
     void handleINotification();
-
-    std::map< std::string, WDAction > file_watchers;
-    std::recursive_mutex file_watchers_mutex; // file_watchers is accessed from our thread and the host
     void executeActionForWD( int event_wd );
 };
 

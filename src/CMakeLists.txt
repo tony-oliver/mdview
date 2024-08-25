@@ -1,4 +1,4 @@
-project( mdview )
+project( mdview-src )
 
 add_executable( mdview
 				mdview.cpp

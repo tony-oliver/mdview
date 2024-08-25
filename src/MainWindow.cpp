@@ -54,9 +54,6 @@ pre { padding: 15px; background-color: whitesmoke; }
 h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; })";
 }
 
-
-using auto_free_ptr = std::unique_ptr< char, decltype( std::free )* >;
-
 //----------------------------------------------------------------------------
 } // close unnamed namespace
 //============================================================================
