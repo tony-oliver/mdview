@@ -1,26 +1,22 @@
 #include "MainWindow.hpp"
-#include <gtkmm/enums.h>
-
-#include "cmark.h"
+#include "HTMLTidier.hpp"
+#include "CMarkParser.hpp"
 
 #include <cerrno>           // errno
-#include <memory>           // std::unique_ptr<>{}
-#include <string>           // std::to_string<>()
 #include <cstdlib>          // std::free()
-#include <cstring>          // std::strerror()
 #include <fstream>          // std::ifstream{}
 #include <iostream>         // std::cerr{}
 #include <iterator>         // std::istreambuf_iterator{}
 #include <exception>        // std::exception{}
 #include <stdexcept>        // std::runtime_error{}
-#include <initializer_list> // std::initializer_list<>{}
-#include "HTMLTidier.hpp"
 
 //============================================================================
 namespace { // unnamed
 //----------------------------------------------------------------------------
 
 constexpr std::string appname = "mdview";
+
+//----------------------------------------------------------------------------
 
 void check_file_opened_ok( std::ifstream const& file, std::string const& filename )
 {
@@ -30,13 +26,7 @@ void check_file_opened_ok( std::ifstream const& file, std::string const& filenam
     }
 }
 
-void check_converted_to_html_ok( char const* const converted_text_ptr )
-{
-    if ( !converted_text_ptr )
-    {
-        throw std::runtime_error( "Internal error: cmark_markdown_to_html() returned nullptr." );
-    }
-}
+//----------------------------------------------------------------------------
 
 void wrap_html( std::string& html, std::string const& tag )
 {
@@ -46,6 +36,8 @@ void wrap_html( std::string& html, std::string const& tag )
     html.insert( 0, prefix );
     html.append( suffix );
 }
+
+//----------------------------------------------------------------------------
 
 std::string make_css()
 {
@@ -68,9 +60,7 @@ MainWindow::MainWindow( Options const& options )
 {
     signalHandler.registerAction( [ & ]{ close(); } );
 
-    scroller.set_policy( Gtk::PolicyType::NEVER, Gtk::PolicyType::ALWAYS );
-    scroller.set_child( webViewWidget );
-    set_child( scroller );
+    set_child( webView );
 
     auto title = appname;
     if ( !filename.empty() ) title += " - " + filename;
@@ -112,11 +102,7 @@ void MainWindow::displayMarkdownFile()
 
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdownText{ Iterator{ markdownFile }, Iterator{} };
-
-        auto const html_ptr{ cmark_markdown_to_html( markdownText.data(), markdownText.size(), 0 ) };
-        check_converted_to_html_ok( html_ptr );
-        html.assign( html_ptr );
-        free( html_ptr );
+        html = CMarkParser::convert_to_html( markdownText );
     }
     catch ( std::exception const& e )
     {
@@ -134,5 +120,5 @@ void MainWindow::displayMarkdownFile()
         std::cout << html << std::flush;
     }
 
-    webViewWidget.load_html( html );
+    webView.load_html( html );
 }

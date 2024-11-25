@@ -3,13 +3,14 @@ project( mdview-src )
 add_executable( mdview
 				mdview.cpp
 				Options.cpp
+				WebView.cpp
 				HTMLTidier.cpp
 				MainWindow.cpp
 				ThreadLoop.cpp
+				CMarkParser.cpp
 				FileWatcher.cpp
 				StringUtils.cpp
 				SignalHandler.cpp
-				WebViewWidget.cpp
 				ThreadSafeOStream.cpp
 				)
 

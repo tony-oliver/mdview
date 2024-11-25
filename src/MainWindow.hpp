@@ -2,22 +2,17 @@
 #define INCLUDED_MDVIEW_MAIN_WINDOW_HPP
 
 #include "Options.hpp"
+
+#include <gtkmm/window.h>
+
+#include "WebView.hpp"
 #include "FileWatcher.hpp"
 #include "SignalHandler.hpp"
-#include "WebViewWidget.hpp"
 #include "ThreadSafeOStream.hpp"
 
-#include <gtkmm/applicationwindow.h>
-#include <gtkmm/scrolledwindow.h>
-
-#include <memory>
 #include <string>
-#include <vector>
-#include <cstddef>
-#include <cstdlib>
-#include <string_view>
 
-class MainWindow: public Gtk::ApplicationWindow
+class MainWindow: public Gtk::Window
 {
 public:
 
@@ -31,8 +26,7 @@ private:
     std::string const&  filename;
     std::ostream&       logger;
 
-    Gtk::ScrolledWindow scroller;
-    WebViewWidget       webViewWidget;
+    WebKit::WebView     webView;
     ThreadSafeOStream   makeThreadSafe;
     FileWatcher         watcher;
 

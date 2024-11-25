@@ -72,7 +72,7 @@ ThreadLoop::~ThreadLoop()
 
     for ( auto const stop_fd: stop_fds )
     {
-        logger << "Closing stop_fd " << stop_fd << std::endl;
+        logger << "Closing stop_fd " << stop_fd << " ... ";
         auto const close_result = close( stop_fd );
         checkForPosixError( close_result, "close()" );
     }
@@ -92,7 +92,7 @@ void ThreadLoop::stop()
     stopping = true;
 
     static std::string const stop_data{ "stop" };
-    logger << "Writing " << std::quoted( stop_data ) << " to fd " << stop_fds[ WriteEnd ] << std::endl;
+    logger << "Writing " << std::quoted( stop_data ) << " to fd " << stop_fds[ WriteEnd ] << " ... ";
     auto const write_result = write( stop_fds[ WriteEnd ], stop_data.data(), stop_data.size() );
     checkForPosixError( write_result, "write()" );
 
