@@ -75,8 +75,9 @@ FileWatcher::~FileWatcher()
         inotify_rm_watch( inotify_fd, wd );
     }
 
-    logger << "Closing inotify_fd " << inotify_fd << std::endl;
-    close( inotify_fd );
+    logger << "Closing inotify_fd = " << inotify_fd << " ... ";
+    auto const close_result = close( inotify_fd );
+    checkForPosixError( close_result, "close()" );
 }
 
 void FileWatcher::watchFile( std::string const& filename, Action const& action )
@@ -129,6 +130,33 @@ bool FileWatcher::isWatching( std::string const& filename )
     return p != file_watchers.end();
 }
 
+void FileWatcher::handleINotification()
+{
+    // Buffer, large enough to hold an inotify_event structure and a filename
+    std::array< char, sizeof ( inotify_event ) + NAME_MAX > buffer;
+
+    // Read the inotify event structure into the raw-bytes buffer
+    auto const read_result = read( inotify_fd, buffer.data(), buffer.size() );
+    checkForPosixError( read_result, "read()" );
+
+    // Treat the buffer contents as an inotify event structure (with optional filename)
+    auto const& inotifyEvent = *reinterpret_cast< inotify_event const* >( buffer.data() );
+    logger << "inotifyEvent.wd     = " << inotifyEvent.wd << std::endl;
+    logger << "inotifyEvent.mask   = " << inotifyEventMaskToString( inotifyEvent.mask ) << std::endl;
+    logger << "inotifyEvent.cookie = " << inotifyEvent.cookie << std::endl;
+    logger << "inotifyEvent.len    = " << inotifyEvent.len << std::endl;
+
+    if ( inotifyEvent.len > 0 ) // ignore empty filenames
+    {
+        std::string_view const filename( inotifyEvent.name, inotifyEvent.len );
+
+        logger << "inotifyEvent.name   = " << std::quoted( filename ) << std::endl;
+    }
+
+    // Lookup which action to execute for this wd and execute it
+    executeActionForWD( inotifyEvent.wd );
+}
+
 void FileWatcher::executeActionForWD( int const event_wd )
 {
     std::lock_guard const locker( file_watchers_mutex );
@@ -150,28 +178,4 @@ void FileWatcher::executeActionForWD( int const event_wd )
 
         std::invoke( action );
     }
-}
-
-void FileWatcher::handleINotification()
-{
-    // Buffer, large enough to hold an inotify_event structure and a filename
-    std::array< char, sizeof ( inotify_event ) + NAME_MAX > buffer;
-
-    // Read the inotify event structure into the raw-bytes buffer
-    auto const read_result = read( inotify_fd, buffer.data(), buffer.size() );
-    checkForPosixError( read_result, "read()" );
-
-    auto const& inotifyEvent = *reinterpret_cast< inotify_event const* >( buffer.data() );
-    logger << "inotifyEvent.wd = " << inotifyEvent.wd << std::endl;
-    logger << "inotifyEvent.mask = " << inotifyEventMaskToString( inotifyEvent.mask ) << std::endl;
-    logger << "inotifyEvent.cookie = " << inotifyEvent.cookie << std::endl;
-    logger << "inotifyEvent.len = " << inotifyEvent.len << std::endl;
-
-    if ( inotifyEvent.len > 0 )
-    {
-        logger << "inotifyEvent.name = " << std::quoted( std::string_view( inotifyEvent.name, inotifyEvent.len ) ) << std::endl;
-    }
-
-    // Lookup which action to execute for this wd and execute it
-    executeActionForWD( inotifyEvent.wd );
 }

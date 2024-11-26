@@ -102,7 +102,9 @@ void MainWindow::displayMarkdownFile()
 
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdownText{ Iterator{ markdownFile }, Iterator{} };
-        html = CMarkParser::convert_to_html( markdownText );
+
+        CMarkParser const cmarkParser( markdownText );
+        html = cmarkParser.convert_to_html();
     }
     catch ( std::exception const& e )
     {

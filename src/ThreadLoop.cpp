@@ -70,12 +70,7 @@ ThreadLoop::~ThreadLoop()
 
     stop();
 
-    for ( auto const stop_fd: stop_fds )
-    {
-        logger << "Closing stop_fd " << stop_fd << " ... ";
-        auto const close_result = close( stop_fd );
-        checkForPosixError( close_result, "close()" );
-    }
+    closeStopFD( ReadEnd, "ReadEnd" );
 
     logger << "ThreadLoop dtor done." << std::endl;
 }
@@ -88,20 +83,25 @@ void ThreadLoop::start()
 
 void ThreadLoop::stop()
 {
-    logger << "Setting stopping = true" << std::endl;
-    stopping = true;
-
-    static std::string const stop_data{ "stop" };
-    logger << "Writing " << std::quoted( stop_data ) << " to fd " << stop_fds[ WriteEnd ] << " ... ";
-    auto const write_result = write( stop_fds[ WriteEnd ], stop_data.data(), stop_data.size() );
-    checkForPosixError( write_result, "write()" );
-
-    if ( polling_thread.joinable() )
+    if ( polling_thread.joinable() ) // test whether still running
     {
+        logger << "Setting stopping = true" << std::endl;
+        stopping = true;
+
+        closeStopFD( WriteEnd, "WriteEnd" );
+
         logger << "Waiting for polling-thread to finish" << std::endl;
         polling_thread.join();
         logger << "Polling-thread has joined" << std::endl;
     }
+}
+
+void ThreadLoop::closeStopFD( PipeFDType const pipeEnd, std::string const& endName )
+{
+    auto const fd = stop_fds[ pipeEnd ];
+    logger << "Closing stop_fds[" << endName << "] = " << fd << " ... ";
+    auto const close_result = close( fd );
+    checkForPosixError( close_result, "close()" );
 }
 
 void ThreadLoop::registerActionForFD( int const fd, Action const& action )

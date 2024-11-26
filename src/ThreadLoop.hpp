@@ -42,7 +42,7 @@ private:
 
     void executeActionForFD( int fd );
 
-    enum PipeFDTypes { ReadEnd, WriteEnd, NumPipeFDs };
+    enum PipeFDType { ReadEnd, WriteEnd, NumPipeFDs };
     using PipeFDs = std::array< int, NumPipeFDs >;
     PipeFDs stop_fds;
 
@@ -50,6 +50,7 @@ private:
     std::thread polling_thread;
 
     void pollingLoop();
+    void closeStopFD( PipeFDType end, std::string const& endName );
 };
 
 } // close namespace awo

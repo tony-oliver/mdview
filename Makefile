@@ -21,4 +21,4 @@ strip: all;				@strip -s ${BUILDDIR}/src/${TARGET}
 install: strip;			@sudo cmake --install ${BUILDDIR}
 
 uninstall:				${BUILDDIR}/install_manifest.txt
-						@[[ -f $< ]] && sudo xargs -r rm -fv <$< && sudo rm -fv $< || true
+						@[[ -f $< ]] && sudo xargs -r rm -fv < $< && sudo rm -fv $< || true
