@@ -1,5 +1,5 @@
-#ifndef INCLUDED_CMARK_PARSER_HPP
-#define INCLUDED_CMARK_PARSER_HPP
+#ifndef INCLUDED_MARKDOWN_CONVERTER_HPP
+#define INCLUDED_MARKDOWN_CONVERTER_HPP
 
 #include <cmark.h>
 
@@ -25,7 +25,7 @@ public:
 
 private:
 
-    void check_returned_ptr( void const* ptr, std::string const& operation ) const;
+    void check_returned_cmark_ptr( void const* ptr, std::string const& operation ) const;
 };
 
-#endif // INCLUDED_CMARK_PARSER_HPP
+#endif // INCLUDED_MARKDOWN_CONVERTER_HPP

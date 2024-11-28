@@ -35,7 +35,7 @@ class MarkdownConverter::Exception: public std::runtime_error
 MarkdownConverter::MarkdownConverter( std::string const& markdown )
 : root{ cmark_parse_document( markdown.data(), markdown.size(), options ) }
 {
-    check_returned_ptr( root, "parse_document" );
+    check_returned_cmark_ptr( root, "parse_document" );
 }
 
 //----------------------------------------------------------------------------
@@ -50,7 +50,7 @@ MarkdownConverter::~MarkdownConverter()
 std::string MarkdownConverter::convert_to_xml() const
 {
     auto const rendered{ cmark_render_xml( root, options ) };
-    check_returned_ptr( rendered, "render_xml" );
+    check_returned_cmark_ptr( rendered, "render_xml" );
     std::string const result( rendered );
     std::free( rendered );
     return result;
@@ -61,7 +61,7 @@ std::string MarkdownConverter::convert_to_xml() const
 std::string MarkdownConverter::convert_to_html() const
 {
     auto const rendered{ cmark_render_html( root, options ) };
-    check_returned_ptr( rendered, "render_html" );
+    check_returned_cmark_ptr( rendered, "render_html" );
     std::string const result( rendered );
     std::free( rendered );
     return result;
@@ -72,7 +72,7 @@ std::string MarkdownConverter::convert_to_html() const
 std::string MarkdownConverter::convert_to_latex() const
 {
     auto const rendered{ cmark_render_latex( root, options, width ) };
-    check_returned_ptr( rendered, "render_latex" );
+    check_returned_cmark_ptr( rendered, "render_latex" );
     std::string const result( rendered );
     std::free( rendered );
     return result;
@@ -83,7 +83,7 @@ std::string MarkdownConverter::convert_to_latex() const
 std::string MarkdownConverter::convert_to_manpage() const
 {
     auto const rendered{ cmark_render_man( root, options, width ) };
-    check_returned_ptr( rendered, "render_man" );
+    check_returned_cmark_ptr( rendered, "render_man" );
     std::string const result( rendered );
     std::free( rendered );
     return result;
@@ -94,7 +94,7 @@ std::string MarkdownConverter::convert_to_manpage() const
 std::string MarkdownConverter::convert_to_markdown() const
 {
     auto const rendered{ cmark_render_commonmark( root, options, width ) };
-    check_returned_ptr( rendered, "render_commonmark" );
+    check_returned_cmark_ptr( rendered, "render_commonmark" );
     std::string const result( rendered );
     std::free( rendered );
     return result;
@@ -102,7 +102,7 @@ std::string MarkdownConverter::convert_to_markdown() const
 
 //----------------------------------------------------------------------------
 
-void MarkdownConverter::check_returned_ptr( void const* const ptr, std::string const& operation ) const
+void MarkdownConverter::check_returned_cmark_ptr( void const* const ptr, std::string const& operation ) const
 {
     if ( ptr == nullptr )
     {
