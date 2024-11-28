@@ -24,9 +24,10 @@ clumsily showing the rendered version side-by-side with the marked-down source t
 
 Finally, I got around to developing such a tool: this program, `mdview`.
 
-This was an ideal hobby project on which to learn the features and limitations of `gtkmm-4`, having used only `gtkmm-3`
-on my previoius C++ GUI-based projects. It also gave me a good look at how `inotify` monitors (and reports) changes to files,
-as well as how to make the displayed HTML use the visual style adopted by GitHub and by markdown editors.
+This was an ideal hobby project on which to learn the features and limitations of `gtkmm-4`
+(having used only `gtkmm-3` on my previoius C++ GUI-based projects).
+It also gave me a good look at how `inotify` monitors (and reports) changes to files, as well as
+how to make the displayed HTML use the visual styles adopted by GitHub and by markdown editors.
 
 ## Packaging
 
@@ -48,21 +49,24 @@ The default C++ compiler must be capable of supporting the C++20 standard
 
 This program uses the `gtkmm-4.0` package for its windowing framework (which wraps the C-only `GTK 4` package). 
 
+For the HTML-viewing widget within the `GTK 4` framework, it uses the WebKit-GTK bindings.
+
 For the markdown-to-HTML parser it uses the `cmark` package; this only parses Common Markdown, which does not
 implement some of the extensions provided by other "standards" (*e.g.* GitHub Markdown).
 
 For tidying-up the generated HTML, `libtidy` gets the job.
 
-For the HTML-viewing widget in the `GTK 4` framework, it uses the WebKit-GTK bindings.
-
 Installation of these packages is as simple as
 
 ```
-$ sudo dnf install -y gtkmm4.0-devel cmark-devel libtidy-devel webkitgtk6.0-devel
+$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel
 ```
 
 (For other flavours of Linux, the appropriate package management tool should be used
 instead of `dnf`, *e.g.* `yum`, `apt`, `pkg`, *etc.*).
+
+Also note that some package names will end `-dev` (instead of `-devel`) when using certain
+non-`dnf` package managers (*e.g.* `apt`).
 
 ## Building
 
@@ -86,13 +90,15 @@ or
 $ make all
 ```
 
+will create the executable `build/src/mdview`.
+
 Simple testing (displaying this `README.md` file) can be run as a confidence test after building:
 
 ```
 $ make run
 ```
 
-Installation is accomplished with
+Installation (to `/usr/local`) is accomplished with
 
 ```
 $ make install
@@ -115,11 +121,10 @@ $ make clean
 ### Quick build
 
 ```
-$ sudo dnf install -y gtkmm4.0-devel cmark-devel libtidy-devel webkitgtk6.0-devel
+$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel
 $ git clone https://github.com/tony-oliver/mdview && cd mdview
 $ make install
 $ cd .. && rm -rf mdview
 ```
 
-(Again, use `apt`, `yum`, `pkg`, *etc.* instead of `dnf`, according as to which of these
-package managers is supplied with for your particular flavour of Linux.)
+(The notes in the `Packages` section, above, also apply here).
