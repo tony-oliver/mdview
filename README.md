@@ -121,10 +121,12 @@ $ make clean
 ### Quick build
 
 ```
+$ pushd /tmp
 $ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel
 $ git clone https://github.com/tony-oliver/mdview && cd mdview
 $ make install
 $ cd .. && rm -rf mdview
+$ popd
 ```
 
 (The notes in the `Packages` section, above, also apply here).

@@ -64,6 +64,8 @@ ThreadLoop::ThreadLoop( std::ostream& logger )
     logger << "ThreadLoop ctor done." << std::endl;
 }
 
+//----------------------------------------------------------------------------
+
 ThreadLoop::~ThreadLoop()
 {
     logger << "ThreadLoop dtor entered..." << std::endl;
@@ -75,11 +77,15 @@ ThreadLoop::~ThreadLoop()
     logger << "ThreadLoop dtor done." << std::endl;
 }
 
+//----------------------------------------------------------------------------
+
 void ThreadLoop::start()
 {
     logger << "Creating thread running the pollingLoop() function" << std::endl;
     polling_thread = std::thread( [ this ]{ pollingLoop(); } );
 }
+
+//----------------------------------------------------------------------------
 
 void ThreadLoop::stop()
 {
@@ -96,6 +102,8 @@ void ThreadLoop::stop()
     }
 }
 
+//----------------------------------------------------------------------------
+
 void ThreadLoop::closeStopFD( PipeFDType const pipeEnd, std::string const& endName )
 {
     auto const fd = stop_fds[ pipeEnd ];
@@ -104,6 +112,8 @@ void ThreadLoop::closeStopFD( PipeFDType const pipeEnd, std::string const& endNa
     checkForPosixError( close_result, "close()" );
 }
 
+//----------------------------------------------------------------------------
+
 void ThreadLoop::registerActionForFD( int const fd, Action const& action )
 {
     std::lock_guard const locker( action_table_mutex );
@@ -111,12 +121,16 @@ void ThreadLoop::registerActionForFD( int const fd, Action const& action )
     action_table[ fd ] = action;
 }
 
+//----------------------------------------------------------------------------
+
 void ThreadLoop::deregisterFD( int const fd )
 {
     std::lock_guard const locker( action_table_mutex );
 
     action_table.erase( fd );
 }
+
+//----------------------------------------------------------------------------
 
 void ThreadLoop::executeActionForFD( int const fd )
 {
@@ -128,6 +142,8 @@ void ThreadLoop::executeActionForFD( int const fd )
         std::invoke( action_table.at( fd ) );
     }
 }
+
+//----------------------------------------------------------------------------
 
 void ThreadLoop::pollingLoop()
 {
@@ -187,6 +203,8 @@ void ThreadLoop::pollingLoop()
 
     logger << "Function " << __FUNCTION__ << "() now exiting" << std::endl;
 }
+
+//----------------------------------------------------------------------------
 
 bool ThreadLoop::checkForPosixError( std::intmax_t const value, std::string const& what )
 {

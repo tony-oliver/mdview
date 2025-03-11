@@ -1,24 +1,43 @@
-TARGET =				mdview
-BUILDDIR = 				build
-TESTFILE =				README.md
+TARGET =							mdview
+BUILDDIR = 							build
+TESTFILE =							README.md
+GRAPHER =							fdp
 
-.PHONY:					all verbose cmake clean run strip install uninstall ${BUILDDIR}/install_manifest.txt
+.PHONY:								all clean graphviz run stripped install uninstall verbose ${BUILDDIR}/install_manifest.txt
 
-all: ${BUILDDIR};		@cd ${BUILDDIR} && make -j
+all: 								lib/sundown ${BUILDDIR}
+									@cmake --build ${BUILDDIR} -j 32
 
-verbose: ${BUILDDIR};	@cd ${BUILDDIR} && make -j VERBOSE=1
+verbose:							lib/sundown ${BUILDDIR}
+									@cmake --build ${BUILDDIR} -j 32 VERBOSE=1
 
-${BUILDDIR}:;			@cmake -B ${BUILDDIR}
+${BUILDDIR}:
+									@cmake -B ${BUILDDIR}
 
-cmake:;					@cmake -B ${BUILDDIR}
+lib/sundown:
+									cd lib && git clone https://github.com/vmg/sundown.git
 
-clean:;					@rm -rvf ${BUILDDIR}
+stripped:							all
+									@strip -s ${BUILDDIR}/app/${TARGET}
 
-run: all;				@${BUILDDIR}/app/${TARGET} ${TESTFILE}
+install: 							stripped
+									@sudo cmake --install ${BUILDDIR}
 
-strip: all;				@strip -s ${BUILDDIR}/app/${TARGET}
+uninstall:							${BUILDDIR}/install_manifest.txt
+									@[[ -f $< ]] && sudo xargs -r rm -fv < $< && sudo rm -fv $< || true
+									rm -rfv lib/sundown
 
-install: strip;			@sudo cmake --install ${BUILDDIR}
+run: 								all
+									@${BUILDDIR}/app/${TARGET} ${TESTFILE}
 
-uninstall:				${BUILDDIR}/install_manifest.txt
-						@[[ -f $< ]] && sudo xargs -r rm -fv < $< && sudo rm -fv $< || true
+clean:
+									@rm -frv ${BUILDDIR} lib/sundown
+
+graphviz: 							${BUILDDIR}/graphviz/${TARGET}.svg
+									firefox $<
+
+${BUILDDIR}/graphviz/${TARGET}.dot:
+									cmake -B ${BUILDDIR} --graphviz=$@
+
+${BUILDDIR}/graphviz/${TARGET}.svg:	${BUILDDIR}/graphviz/${TARGET}.dot
+									${GRAPHER} -Tsvg $< >$@

@@ -1,11 +1,7 @@
-#include "Options.hpp"
-#include "MainWindow.hpp"
+#include "Options.hpp"          // for Options{}
+#include "MainWindow.hpp"       // for MainWindow{}
 
-// 3rd-party/system header files
-#include <gtkmm/application.h>
-
-#include <ostream>
-#include <iostream>
+#include <gtkmm/application.h>  // for Gtk::Application{}
 
 int main( int const argc, char** const argv )
 {

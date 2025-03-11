@@ -1,5 +1,6 @@
 #include "MainWindow.hpp"
 #include "MarkdownConverter.hpp"
+#include "HTMLRenderer.hpp"
 #include "HTMLTidier.hpp"
 
 #include <cerrno>           // errno
@@ -57,7 +58,7 @@ MainWindow::MainWindow( Options const& options )
 
     set_title( title );
     set_child( webView );
-    set_default_size( 1024, 768 );
+    set_default_size( 1200, 800 );
 
     displayMarkdownFile();
 }
@@ -88,8 +89,16 @@ void MainWindow::displayMarkdownFile()
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdown( Iterator( file ), Iterator{} );
 
-        MarkdownConverter cmarkParser( markdown );
-        html = cmarkParser.convert_to_html();
+        if ( options.get_use_cmark() )
+        {
+            MarkdownConverter cmarkParser( markdown );
+            html = cmarkParser.convert_to_html();
+        }
+        else
+        {
+            HTMLRenderer htmlRenderer;
+            html = htmlRenderer.render( markdown );
+        }
     }
     catch ( std::exception const& e )
     {

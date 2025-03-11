@@ -1,18 +1,33 @@
-project( mdview-src )
+project( mdview-app )
 
-add_executable( mdview
-				mdview.cpp
-				Options.cpp
-				WebView.cpp
-				HTMLTidier.cpp
-				MainWindow.cpp
-				ThreadLoop.cpp
-				FileWatcher.cpp
-				StringUtils.cpp
-				SignalHandler.cpp
-				MarkdownConverter.cpp
-				ThreadSafeOStream.cpp
-				)
+set(	CMAKE_CXX_STANDARD			20	)
+set(	CMAKE_CXX_STANDARD_REQUIRED On	)
+set(	CMAKE_CXX_EXTENSIONS 		Off )
+
+add_compile_options( -pedantic 		)
+add_compile_options( -Wall -Wextra 	)
+add_compile_options( -O2 -g3 		)
+
+add_executable( 		mdview
+                		mdview.cpp
+                		Options.cpp
+                		WebView.cpp
+                		HTMLTidier.cpp
+                		MainWindow.cpp
+                		ThreadLoop.cpp
+                		FileWatcher.cpp
+                		StringUtils.cpp
+                		SignalHandler.cpp
+                		MarkdownConverter.cpp
+                		ThreadSafeOStream.cpp
+                		)
+
+include_directories(	../lib/md2html
+                        ../lib/sundown/src
+                        ../lib/sundown/html
+                        )
+
+include( FindPkgConfig )
 
 pkg_search_module( GTKMM REQUIRED gtkmm-4.0 )
 target_compile_options( mdview PUBLIC ${GTKMM_CFLAGS} )
@@ -33,5 +48,7 @@ target_link_libraries( mdview PUBLIC ${TERMINFO_LDFLAGS} )
 pkg_search_module( TIDY REQUIRED tidy )
 target_compile_options( mdview PUBLIC ${TIDY_CFLAGS} )
 target_link_libraries( mdview PUBLIC ${TIDY_LDFLAGS} )
+
+target_link_libraries(	mdview PUBLIC md2html )
 
 install( TARGETS mdview RUNTIME DESTINATION bin )

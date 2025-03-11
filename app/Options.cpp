@@ -3,31 +3,56 @@
 #include <iostream>
 #include <streambuf>
 
+//============================================================================
 namespace { // unnamed
+//----------------------------------------------------------------------------
 
-struct NullBuffer: std::streambuf {} nullbuffer;
-struct NullStream: std::ostream { NullStream(): std::ostream{ &nullbuffer } {} } nullstream;
+struct NullBuffer: std::streambuf
+{
+};
 
+NullBuffer nullbuffer;
+
+//----------------------------------------------------------------------------
+
+struct NullStream: std::ostream
+{
+    NullStream()
+    : std::ostream{ &nullbuffer }
+    {
+    }
+};
+
+NullStream nullstream;
+
+//----------------------------------------------------------------------------
 } // close unnamed namespace
+//============================================================================
 
 Options::Options( int const argc, char** const argv )
 : logger_ptr{ &nullstream }
 {
-    static char const arguments_doc[] = "FILE";  // description of non-option arguments
+    constexpr char arguments_doc[]   // description of non-option arguments
+    {
+        "FILE"
+    };
 
-    static char const program_doc[] =   // description of program and its non-option arguments
+    constexpr char program_doc[]     // description of program and its non-option arguments
+    {
         "\n"
         "mdview -- a markdown-file viewer.\n"
         "\n"
         "OPTIONS:\n"
-        "\v";
+        "\v"
+    };
 
-    static argp_option const options[] =
+    constexpr argp_option options[]
     {
         { "verbose",        'v', nullptr, 0, "Produce verbose output on stderr", 0 },
         { "html",           'h', nullptr, 0, "Dump HTML to stdout", 0 },
+        { "colour",         'x', nullptr, 0, "Distinguish verbose output by colours", 0 },
         { "diagnostics",    'd', nullptr, 0, "Show diagnostics from LibTidy", 0 },
-        { "colour",         'c', nullptr, 0, "Distinguish verbose output by colours", 0 },
+        { "cmark",          'c', nullptr, 0, "Use shared cmark library (instead of built-in sundown)", 0 },
         {}
     };
 
@@ -57,8 +82,9 @@ error_t Options::parse_option( int const key, char* const arg, argp_state* const
     switch ( key )
     {
     case 'h': dump_html         = true; break;
+    case 'x': use_colour        = true; break;
     case 'd': show_diagnostics  = true; break;
-    case 'c': use_colour        = true; break;
+    case 'c': use_cmark         = true; break;
     case 'v': logger_ptr = &std::clog;  break;
 
     case ARGP_KEY_ARG:
@@ -87,14 +113,19 @@ bool Options::get_dump_html() const
     return dump_html;
 }
 
+bool Options::get_show_diagnostics() const
+{
+    return show_diagnostics;
+}
+
 bool Options::get_use_colour() const
 {
     return use_colour;
 }
 
-bool Options::get_show_diagnostics() const
+bool Options::get_use_cmark() const
 {
-    return show_diagnostics;
+    return use_cmark;
 }
 
 std::ostream& Options::get_logger() const

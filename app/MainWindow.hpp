@@ -1,13 +1,13 @@
 #ifndef INCLUDED_MDVIEW_MAIN_WINDOW_HPP
 #define INCLUDED_MDVIEW_MAIN_WINDOW_HPP
 
-#include "Options.hpp"
-#include "WebView.hpp"
-#include "FileWatcher.hpp"
-#include "SignalHandler.hpp"
-#include "ThreadSafeOStream.hpp"
+#include "Options.hpp"              // for Options{}
+#include "WebView.hpp"              // for Webkit::WebView{}
+#include "FileWatcher.hpp"          // for FileWatcher{}
+#include "SignalHandler.hpp"        // for awo::SignalHandler{}
+#include "ThreadSafeOStream.hpp"    // for ThreadSafeOStream{}
 
-#include <gtkmm/window.h>
+#include <gtkmm/window.h>           // for Gtk::Window{}
 
 #include <string>
 

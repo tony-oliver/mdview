@@ -8,26 +8,28 @@
 
 class Options
 {
-    std::string filename;
-    bool dump_html = false;
-    bool show_diagnostics = false;
-    bool use_colour = false;
-    std::ostream* logger_ptr;
+    std::string     filename;
+    bool            dump_html           = false;
+    bool            show_diagnostics    = false;
+    bool            use_colour          = false;
+    bool            use_cmark           = false;
+    std::ostream*   logger_ptr          = nullptr;
 
 public:
 
     Options( int argc, char** argv );
 
-    std::string const& get_filename() const;
-    bool get_dump_html() const;
-    bool get_show_diagnostics() const;
-    bool get_use_colour() const;
-    std::ostream& get_logger() const;
+    std::string const&  get_filename()          const;
+    bool                get_dump_html()         const;
+    bool                get_show_diagnostics()  const;
+    bool                get_use_colour()        const;
+    bool                get_use_cmark()         const;
+    std::ostream&       get_logger()            const;
 
 private:
 
     static error_t option_parser( int key, char* arg, argp_state* state );
-    error_t parse_option( int key, char* arg, argp_state* state );
+    error_t         parse_option( int key, char* arg, argp_state* state );
 };
 
 #endif // INCLUDED_MDVIEW_OPTIONS_HPP

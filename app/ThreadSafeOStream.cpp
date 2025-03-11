@@ -35,7 +35,7 @@ bool is_attached_to_terminal( std::streambuf const* const stream_buffer )
 ThreadSafeOStream::ThreadSafeOStream( std::ostream& stream, bool const use_colours )
 : host_ostream{ stream }
 , underlying_streambuf{ stream.rdbuf() }
-, using_colours( use_colours && is_attached_to_terminal( underlying_streambuf ) )
+, using_colours{ use_colours && is_attached_to_terminal( underlying_streambuf ) }
 {
     if ( using_colours )
     {
