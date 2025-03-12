@@ -99,6 +99,13 @@ void MainWindow::displayMarkdownFile()
             HTMLRenderer htmlRenderer;
             html = htmlRenderer.render( markdown );
         }
+
+        if ( !watcher.isWatching( filename ) )
+        {
+            watcher.watchFile( filename, [ this ]{ displayMarkdownFile(); } );
+
+            watcher.start();
+        }
     }
     catch ( std::exception const& e )
     {

@@ -81,8 +81,15 @@ ThreadLoop::~ThreadLoop()
 
 void ThreadLoop::start()
 {
-    logger << "Creating thread running the pollingLoop() function" << std::endl;
-    polling_thread = std::thread( [ this ]{ pollingLoop(); } );
+    if ( polling_thread.joinable() )
+    {
+        logger << "ThreadLoop already running - ignoring start{} request" << std::endl;
+    }
+    else
+    {
+        logger << "Creating thread running the pollingLoop() function" << std::endl;
+        polling_thread = std::thread( [ this ]{ pollingLoop(); } );
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -99,6 +106,10 @@ void ThreadLoop::stop()
         logger << "Waiting for polling-thread to finish" << std::endl;
         polling_thread.join();
         logger << "Polling-thread has joined" << std::endl;
+    }
+    else
+    {
+        logger << "ThreadLoop is not running - ignoring stop() request" << std::endl;
     }
 }
 
