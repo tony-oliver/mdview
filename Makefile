@@ -9,12 +9,12 @@ all: 								lib/sundown ${BUILDDIR}
 									@cmake --build ${BUILDDIR} -j 32
 
 verbose:							lib/sundown ${BUILDDIR}
-									@cmake --build ${BUILDDIR} -j 32 VERBOSE=1
+									@cmake --build ${BUILDDIR} -v -j 32
 
-${BUILDDIR}:
+${BUILDDIR}:						# no dependencies
 									@cmake -B ${BUILDDIR}
 
-lib/sundown:
+lib/sundown:						# no dependencies
 									cd lib && git clone https://github.com/vmg/sundown.git
 
 stripped:							all
@@ -30,13 +30,13 @@ uninstall:							${BUILDDIR}/install_manifest.txt
 run: 								all
 									@${BUILDDIR}/app/${TARGET} ${TESTFILE}
 
-clean:
+clean:								# no dependencies
 									@rm -frv ${BUILDDIR} lib/sundown
 
 graphviz: 							${BUILDDIR}/graphviz/${TARGET}.svg
 									firefox $<
 
-${BUILDDIR}/graphviz/${TARGET}.dot:
+${BUILDDIR}/graphviz/${TARGET}.dot:	# no dependencies
 									cmake -B ${BUILDDIR} --graphviz=$@
 
 ${BUILDDIR}/graphviz/${TARGET}.svg:	${BUILDDIR}/graphviz/${TARGET}.dot

@@ -13,7 +13,7 @@ HTMLRenderer::HTMLRenderer( html_render_mode const render_flags )
 
 std::string HTMLRenderer::render( std::string const& markdown_text )
 {
-    constexpr auto all_extensions = static_cast< mkd_extensions >( ~0 );
+    constexpr auto all_extensions = static_cast< mkd_extensions >( ~MKDEXT_NO_INTRA_EMPHASIS );
 
     // create a markdown-parser that uses the HTML-gneration callbacks and options
     MarkdownParser markdown_parser( all_extensions, html_callbacks, html_options );

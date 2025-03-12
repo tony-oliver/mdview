@@ -10,6 +10,4 @@ add_library( 	sundown
 				sundown/html/houdini_href_e.c
 				)
 
-include_directories( sundown/src )
-
 add_subdirectory( md2html )

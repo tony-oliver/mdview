@@ -52,11 +52,14 @@ This program uses the `gtkmm-4.0` package for its windowing framework (which wra
 For the HTML-viewing widget within the `GTK 4` framework, it uses the WebKit-GTK bindings.
 
 For the markdown-to-HTML parser it uses the `cmark` package; this only parses Common Markdown, which does not
-implement some of the extensions provided by other "standards" (*e.g.* GitHub Markdown).
+implement some of the extensions provided by other "standards" (*e.g.* GitHub Markdown).  For this reason,
+use of `sundown` has supplanted `cmark` as the default converter, although the latter can still be used if
+the option `-c` is supplied when launching the program.  The source code of `sundown` is downloaded in full
+when first building this project (and after `make clean`).
 
 For tidying-up the generated HTML, `libtidy` gets the job.
 
-Installation of these packages is as simple as
+Installation of the shared-library packages,above, is as simple as
 
 ```
 $ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel
