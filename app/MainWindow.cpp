@@ -44,7 +44,7 @@ std::string make_css()
         table { border-spacing: 0; }
         th, td { padding: 5px; }
         th { font-weight: bold; }
-        a:link { color: blue; text-decoration: none; }
+        a { color: mediumblue; text-decoration: none; }
     )";
 }
 

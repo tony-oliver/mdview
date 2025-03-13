@@ -5,17 +5,14 @@ GRAPHER =							fdp
 
 .PHONY:								all clean graphviz run stripped install uninstall verbose ${BUILDDIR}/install_manifest.txt
 
-all: 								lib/sundown ${BUILDDIR}
+all: 								${BUILDDIR}
 									@cmake --build ${BUILDDIR} -j 32
 
-verbose:							lib/sundown ${BUILDDIR}
+verbose:							${BUILDDIR}
 									@cmake --build ${BUILDDIR} -v -j 32
 
 ${BUILDDIR}:						# no dependencies
 									@cmake -B ${BUILDDIR}
-
-lib/sundown:						# no dependencies
-									cd lib && git clone https://github.com/vmg/sundown.git
 
 stripped:							all
 									@strip -s ${BUILDDIR}/app/${TARGET}
@@ -25,13 +22,12 @@ install: 							stripped
 
 uninstall:							${BUILDDIR}/install_manifest.txt
 									@[[ -f $< ]] && sudo xargs -r rm -fv < $< && sudo rm -fv $< || true
-									rm -rfv lib/sundown
 
 run: 								all
 									@${BUILDDIR}/app/${TARGET} ${TESTFILE}
 
 clean:								# no dependencies
-									@rm -frv ${BUILDDIR} lib/sundown
+									@rm -frv ${BUILDDIR}
 
 graphviz: 							${BUILDDIR}/graphviz/${TARGET}.svg
 									firefox $<
