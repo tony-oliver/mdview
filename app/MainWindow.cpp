@@ -1,8 +1,8 @@
 #include "MainWindow.hpp"
+#include "MDConverter.hpp"
 #include "HTMLTidier.hpp"
 
 #include <gtkmm/version.h>
-#include <md4c-html.h>
 
 #include <cerrno>           // errno
 #include <string>           // std::string{}
@@ -50,16 +50,35 @@ std::string make_css()
 
 //----------------------------------------------------------------------------
 
-constexpr unsigned md4c_parser_flags = MD_DIALECT_GITHUB;
-constexpr unsigned md4c_render_flags = 0; // MD_HTML_FLAG_xxx
-
-//----------------------------------------------------------------------------
-
-void append_html( char const* const data, unsigned const size, void* const userdata )
+void log_components_to( std::ostream& logger )
 {
-    auto html = static_cast< std::string* >( userdata );
+    logger << "-------------------------------" << std::endl;
 
-    html->append( data, size );
+    logger << "GTKmm header version = "
+           << GTKMM_MAJOR_VERSION << "."
+           << GTKMM_MINOR_VERSION << "."
+           << GTKMM_MICRO_VERSION << std::endl;
+
+    // Desired: GTKmm library version
+
+    logger << "WebKit header version = "
+           << WEBKIT_MAJOR_VERSION << "."
+           << WEBKIT_MINOR_VERSION << "."
+           << WEBKIT_MICRO_VERSION << std::endl;
+
+    logger << "WebKit library version = "
+            << webkit_get_major_version() << "."
+            << webkit_get_minor_version() << "."
+            << webkit_get_micro_version() << std::endl;
+
+    // Desired: MD4C header version
+    // Desired: MD4C library version
+    // Desired: LibTidy header version
+
+    logger << "LibTidy library version = "
+           << tidyLibraryVersion() << std::endl;
+
+    logger << "-------------------------------" << std::endl;
 }
 
 //----------------------------------------------------------------------------
@@ -83,28 +102,7 @@ MainWindow::MainWindow( Options const& options )
     set_child( webView );
     set_default_size( 1200, 800 );
 
-    logger << "-------------------------------" << std::endl;
-
-    logger << "GTKmm header version = "
-           << GTKMM_MAJOR_VERSION << "."
-           << GTKMM_MINOR_VERSION << "."
-           << GTKMM_MICRO_VERSION << std::endl;
-
-    logger << "WebKit header version = "
-           << WEBKIT_MAJOR_VERSION << "."
-           << WEBKIT_MINOR_VERSION << "."
-           << WEBKIT_MICRO_VERSION << std::endl;
-
-    logger << "WebKit library version = "
-            << webkit_get_major_version() << "."
-            << webkit_get_minor_version() << "."
-            << webkit_get_micro_version() << std::endl;
-
-    logger << "LibTidy library version = " << tidyLibraryVersion() << std::endl;
-
-    logger << "-------------------------------" << std::endl;
-
-    watcher.start();
+    log_components_to( logger );
 
     displayMarkdownFile();
 }
@@ -131,13 +129,19 @@ void MainWindow::displayMarkdownFile()
         |* convert the markdown text to HTML    *|
         \*--------------------------------------*/
 
-        md_html( markdown.data(), markdown.size(), append_html, &html, md4c_parser_flags, md4c_render_flags );
+        MDConverter md_converter;
+        html = md_converter.convert( markdown );
 
         /*------------------------------------------------------*\
         |*  Re-do this operation if the markdown file changes   *|
         \*------------------------------------------------------*/
 
-        watcher.watchFile( filename, [ this ]{ displayMarkdownFile(); } );
+        if ( !watcher.running() )
+        {
+            watcher.watchFile( filename, [ this ]{ displayMarkdownFile(); } );
+
+            watcher.start();
+        }
     }
     catch ( std::exception const& e )
     {

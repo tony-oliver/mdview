@@ -79,9 +79,16 @@ ThreadLoop::~ThreadLoop()
 
 //----------------------------------------------------------------------------
 
+bool ThreadLoop::running() const
+{
+    return polling_thread.joinable();
+}
+
+//----------------------------------------------------------------------------
+
 void ThreadLoop::start()
 {
-    if ( polling_thread.joinable() )
+    if ( running() )
     {
         logger << "ThreadLoop already running - ignoring start{} request" << std::endl;
     }
@@ -96,7 +103,7 @@ void ThreadLoop::start()
 
 void ThreadLoop::stop()
 {
-    if ( polling_thread.joinable() ) // test whether still running
+    if ( running() )
     {
         logger << "Setting stopping = true" << std::endl;
         stopping = true;

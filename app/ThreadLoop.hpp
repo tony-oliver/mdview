@@ -26,6 +26,7 @@ public:
     void registerActionForFD( int fd, Action const& action );
     void deregisterFD( int fd );
 
+    bool running() const;
     void start();
     void stop();
 

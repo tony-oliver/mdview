@@ -1,5 +1,7 @@
 # mdview: a markdown-file viewer
 
+asd
+
 ## Description
 
 `mdview` is a program for viewing markdown files (conventionally denoted by the `.md` suffix in their filenames).
@@ -12,7 +14,7 @@ $ mdview <filename>
 
 which parses the contents of the named file from markdown, converts it to HTML and displays the latter in an HTML widget.
 
-It also watches for file-content updates and keeps the rendered content in sync whenever they occur.
+It also watches for markdown file-contents updates and keeps the rendered HTML in sync whenever they occur.
 
 ## Background
 
@@ -154,3 +156,4 @@ $ popd
 ```
 
 (The notes in the `Packages` section, above, also apply here).
+

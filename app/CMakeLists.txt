@@ -10,6 +10,7 @@ add_executable(	mdview
                 MainWindow.cpp
                 ThreadLoop.cpp
                 FileWatcher.cpp
+                MDConverter.cpp
                 StringUtils.cpp
                 SignalHandler.cpp
                 ThreadSafeOStream.cpp
