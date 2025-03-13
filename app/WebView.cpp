@@ -9,10 +9,14 @@ WebView::WebView()
 {
 }
 
+//----------------------------------------------------------------------------
+
 WebView::operator WebKitWebView*()
 {
     return WEBKIT_WEB_VIEW( gobj() );
 }
+
+//----------------------------------------------------------------------------
 
 void WebView::load_html( std::string const& content, std::string const& base_uri )
 {

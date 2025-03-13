@@ -1,10 +1,10 @@
 #ifndef INCLUDED_MDVIEW_WEBVIEW_WIDGET_HPP
 #define INCLUDED_MDVIEW_WEBVIEW_WIDGET_HPP
 
-#include <gtkmm/widget.h>
-#include <webkit/webkit.h>
+#include <gtkmm/widget.h>   // for Gtk::Widget{}
+#include <webkit/webkit.h>  // for WebKitWebView{}
 
-#include <string>
+#include <string>           // for std::string{}
 
 //============================================================================
 namespace WebKit {

@@ -4,7 +4,7 @@
 
 `mdview` is a program for viewing markdown files (conventionally denoted by the `.md` suffix in their filenames).
 
-Once installed, it is invoked thus:
+Once installed on your system, it is invoked thus:
 
 ```
 $ mdview <filename>
@@ -47,31 +47,41 @@ The default C++ compiler must be capable of supporting the C++20 standard
 
 ### Packages
 
-This program uses the `gtkmm-4.0` package for its windowing framework (which wraps the C-only `GTK 4` package). 
+This program uses the `gtkmm-4.0` package for its windowing framework (which wraps the C-only `GTK 4+` package into C++ classes). 
 
-For the HTML-viewing widget within the `GTK 4` framework, it uses the WebKit-GTK bindings.
+For an HTML-viewing widget within the `GTK 4+` framework, it uses the WebKit-GTK bindings.
 
-For the markdown-to-HTML parser, I originally used the `cmark` package; however, this only parses Common Markdown,
-which does not implement some of the extensions provided by other "standards" (*e.g.* GitHub Markdown).
-For this reason, I switched to using `sundown` as the default converter, although `cmark` can still be used if
-the option `-c` is supplied when launching the program.  The source code of `sundown` is downloaded in full
-when first building this project (and after `make clean`).  For some reason (I forget what, now) I then switched
-to using the `md4c` converter (running in Github Markdown mode) by default; `sundown` can still be selected by
-supplying the `-s` option when launching the program.
+The original choice for the Markdown-to-HTML converter was to use the
+[cmark](https://github.com/commonmark/cmark) package (the reference implementation
+of a [CommonMark](https://commonmark.org) converter).
+Unfortunately, many markdown files are authored using certain *de facto* markdown extensions
+(mainly parts of Github Markdown, *e.g.*
+[tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables))
+that are not covered in Common Markdown.
+I finally settled on the `md4c` package (which can easily be configured to operate in Github Markdown mode) for the job.
 
 For tidying-up the generated HTML, `libtidy` gets the job.
 
-Installation of the shared-library packages,above, is as simple as
+Installation of the shared-library packages, above, is as simple as
 
 ```
-$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel md4c-devel
+$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel
 ```
 
-(For other flavours of Linux, the appropriate package management tool should be used
+(For Linux flavours other than Fedora, the appropriate package management tool should be used
 instead of `dnf`, *e.g.* `yum`, `apt`, `pkg`, *etc.*).
 
 Also note that some package names will end `-dev` (instead of `-devel`) when using certain
 non-`dnf` package managers (*e.g.* `apt`).
+
+These are the versions of external components that I currently build against:
+
+| Component 		| Description 					| Version 	|
+| ----------------: | :---------------------------- | :-------: |
+| gtkmm4.0-devel	| GTKmm GUI framework			| 4.16.0	|
+| webkit6.0-devel 	| HTML-rendering GTK+ widget	| 2.46.5	|
+| md4c-devel 		| Markdown-to-HTML converter	| 0.5.1		|
+| libtidy-devel 	| HTML fixer and reformatter	| 5.8.0		|
 
 ## Building
 
@@ -105,6 +115,9 @@ Simple testing (displaying this `README.md` file) can be run as a confidence tes
 $ make run
 ```
 
+In particular, we expect *tables* to be rendered correctly, such as the one
+in the Packages section, above.
+
 ---
 
 Installation (to `/usr/local`) is accomplished with
@@ -133,7 +146,7 @@ $ make clean
 
 ```
 $ pushd /tmp
-$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel md4c-devel
+$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel
 $ git clone https://github.com/tony-oliver/mdview && cd mdview
 $ make install
 $ cd .. && rm -rf mdview

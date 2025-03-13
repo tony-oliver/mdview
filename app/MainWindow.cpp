@@ -1,8 +1,7 @@
 #include "MainWindow.hpp"
-#include "MarkdownConverter.hpp"
-#include "HTMLRenderer.hpp"
 #include "HTMLTidier.hpp"
 
+#include <gtkmm/version.h>
 #include <md4c-html.h>
 
 #include <cerrno>           // errno
@@ -35,10 +34,18 @@ void wrap_html( std::string& html, std::string const& tag )
 
 std::string make_css()
 {
-return R"(code { color: mediumblue; }
-pre { padding: 15px; background-color: whitesmoke; }
-h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; }
-hr { background-color: gainsboro; height: 1px; border: 0; })";
+    return
+    R"(
+        code { color: mediumblue; }
+        pre { padding: 15px; background-color: whitesmoke; }
+        h1, h2, h3, h4, h5, h6 { border-bottom: 1px solid gainsboro; }
+        hr { background-color: gainsboro; height: 1px; border: 0; }
+        table, th, td { border: 1px solid gainsboro; }
+        table { border-spacing: 0; }
+        th, td { padding: 5px; }
+        th { font-weight: bold; }
+        a:link { color: blue; text-decoration: none; }
+    )";
 }
 
 //----------------------------------------------------------------------------
@@ -76,6 +83,27 @@ MainWindow::MainWindow( Options const& options )
     set_child( webView );
     set_default_size( 1200, 800 );
 
+    logger << "-------------------------------" << std::endl;
+
+    logger << "GTKmm header version = "
+           << GTKMM_MAJOR_VERSION << "."
+           << GTKMM_MINOR_VERSION << "."
+           << GTKMM_MICRO_VERSION << std::endl;
+
+    logger << "WebKit header version = "
+           << WEBKIT_MAJOR_VERSION << "."
+           << WEBKIT_MINOR_VERSION << "."
+           << WEBKIT_MICRO_VERSION << std::endl;
+
+    logger << "WebKit library version = "
+            << webkit_get_major_version() << "."
+            << webkit_get_minor_version() << "."
+            << webkit_get_micro_version() << std::endl;
+
+    logger << "LibTidy library version = " << tidyLibraryVersion() << std::endl;
+
+    logger << "-------------------------------" << std::endl;
+
     watcher.start();
 
     displayMarkdownFile();
@@ -85,42 +113,38 @@ MainWindow::MainWindow( Options const& options )
 
 void MainWindow::displayMarkdownFile()
 {
-    std::cout << "*** displayMarkdownFile() ***" << std::endl;
     std::string html;
 
     try
     {
+        /*--------------------------------------------------*\
+        |*  extract the markdown text from the named file   *|
+        \*--------------------------------------------------*/
+
         std::ifstream file( filename );
         if ( !file ) throw std::system_error( errno, std::generic_category(), filename );
 
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdown( Iterator( file ), Iterator{} );
 
-        switch ( options.get_converter() )
-        {
-        case CMark:
-            logger << "Using cmark converter." << std::endl;
-            html = MarkdownConverter( markdown ).convert_to_html();
-            break;
+        /*--------------------------------------*\
+        |* convert the markdown text to HTML    *|
+        \*--------------------------------------*/
 
-        case Sundown:
-            logger << "Using sundown converter." << std::endl;
-            html = HTMLRenderer{}.render( markdown );
-            break;
+        md_html( markdown.data(), markdown.size(), append_html, &html, md4c_parser_flags, md4c_render_flags );
 
-        case MD4C:
-            logger << "Using md4c converter." << std::endl;
-            md_html( markdown.data(), markdown.size(), append_html, &html, md4c_parser_flags, md4c_render_flags );
-            break;
-        }
+        /*------------------------------------------------------*\
+        |*  Re-do this operation if the markdown file changes   *|
+        \*------------------------------------------------------*/
 
-        if ( !watcher.isWatching( filename ) )
-        {
-            watcher.watchFile( filename, [ this ]{ displayMarkdownFile(); } );
-        }
+        watcher.watchFile( filename, [ this ]{ displayMarkdownFile(); } );
     }
     catch ( std::exception const& e )
     {
+        /*----------------------------------------------------------*\
+        |*  Present the error message instead of converted markdown *|
+        \*----------------------------------------------------------*/
+
         html = e.what();
 
         std::cerr << "* " << html << std::endl;
@@ -129,12 +153,20 @@ void MainWindow::displayMarkdownFile()
         wrap_html( html, "pre" );
     }
 
+    /*------------------------------------------------------------------*\
+    |*  Add missing elements to the HTML and write out (if requested)   *|
+    \*------------------------------------------------------------------*/
+
     postProcess( html );
 
     if ( options.get_dump_html() )
     {
         std::cout << html << std::flush;
     }
+
+    /*----------------------------------------------------------*\
+    |*  Finally, display the converted HTML in its GUI widget   *|
+    \*----------------------------------------------------------*/
 
     webView.load_html( html );
 }
