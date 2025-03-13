@@ -51,18 +51,20 @@ This program uses the `gtkmm-4.0` package for its windowing framework (which wra
 
 For the HTML-viewing widget within the `GTK 4` framework, it uses the WebKit-GTK bindings.
 
-For the markdown-to-HTML parser it uses the `cmark` package; this only parses Common Markdown, which does not
-implement some of the extensions provided by other "standards" (*e.g.* GitHub Markdown).  For this reason,
-use of `sundown` has supplanted `cmark` as the default converter, although the latter can still be used if
+For the markdown-to-HTML parser, I originally used the `cmark` package; however, this only parses Common Markdown,
+which does not implement some of the extensions provided by other "standards" (*e.g.* GitHub Markdown).
+For this reason, I switched to using `sundown` as the default converter, although `cmark` can still be used if
 the option `-c` is supplied when launching the program.  The source code of `sundown` is downloaded in full
-when first building this project (and after `make clean`).
+when first building this project (and after `make clean`).  For some reason (I forget what, now) I then switched
+to using the `md4c` converter (running in Github Markdown mode) by default; `sundown` can still be selected by
+supplying the `-s` option when launching the program.
 
 For tidying-up the generated HTML, `libtidy` gets the job.
 
 Installation of the shared-library packages,above, is as simple as
 
 ```
-$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel
+$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel md4c-devel
 ```
 
 (For other flavours of Linux, the appropriate package management tool should be used
@@ -95,11 +97,15 @@ $ make all
 
 will create the executable `build/src/mdview`.
 
+---
+
 Simple testing (displaying this `README.md` file) can be run as a confidence test after building:
 
 ```
 $ make run
 ```
+
+---
 
 Installation (to `/usr/local`) is accomplished with
 
@@ -115,6 +121,8 @@ $ make uninstall
 
 *(provided the project has not been cleaned; see below).*
  
+---
+
 Project cleanup can be performed with
 
 ```
@@ -125,7 +133,7 @@ $ make clean
 
 ```
 $ pushd /tmp
-$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel
+$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel cmark-devel libtidy-devel md4c-devel
 $ git clone https://github.com/tony-oliver/mdview && cd mdview
 $ make install
 $ cd .. && rm -rf mdview

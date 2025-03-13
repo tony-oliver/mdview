@@ -52,7 +52,9 @@ Options::Options( int const argc, char** const argv )
         { "html",           'h', nullptr, 0, "Dump HTML to stdout", 0 },
         { "colour",         'x', nullptr, 0, "Distinguish verbose output by colours", 0 },
         { "diagnostics",    'd', nullptr, 0, "Show diagnostics from LibTidy", 0 },
-        { "cmark",          'c', nullptr, 0, "Use shared cmark library (instead of built-in sundown)", 0 },
+        { "cmark",          'c', nullptr, 0, "Use cmark library for conversion", 0 },
+        { "sundown",        's', nullptr, 0, "Use sundown library for conversion", 0 },
+        { "cmark",          'm', nullptr, 0, "Use md4c library for conversion (default)", 0 },
         {}
     };
 
@@ -81,11 +83,13 @@ error_t Options::parse_option( int const key, char* const arg, argp_state* const
 
     switch ( key )
     {
-    case 'h': dump_html         = true; break;
-    case 'x': use_colour        = true; break;
-    case 'd': show_diagnostics  = true; break;
-    case 'c': use_cmark         = true; break;
-    case 'v': logger_ptr = &std::clog;  break;
+    case 'h': dump_html         = true;     break;
+    case 'x': use_colour        = true;     break;
+    case 'd': show_diagnostics  = true;     break;
+    case 'c': converter         = CMark;    break;
+    case 's': converter         = Sundown;  break;
+    case 'm': converter         = MD4C;     break;
+    case 'v': logger_ptr = &std::clog;      break;
 
     case ARGP_KEY_ARG:
         if ( arg_num > 0 ) argp_usage( state ); // Too many arguments.
@@ -123,9 +127,9 @@ bool Options::get_use_colour() const
     return use_colour;
 }
 
-bool Options::get_use_cmark() const
+Converter Options::get_converter() const
 {
-    return use_cmark;
+    return converter;
 }
 
 std::ostream& Options::get_logger() const

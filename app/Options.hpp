@@ -6,13 +6,20 @@
 #include <string>
 #include <ostream>
 
+enum Converter
+{
+    CMark,
+    Sundown,
+    MD4C,
+};
+
 class Options
 {
     std::string     filename;
     bool            dump_html           = false;
     bool            show_diagnostics    = false;
     bool            use_colour          = false;
-    bool            use_cmark           = false;
+    Converter       converter           = MD4C;
     std::ostream*   logger_ptr          = nullptr;
 
 public:
@@ -23,7 +30,7 @@ public:
     bool                get_dump_html()         const;
     bool                get_show_diagnostics()  const;
     bool                get_use_colour()        const;
-    bool                get_use_cmark()         const;
+    Converter           get_converter()         const;
     std::ostream&       get_logger()            const;
 
 private:

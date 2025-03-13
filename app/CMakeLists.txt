@@ -42,6 +42,10 @@ pkg_search_module( TERMINFO REQUIRED tinfo )
 target_compile_options( mdview PUBLIC ${TERMINFO_CFLAGS} )
 target_link_libraries( mdview PUBLIC ${TERMINFO_LDFLAGS} )
 
+pkg_search_module( MD4C_HTML REQUIRED md4c-html )
+target_compile_options( mdview PUBLIC ${MD4C_HTML_CFLAGS} )
+target_link_libraries( mdview PUBLIC ${MD4C_HTML_LDFLAGS} )
+
 include_directories( ../lib/md2html )
 
 target_link_libraries(	mdview PUBLIC

@@ -3,14 +3,15 @@
 #include "HTMLRenderer.hpp"
 #include "HTMLTidier.hpp"
 
+#include <md4c-html.h>
+
 #include <cerrno>           // errno
-#include <cstdlib>          // std::free()
+#include <string>           // std::string{}
 #include <fstream>          // std::ifstream{}
+#include <iomanip>          // std::quoted<>()
 #include <iostream>         // std::cerr{}
 #include <iterator>         // std::istreambuf_iterator{}
-#include <filesystem>       // std::filesystem::path{}
 #include <exception>        // std::exception{}
-#include <stdexcept>        // std::runtime_error{}
 #include <system_error>     // std::system_error{}
 
 //============================================================================
@@ -36,7 +37,22 @@ std::string make_css()
 {
 return R"(code { color: mediumblue; }
 pre { padding: 15px; background-color: whitesmoke; }
-h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; })";
+h1, h2, h3, h4 { border-bottom: 1px solid gainsboro; }
+hr { background-color: gainsboro; height: 1px; border: 0; })";
+}
+
+//----------------------------------------------------------------------------
+
+constexpr unsigned md4c_parser_flags = MD_DIALECT_GITHUB;
+constexpr unsigned md4c_render_flags = 0; // MD_HTML_FLAG_xxx
+
+//----------------------------------------------------------------------------
+
+void append_html( char const* const data, unsigned const size, void* const userdata )
+{
+    auto html = static_cast< std::string* >( userdata );
+
+    html->append( data, size );
 }
 
 //----------------------------------------------------------------------------
@@ -60,25 +76,16 @@ MainWindow::MainWindow( Options const& options )
     set_child( webView );
     set_default_size( 1200, 800 );
 
+    watcher.start();
+
     displayMarkdownFile();
 }
 
-void MainWindow::postProcess( std::string& html )
-{
-    auto style = make_css();
-    wrap_html( style, "style" );
-
-    HTMLTidier tidier( logger );
-    html = tidier.tidyupHTML( style + html );
-
-    if ( options.get_show_diagnostics() )
-    {
-        std::cout << "LIBTIDY DIAGNOSTICS:\n" << tidier.getDiagnostics() << std::endl;
-    }
-}
+//----------------------------------------------------------------------------
 
 void MainWindow::displayMarkdownFile()
 {
+    std::cout << "*** displayMarkdownFile() ***" << std::endl;
     std::string html;
 
     try
@@ -89,22 +96,27 @@ void MainWindow::displayMarkdownFile()
         using Iterator = std::istreambuf_iterator< char >;
         std::string const markdown( Iterator( file ), Iterator{} );
 
-        if ( options.get_use_cmark() )
+        switch ( options.get_converter() )
         {
-            MarkdownConverter cmarkParser( markdown );
-            html = cmarkParser.convert_to_html();
-        }
-        else
-        {
-            HTMLRenderer htmlRenderer;
-            html = htmlRenderer.render( markdown );
+        case CMark:
+            logger << "Using cmark converter." << std::endl;
+            html = MarkdownConverter( markdown ).convert_to_html();
+            break;
+
+        case Sundown:
+            logger << "Using sundown converter." << std::endl;
+            html = HTMLRenderer{}.render( markdown );
+            break;
+
+        case MD4C:
+            logger << "Using md4c converter." << std::endl;
+            md_html( markdown.data(), markdown.size(), append_html, &html, md4c_parser_flags, md4c_render_flags );
+            break;
         }
 
         if ( !watcher.isWatching( filename ) )
         {
             watcher.watchFile( filename, [ this ]{ displayMarkdownFile(); } );
-
-            watcher.start();
         }
     }
     catch ( std::exception const& e )
@@ -126,3 +138,22 @@ void MainWindow::displayMarkdownFile()
 
     webView.load_html( html );
 }
+
+//----------------------------------------------------------------------------
+
+void MainWindow::postProcess( std::string& html )
+{
+    auto style = make_css();
+    wrap_html( style, "style" );
+    html.insert( 0, style );
+
+    HTMLTidier tidier( logger );
+    html = tidier.tidyupHTML( html );
+
+    if ( options.get_show_diagnostics() )
+    {
+        std::cout << "LIBTIDY DIAGNOSTICS:\n" << tidier.getDiagnostics() << std::endl;
+    }
+}
+
+//============================================================================
