@@ -55,11 +55,11 @@ ThreadLoop::ThreadLoop( std::ostream& logger )
 {
     logger << "ThreadLoop ctor entered..." << std::endl;
 
-    auto const pipe_result = pipe( stop_fds.data() );
+    auto const pipe_result = pipe( stop_pipe.data() );
     checkForPosixError( pipe_result, "pipe()" );
 
-    logger << "Stop-pipe: writing-fd = " << stop_fds[ WriteEnd ]
-           << "; reading-fd = " << stop_fds[ ReadEnd ] << std::endl;
+    logger << "Stop-pipe: writing-fd = " << stop_pipe[ WriteEnd ]
+           << "; reading-fd = " << stop_pipe[ ReadEnd ] << std::endl;
 
     logger << "ThreadLoop ctor done." << std::endl;
 }
@@ -72,7 +72,7 @@ ThreadLoop::~ThreadLoop()
 
     stop();
 
-    closeStopFD( ReadEnd, "ReadEnd" );
+    closeStopPipe( ReadEnd, "ReadEnd" );
 
     logger << "ThreadLoop dtor done." << std::endl;
 }
@@ -108,7 +108,7 @@ void ThreadLoop::stop()
         logger << "Setting stopping = true" << std::endl;
         stopping = true;
 
-        closeStopFD( WriteEnd, "WriteEnd" );
+        closeStopPipe( WriteEnd, "WriteEnd" );
 
         logger << "Waiting for polling-thread to finish" << std::endl;
         polling_thread.join();
@@ -122,10 +122,10 @@ void ThreadLoop::stop()
 
 //----------------------------------------------------------------------------
 
-void ThreadLoop::closeStopFD( PipeFDType const pipeEnd, std::string const& endName )
+void ThreadLoop::closeStopPipe( PipeEnd const pipeEnd, std::string const& endName )
 {
-    auto const fd = stop_fds[ pipeEnd ];
-    logger << "Closing stop_fds[" << endName << "] = " << fd << " ... ";
+    auto const fd = stop_pipe[ pipeEnd ];
+    logger << "Closing stop_pipe[" << endName << "] = " << fd << " ... ";
     auto const close_result = close( fd );
     checkForPosixError( close_result, "close()" );
 }
@@ -175,8 +175,8 @@ void ThreadLoop::pollingLoop()
         {
             std::vector< pollfd > pollfds;
 
-            logger << "Adding stop-fd " << stop_fds[ ReadEnd ] << " to pollfds[]" << std::endl;
-            pollfds.emplace_back( stop_fds[ ReadEnd ], POLLIN, 0 );
+            logger << "Adding stop-fd " << stop_pipe[ ReadEnd ] << " to pollfds[]" << std::endl;
+            pollfds.emplace_back( stop_pipe[ ReadEnd ], POLLIN, 0 );
 
             for ( auto const& [ fd, action ]: action_table )
             {
@@ -205,7 +205,7 @@ void ThreadLoop::pollingLoop()
 
                         // This pollfd has read-events to be serviced.
 
-                        if ( pollfd.fd == stop_fds[ ReadEnd ] ) break; // Halt this loop so the 'stopping' flag can be re-checked
+                        if ( pollfd.fd == stop_pipe[ ReadEnd ] ) break; // Halt this loop so the 'stopping' flag can be re-checked
 
                         executeActionForFD( pollfd.fd );
                     }

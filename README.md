@@ -49,9 +49,9 @@ The default C++ compiler must be capable of supporting the C++20 standard
 
 ### Packages
 
-This program uses the `gtkmm-4.0` package for its windowing framework (which wraps the C-only `GTK 4+` package into C++ classes). 
+This program uses the `gtkmm-4.0` package for its windowing framework (which wraps the C-only `GTK4+` package into C++ classes). 
 
-For an HTML-viewing widget within the `GTK 4+` framework, it uses the WebKit-GTK bindings.
+For an HTML-viewing widget within the `GTK4+` framework, it uses the WebKit-GTK bindings.
 
 The original choice for the Markdown-to-HTML converter was to use the
 [cmark](https://github.com/commonmark/cmark) package (the reference implementation
@@ -60,7 +60,8 @@ Unfortunately, many markdown files are authored using certain *de facto* markdow
 (mainly parts of Github Markdown, *e.g.*
 [tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables))
 that are not covered in Common Markdown.
-I finally settled on the `md4c` package (which can easily be configured to operate in Github Markdown mode) for the job.
+Finally, the `md4c` package was settled on (which can easily be configured to operate in Github Markdown mode) for the job;
+it is also reputed to be significantly faster than other such libraries.
 
 For tidying-up the generated HTML, `libtidy` gets the job.
 
@@ -76,7 +77,7 @@ instead of `dnf`, *e.g.* `yum`, `apt`, `pkg`, *etc.*).
 Also note that some package names will end `-dev` (instead of `-devel`) when using certain
 non-`dnf` package managers (*e.g.* `apt`).
 
-These are the versions of external components that I currently build against:
+These are the versions of external components that `mdview` is currently built against:
 
 | Component 		| Description 					| Version 	|
 | ----------------: | :---------------------------- | :-------: |

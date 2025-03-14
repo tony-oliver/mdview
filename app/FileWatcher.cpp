@@ -60,13 +60,19 @@ FileWatcher::FileWatcher( std::ostream& logger )
 : ThreadLoop( logger )
 , inotify_fd{ inotify_init() }
 {
+    logger << "FileWatcher ctor entered..." << std::endl;
+
     checkForPosixError( inotify_fd, "inotify_init()" );
 
     registerActionForFD( inotify_fd, [ this ]{ handleINotification(); } );
+
+    logger << "FileWatcher ctor done." << std::endl;
 }
 
 FileWatcher::~FileWatcher()
 {
+    logger << "FileWatcher dtor entered..." << std::endl;
+
     for ( auto const& [ filename, wdaction ]: file_watchers )
     {
         auto const& [ wd, action ] = wdaction;
@@ -78,6 +84,8 @@ FileWatcher::~FileWatcher()
     logger << "Closing inotify_fd = " << inotify_fd << " ... ";
     auto const close_result = close( inotify_fd );
     checkForPosixError( close_result, "close()" );
+
+    logger << "FileWatcher dtor done." << std::endl;
 }
 
 void FileWatcher::watchFile( std::string const& filename, Action const& action )

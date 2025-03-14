@@ -21,6 +21,18 @@ constexpr std::string appname = "mdview";
 
 //----------------------------------------------------------------------------
 
+std::string extract_file_contents( std::string const& filename )
+{
+
+    std::ifstream file( filename );
+    if ( !file ) throw std::system_error( errno, std::generic_category(), filename );
+
+    using Iterator = std::istreambuf_iterator< char >;
+    return std::string( Iterator( file ), Iterator{} );
+}
+
+//----------------------------------------------------------------------------
+
 void wrap_html( std::string& html, std::string const& tag )
 {
     std::string const prefix = "\n<" + tag + ">\n";
@@ -116,25 +128,20 @@ void MainWindow::displayMarkdownFile()
     try
     {
         /*--------------------------------------------------*\
-        |*  extract the markdown text from the named file   *|
+        |*  Extract the markdown text from the named file.  *|
         \*--------------------------------------------------*/
 
-        std::ifstream file( filename );
-        if ( !file ) throw std::system_error( errno, std::generic_category(), filename );
-
-        using Iterator = std::istreambuf_iterator< char >;
-        std::string const markdown( Iterator( file ), Iterator{} );
+        auto const markdown = extract_file_contents( filename );
 
         /*--------------------------------------*\
-        |* convert the markdown text to HTML    *|
+        |*  Convert the markdown text to HTML.  *|
         \*--------------------------------------*/
 
-        MDConverter md_converter;
-        html = md_converter.convert( markdown );
+        html = MDConverter{}.convert( markdown );
 
-        /*------------------------------------------------------*\
-        |*  Re-do this operation if the markdown file changes   *|
-        \*------------------------------------------------------*/
+        /*----------------------------------------------------------------------*\
+        |*  Repeat this operation whenever the markdown file contents change.   *|
+        \*----------------------------------------------------------------------*/
 
         if ( !watcher.running() )
         {
