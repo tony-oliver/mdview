@@ -1,7 +1,5 @@
 # mdview: a markdown-file viewer
 
-asd
-
 ## Description
 
 `mdview` is a program for viewing markdown files (conventionally denoted by the `.md` suffix in their filenames).
@@ -28,6 +26,7 @@ Finally, I got around to developing such a tool: this program, `mdview`.
 
 This was an ideal hobby project on which to learn the features and limitations of `gtkmm-4`
 (having used only `gtkmm-3` on my previoius C++ GUI-based projects).
+
 It also gave me a good look at how `inotify` monitors (and reports) changes to files, as well as
 how to make the displayed HTML use the visual styles adopted by GitHub and by markdown editors.
 
@@ -51,13 +50,11 @@ The default C++ compiler must be capable of supporting the C++20 standard
 
 This program uses the `gtkmm-4.0` package for its windowing framework (which wraps the C-only `GTK4+` package into C++ classes). 
 
-For an HTML-viewing widget within the `GTK4+` framework, it uses the WebKit-GTK bindings.
+For an HTML-viewing widget within the `GTK4+` framework, we use the WebKit-GTK bindings.
 
-The original choice for the Markdown-to-HTML converter was to use the
-[cmark](https://github.com/commonmark/cmark) package (the reference implementation
-of a [CommonMark](https://commonmark.org) converter).
-Unfortunately, many markdown files are authored using certain *de facto* markdown extensions
-(mainly parts of Github Markdown, *e.g.*
+The original choice for the Markdown-to-HTML converter was to use the [cmark](https://github.com/commonmark/cmark) package
+(the reference implementation of a [CommonMark](https://commonmark.org) converter).
+Unfortunately, many markdown files are authored using certain *de facto* markdown extensions (mainly parts of Github Markdown, *e.g.*
 [tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables))
 that are not covered in Common Markdown.
 Finally, the `md4c` package was settled on (which can easily be configured to operate in Github Markdown mode) for the job;
@@ -77,14 +74,14 @@ instead of `dnf`, *e.g.* `yum`, `apt`, `pkg`, *etc.*).
 Also note that some package names will end `-dev` (instead of `-devel`) when using certain
 non-`dnf` package managers (*e.g.* `apt`).
 
-These are the versions of external components that `mdview` is currently built against:
+Here are the versions of these external components that `mdview` was originally built against:
 
-| Component 		| Description 					| Version 	|
-| ----------------: | :---------------------------- | :-------: |
-| gtkmm4.0-devel	| GTKmm GUI framework			| 4.16.0	|
-| webkit6.0-devel 	| HTML-rendering GTK+ widget	| 2.46.5	|
-| md4c-devel 		| Markdown-to-HTML converter	| 0.5.1		|
-| libtidy-devel 	| HTML fixer and reformatter	| 5.8.0		|
+| Component 		| Description 					| Version
+| ----------------: | :---------------------------- | :-----: 
+| gtkmm4.0-devel	| GTKmm GUI framework			| 4.16.0
+| webkit6.0-devel 	| HTML-rendering GTK+ widget	| 2.46.5
+| md4c-devel 		| Markdown-to-HTML converter	| 0.5.1
+| libtidy-devel 	| HTML fixer and reformatter	| 5.8.0
 
 ## Building
 
@@ -108,7 +105,7 @@ or
 $ make all
 ```
 
-will create the executable `build/src/mdview`.
+which will create the executable `build/app/mdview`.
 
 ---
 

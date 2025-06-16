@@ -28,12 +28,3 @@ run: 								all
 
 clean:								# no dependencies
 									@rm -frv ${BUILDDIR}
-
-graphviz: 							${BUILDDIR}/graphviz/${TARGET}.svg
-									firefox $<
-
-${BUILDDIR}/graphviz/${TARGET}.dot:	# no dependencies
-									cmake -B ${BUILDDIR} --graphviz=$@
-
-${BUILDDIR}/graphviz/${TARGET}.svg:	${BUILDDIR}/graphviz/${TARGET}.dot
-									${GRAPHER} -Tsvg $< >$@
