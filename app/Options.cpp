@@ -51,6 +51,7 @@ Options::Options( int const argc, char** const argv )
         { "verbose",        'v', nullptr, 0, "Produce verbose output on stderr", 0 },
         { "html",           'h', nullptr, 0, "Dump HTML to stdout", 0 },
         { "colour",         'x', nullptr, 0, "Distinguish verbose output by colours", 0 },
+        { "foreground",     'f', nullptr, 0, "Do not detach and run 'in the background'", 0 },
         { "diagnostics",    'd', nullptr, 0, "Show diagnostics from LibTidy", 0 },
         { "cmark",          'c', nullptr, 0, "Use cmark library for conversion", 0 },
         { "sundown",        's', nullptr, 0, "Use sundown library for conversion", 0 },
@@ -85,6 +86,7 @@ error_t Options::parse_option( int const key, char* const arg, argp_state* const
     {
     case 'h': dump_html         = true;     break;
     case 'x': use_colour        = true;     break;
+    case 'f': foreground        = true;     break;
     case 'd': show_diagnostics  = true;     break;
     case 'c': converter         = CMark;    break;
     case 's': converter         = Sundown;  break;
@@ -117,14 +119,19 @@ bool Options::get_dump_html() const
     return dump_html;
 }
 
-bool Options::get_show_diagnostics() const
-{
-    return show_diagnostics;
-}
-
 bool Options::get_use_colour() const
 {
     return use_colour;
+}
+
+bool Options::get_foreground() const
+{
+    return foreground;
+}
+
+bool Options::get_show_diagnostics() const
+{
+    return show_diagnostics;
 }
 
 Converter Options::get_converter() const

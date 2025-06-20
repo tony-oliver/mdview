@@ -17,8 +17,9 @@ class Options
 {
     std::string     filename;
     bool            dump_html           = false;
-    bool            show_diagnostics    = false;
     bool            use_colour          = false;
+    bool            foreground          = false;
+    bool            show_diagnostics    = false;
     Converter       converter           = MD4C;
     std::ostream*   logger_ptr          = nullptr;
 
@@ -28,8 +29,9 @@ public:
 
     std::string const&  get_filename()          const;
     bool                get_dump_html()         const;
-    bool                get_show_diagnostics()  const;
     bool                get_use_colour()        const;
+    bool                get_foreground()        const;
+    bool                get_show_diagnostics()  const;
     Converter           get_converter()         const;
     std::ostream&       get_logger()            const;
 
