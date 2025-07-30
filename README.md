@@ -10,7 +10,7 @@ Once installed on your system, it is invoked thus:
 $ mdview <filename>
 ```
 
-which parses the contents of the named file from markdown, converts it to HTML and displays the latter in an HTML widget.
+which parses the (markdown) content of the named file, converts it to HTML and displays the latter in an HTML widget.
 
 It also watches for markdown file-contents updates and keeps the rendered HTML in sync whenever they occur.
 
@@ -34,10 +34,11 @@ how to make the displayed HTML use the visual styles adopted by GitHub and by ma
 
 This project is available from its own `git` [repository](https://github.com/tony-oliver/mdview).
 
-It has been tested (so far) on the following platform(s):
+It has been built and tested (so far) on the following platform(s):
 
 * Fedora 39 (built using `g++ v13`).
 * Fedora 41 (built using `g++ v14`).
+* Fedora 42 (built using `g++ v15`).
 
 ## Dependencies
 

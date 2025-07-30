@@ -195,7 +195,7 @@ void MainWindow::postProcess( std::string& html )
 
     if ( options.get_show_diagnostics() )
     {
-        std::cout << "LIBTIDY DIAGNOSTICS:\n" << tidier.getDiagnostics() << std::endl;
+        std::cerr << "LIBTIDY DIAGNOSTICS:\n" << tidier.getDiagnostics() << std::endl;
     }
 }
 
