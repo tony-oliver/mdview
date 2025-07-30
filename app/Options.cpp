@@ -53,9 +53,6 @@ Options::Options( int const argc, char** const argv )
         { "colour",         'x', nullptr, 0, "Distinguish verbose output by colours", 0 },
         { "foreground",     'f', nullptr, 0, "Do not detach (stay 'in the foreground')", 0 },
         { "diagnostics",    'd', nullptr, 0, "Show LibTidy diagnostics on stderr", 0 },
-        { "cmark",          'c', nullptr, 0, "Use cmark library for conversion", 0 },
-        { "sundown",        's', nullptr, 0, "Use sundown library for conversion", 0 },
-        { "md4c",           'm', nullptr, 0, "Use md4c library for conversion (default)", 0 },
         {}
     };
 
@@ -88,9 +85,6 @@ error_t Options::parse_option( int const key, char* const arg, argp_state* const
     case 'x': use_colour        = true;         break;
     case 'f': foreground        = true;         break;
     case 'd': show_diagnostics  = true;         break;
-    case 'c': converter         = CMark;        break;
-    case 's': converter         = Sundown;      break;
-    case 'm': converter         = MD4C;         break;
     case 'v': logger_ptr        = &std::clog;   break;
 
     case ARGP_KEY_ARG:
@@ -132,11 +126,6 @@ bool Options::get_foreground() const
 bool Options::get_show_diagnostics() const
 {
     return show_diagnostics;
-}
-
-Converter Options::get_converter() const
-{
-    return converter;
 }
 
 std::ostream& Options::get_logger() const

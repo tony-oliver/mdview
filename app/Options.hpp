@@ -6,13 +6,6 @@
 #include <string>
 #include <ostream>
 
-enum Converter
-{
-    CMark,
-    Sundown,
-    MD4C,
-};
-
 class Options
 {
     std::string     filename;
@@ -20,7 +13,6 @@ class Options
     bool            use_colour          = false;
     bool            foreground          = false;
     bool            show_diagnostics    = false;
-    Converter       converter           = MD4C;
     std::ostream*   logger_ptr          = nullptr;
 
 public:
@@ -32,7 +24,6 @@ public:
     bool                get_use_colour()        const;
     bool                get_foreground()        const;
     bool                get_show_diagnostics()  const;
-    Converter           get_converter()         const;
     std::ostream&       get_logger()            const;
 
 private:
