@@ -2,8 +2,7 @@
 #define INCLUDED_MDVIEW_MAIN_WINDOW_HPP
 
 #include "Options.hpp"              // for Options{}
-#include "WebView.hpp"              // for Webkit::WebView{}
-#include "FileWatcher.hpp"          // for FileWatcher{}
+#include "MarkdownView.hpp"         // for MarkdownView{}
 #include "SignalHandler.hpp"        // for awo::SignalHandler{}
 #include "ThreadSafeOStream.hpp"    // for ThreadSafeOStream{}
 
@@ -24,10 +23,8 @@ private:
     Options const&      options;
     std::string const&  filename;
     std::ostream&       logger;
-
-    WebKit::WebView     webView;
     ThreadSafeOStream   makeThreadSafe;
-    FileWatcher         watcher;
+    MarkdownView        markdownView;
 
     void postProcess( std::string& html );
 

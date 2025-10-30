@@ -90,7 +90,7 @@ void ThreadLoop::start()
 {
     if ( running() )
     {
-        logger << "ThreadLoop already running - ignoring start{} request" << std::endl;
+        logger << "ThreadLoop already running - ignoring start() request" << std::endl;
     }
     else
     {

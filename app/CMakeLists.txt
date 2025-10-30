@@ -12,6 +12,7 @@ add_executable(	mdview
                 FileWatcher.cpp
                 MDConverter.cpp
                 StringUtils.cpp
+                MarkdownView.cpp
                 SignalHandler.cpp
                 ThreadSafeOStream.cpp
                 )

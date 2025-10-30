@@ -11,8 +11,11 @@ class SignalHandler
 public:
 
     using Action = std::function< void() >;
+    using Signals = std::set< int >;
 
-    explicit SignalHandler( std::set< int > const& signos );
+    static Signals const default_signos; // { SIGINT, SIGTERM, SIGQUIT, SIGHUP, SIGPWR }
+
+    explicit SignalHandler( Signals const& signos = default_signos );
 
     void registerAction( Action const& newAction );
 

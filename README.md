@@ -12,7 +12,7 @@ $ mdview <filename>
 
 which parses the (markdown) content of the named file, converts it to HTML and displays the latter in an HTML widget.
 
-It also watches for markdown file-contents updates and keeps the rendered HTML in sync whenever they occur.
+It also watches for changes in the markdown file-contents and keeps the rendered HTML in sync whenever they occur.
 
 ## Background
 
@@ -39,13 +39,14 @@ It has been built and tested (so far) on the following platform(s):
 * Fedora 39 (built using `g++ v13`).
 * Fedora 41 (built using `g++ v14`).
 * Fedora 42 (built using `g++ v15`).
+* Fedora 43 (built using `g++ v15.2`).
 
 ## Dependencies
 
 ### Compiler
 
-The default C++ compiler must be capable of supporting the C++20 standard
-(through the options ``-std=c++20 -pedantic``).
+The default C++ compiler must be capable of supporting the C++20 standard, for `std::ranges` support,
+(through the options `-std=c++20 -pedantic`).
 
 ### Packages
 

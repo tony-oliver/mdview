@@ -1,16 +1,16 @@
-#include "Options.hpp"          // for Options{}
-#include "MainWindow.hpp"       // for MainWindow{}
+#include "Options.hpp"          // Options{}
+#include "MainWindow.hpp"       // MainWindow{}
 
-#include <gtkmm/application.h>  // for Gtk::Application{}
+#include <gtkmm/application.h>  // Gtk::Application{}
 
-#include <unistd.h>             // for daemon()
+#include <unistd.h>             // daemon()
 
-#include <cerrno>               // for errno
-#include <cstdlib>              // for EXIT_SUCCESS, EXIT_FAILURE
-#include <ostream>              // for std::endl()
-#include <iostream>             // for std::cerr
-#include <exception>            // for std::exception{}
-#include <system_error>         // for std::system_error{}, std::generic_category()
+#include <cerrno>               // errno
+#include <cstdlib>              // EXIT_SUCCESS, EXIT_FAILURE
+#include <ostream>              // std::endl()
+#include <iostream>             // std::cerr
+#include <exception>            // std::exception{}
+#include <system_error>         // std::system_error{}, std::generic_category()
 
 //============================================================================
 namespace { // unnamed
@@ -39,21 +39,22 @@ void detach_unless_declined( Options const& options )
 
 int main( int const argc, char** const argv )
 {
-    int exit_code = EXIT_FAILURE; // presumed guilty until proved innocent
+    int exit_code = EXIT_FAILURE; // presumed guilty until proven innocent
 
     try
     {
-        // Collect options/arguments specified on the command-line
+        // Collect options/arguments specified on the command-line.
         Options const options( argc, argv );
 
-        // Go into the background unless directed not to (by option --foreground)
+        // Go into the background unless directed not to (by option --foreground).
         detach_unless_declined( options );
 
-        // NOTE: exceptions thrown in the following call will *not* be propagated out to here
+        // NOTE: exceptions thrown in the following call will *not* be propagated out to here.
         exit_code = Gtk::Application::create()->make_window_and_run< MainWindow >( 1, argv, options );
     }
     catch ( std::exception const& e )
     {
+        // Report exceptions thrown in options-gathering or daemoization.
         std::cerr << "* " << e.what() << std::endl;
     }
 
