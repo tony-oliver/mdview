@@ -12,7 +12,7 @@ class MDConverter
 
 public:
 
-    MDConverter( unsigned md4c_markdown_parser_flags = MD_DIALECT_GITHUB,
+    MDConverter( unsigned md4c_markdown_parser_flags = MD_DIALECT_COMMONMARK,
                  unsigned md4c_html_renderer_flags = {} );
 
     std::string convert( std::string const& markdown ) const;

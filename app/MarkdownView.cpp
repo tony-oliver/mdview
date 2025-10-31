@@ -37,19 +37,71 @@ void wrap_html( std::string& html, std::string const& tag )
 
 //----------------------------------------------------------------------------
 
+// Items to address:
+//
+// Font-size for <code> elements    (left alone in Eclipse; 'larger' in github)
+// Font-colour for <code> elements  ('mediumblue' in Eclipse; left alone in github)
+// Text-decoration for <a> elemnts  (underline always/on hover)
+
 std::string make_css()
 {
     return
     R"(
-        code { font-size: larger; }
-        pre { padding: 15px; background-color: whitesmoke; }
-        h1, h2, h3, h4, h5, h6 { border-bottom: 1px solid gainsboro; }
-        hr { background-color: gainsboro; height: 1px; border: 0; }
-        table, th, td { border: 1px solid gainsboro; }
-        table { border-spacing: 0; }
-        th, td { padding: 5px; }
-        th { font-weight: bold; }
-        a { color: mediumblue; text-decoration: none; }
+        code
+        {
+            color: mediumblue;
+            // font-size: larger;
+        }
+
+        pre
+        {
+            padding: 15px;
+            background-color: whitesmoke;
+        }
+
+        h1, h2, h3, h4, h5, h6
+        {
+            border-bottom: 1px solid gainsboro;
+        }
+
+        hr
+        {
+            border: 0;
+            height: 1px;
+            background-color: gainsboro;
+        }
+
+        table, th, td
+        {
+            border: 1px solid gainsboro;
+        }
+
+        table
+        {
+            border-spacing: 0;
+        }
+
+        th, td
+        {
+            padding: 5px;
+        }
+
+        th
+        {
+            font-weight: bold;
+        }
+        
+        a
+        {
+            color: mediumblue;
+            text-decoration: none;
+        }
+
+        a:hover
+        {
+            cursor: grab;
+            text-decoration: underline !important;
+        } 
     )";
 }
 
@@ -88,7 +140,7 @@ void MarkdownView::render()
         |*  Convert the markdown text to HTML.  *|
         \*--------------------------------------*/
 
-        MDConverter md_converter;
+        MDConverter const md_converter( MD_DIALECT_GITHUB );
         html = md_converter.convert( markdown );
 
         /*----------------------------------------------------------------------*\

@@ -59,12 +59,11 @@ The original choice for the Markdown-to-HTML converter was to use the [cmark](ht
 Unfortunately, many markdown files are authored using certain *de facto* markdown extensions (mainly parts of Github Markdown, *e.g.*
 [tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables))
 that are not covered in Common Markdown.
-Finally, the `md4c` package was settled on (which can easily be configured to operate in Github Markdown mode) for the job;
-it is also reputed to be significantly faster than other such libraries.
+So, eventually, the `md4c` package was settled on (which can easily be configured to operate in Github Markdown mode).
 
 For tidying-up the generated HTML, `libtidy` gets the job.
 
-Installation of the shared-library packages, above, is as simple as
+Under Fedora, installation of these packages is as simple as
 
 ```
 $ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel
@@ -78,12 +77,12 @@ non-`dnf` package managers (*e.g.* `apt`).
 
 Here are the versions of these external components that `mdview` was originally built against:
 
-| Component 		| Description 					| Version
-| ----------------: | :---------------------------- | :-----: 
-| gtkmm4.0-devel	| GTKmm GUI framework			| 4.16.0
-| webkit6.0-devel 	| HTML-rendering GTK+ widget	| 2.46.5
-| md4c-devel 		| Markdown-to-HTML converter	| 0.5.1
-| libtidy-devel 	| HTML fixer and reformatter	| 5.8.0
+| Component 			| Description 					| Original | Current
+| --------------------: | :---------------------------- | :------: | :-----: 
+| `gtkmm4.0-devel`	| GTKmm GUI framework			| 4.16.0   | 4.20.0
+| `webkit6.0-devel`	| HTML-rendering GTK+ widget	| 2.46.5   | 2.50.0
+| `md4c-devel`			| Markdown-to-HTML converter	| 0.5.1    | 0.5.2
+| `libtidy-devel`	 	| HTML fixer and reformatter	| 5.8.0    | 5.8.0
 
 ## Building
 

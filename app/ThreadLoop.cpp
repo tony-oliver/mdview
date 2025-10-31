@@ -125,7 +125,7 @@ void ThreadLoop::stop()
 void ThreadLoop::closeStopPipe( PipeEnd const pipeEnd, std::string const& endName )
 {
     auto const fd = stop_pipe[ pipeEnd ];
-    logger << "Closing stop_pipe[" << endName << "] = " << fd << " ... ";
+    logger << "Closing stop_pipe[" << endName << "] = fd " << fd << " ... ";
     auto const close_result = close( fd );
     checkForPosixError( close_result, "close()" );
 }
@@ -185,11 +185,11 @@ void ThreadLoop::pollingLoop()
             }
 
             logger << "Calling poll()" << std::endl;
+            //-------------------------------------------------------------------------
             auto const poll_result = poll( pollfds.data(), pollfds.size(), no_timeout );
-
-            if ( checkForPosixError( poll_result, "poll()" ) ) continue; // loop again if we got an EINTR "error"
-
+            //-------------------------------------------------------------------------
             if ( stopping ) break;
+            if ( checkForPosixError( poll_result, "poll()" ) ) continue; // loop again if we got an EINTR "error"
 
             // Now go through the pollfds to see which one(s) triggered the poll() to return
 

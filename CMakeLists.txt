@@ -8,6 +8,7 @@ set(	CMAKE_CXX_EXTENSIONS 		Off )
 
 add_compile_options( -pedantic )
 add_compile_options( -Wall -Wextra )
-add_compile_options( -O2 -g3 )
+add_compile_options( -O2 )
+add_compile_options( -g3 )
 
 add_subdirectory( app )

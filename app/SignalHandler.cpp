@@ -2,7 +2,7 @@
 
 #include <csignal>      // SIG*, std::signal()
 #include <fstream>      // std::ofstream{}
-#include <ostream>
+#include <ostream>      // std::ostream{}, std::endl()
 #include <utility>      // std::exchange<>()
 
 //============================================================================
@@ -22,7 +22,7 @@ SignalHandler::Signals const SignalHandler::default_signos
 
 SignalHandler::SignalHandler( Signals const& signos )
 {
-    // Point every sensitive signal to our signal-handler.
+    // Attach every signal-of-interest to our signal-handler.
 
     for ( auto signo: signos )
     {
@@ -34,7 +34,7 @@ SignalHandler::SignalHandler( Signals const& signos )
 
 void SignalHandler::registerAction( Action const& newAction )
 {
-    // Record the action to be performed on receipt of any sensitive signal.
+    // Record the action to be performed on receipt of any signal of interest.
 
     action = newAction;
 }
@@ -45,12 +45,12 @@ void SignalHandler::handleSignal( int const signo )
 {
     if ( signo == SIGINT )
     {
-        // "^C" has probably been printed; throw a newline, too.
+        // "^C" has probably been printed.  Throw a newline, too.
 
         std::ofstream( "/dev/tty" ) << std::endl;
     }
 
-    // Get the action provided in registerAction() and clear it.
+    // Get the action previously provided in registerAction() and clear it.
 
     auto const signal_handler{ std::exchange( action, {} ) };
 
@@ -58,7 +58,7 @@ void SignalHandler::handleSignal( int const signo )
 
     if ( signal_handler != nullptr )
     {
-        std::invoke( signal_handler );
+        signal_handler();
     }
 }
 

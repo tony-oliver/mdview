@@ -54,7 +54,11 @@ MainWindow::MainWindow( Options const& options )
 , makeThreadSafe( logger, options.get_use_colour() )
 , markdownView( filename, logger, options.get_dump_html(), options.get_show_diagnostics() )
 {
-    signalHandler.registerAction( [ & ]{ close(); } );
+    signalHandler.registerAction( [ & ]
+    {
+        logger << "Calling Gtk::Widget::hide() on main window" << std::endl;
+        hide(); // less error-prone than close()
+    } );
 
     auto title = appname;
     if ( !filename.empty() ) title += " - " + filename;
