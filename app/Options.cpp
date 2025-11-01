@@ -30,7 +30,7 @@ Options::Options( int const argc, char** const argv )
 
     constexpr char args_doc[]   // description of non-option arguments
     {
-        "FILE"
+        "<MDFILE>"
     };
 
     constexpr char doc[]        // description of program and its non-option arguments
@@ -43,15 +43,16 @@ Options::Options( int const argc, char** const argv )
         // formatted options will get printed here
         //----------------------------------------
         "\v"
-        //----------------------------------------
-        // add notes (to follow options) here
-        //----------------------------------------
+        "ARGUMENTS:\n"
+        "\n"
+        "  <MDFILE>                   Path to file containing markdown source"
     };
 
     constexpr auto children     = nullptr;
     constexpr auto help_filter  = nullptr;
     constexpr auto argp_domain  = nullptr;
-    constexpr auto flags        = ARGP_IN_ORDER; // permit options after args
+    constexpr auto flags        = 0;
+    constexpr auto end_index    = nullptr;
 
     static argp const argp
     {
@@ -64,7 +65,7 @@ Options::Options( int const argc, char** const argv )
         argp_domain
     };
 
-    argp_parse( &argp, argc, argv, flags, nullptr, this );
+    argp_parse( &argp, argc, argv, flags, end_index, this );
 }
 
 //----------------------------------------------------------------------------

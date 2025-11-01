@@ -1,10 +1,12 @@
 #ifndef INCLUDED_MDVIEW_OPTIONS_HPP
 #define INCLUDED_MDVIEW_OPTIONS_HPP
 
-#include <argp.h>
+#include <argp.h>   // error_t, argp_state{}
 
-#include <string>
-#include <ostream>
+#include <string>   // std::string{}
+#include <ostream>  // std::ostream{}
+
+//============================================================================
 
 class Options
 {
@@ -29,5 +31,7 @@ private:
     static error_t parser( int key, char* arg, argp_state* state );
     error_t        option( int key, char* arg, argp_state* state );
 };
+
+//============================================================================
 
 #endif // INCLUDED_MDVIEW_OPTIONS_HPP

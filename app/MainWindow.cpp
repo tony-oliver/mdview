@@ -12,7 +12,7 @@ constexpr std::string appname = "mdview";
 
 //----------------------------------------------------------------------------
 
-void log_components_to( std::ostream& logger )
+void log_library_versions_to( std::ostream& logger )
 {
     logger << "-------------------------------" << std::endl;
 
@@ -20,8 +20,6 @@ void log_components_to( std::ostream& logger )
            << GTKMM_MAJOR_VERSION << "."
            << GTKMM_MINOR_VERSION << "."
            << GTKMM_MICRO_VERSION << std::endl;
-
-    // Desired: GTKmm library version
 
     logger << "WebKit header version = "
            << WEBKIT_MAJOR_VERSION << "."
@@ -32,10 +30,6 @@ void log_components_to( std::ostream& logger )
             << webkit_get_major_version() << "."
             << webkit_get_minor_version() << "."
             << webkit_get_micro_version() << std::endl;
-
-    // Desired: MD4C header version
-    // Desired: MD4C library version
-    // Desired: LibTidy header version
 
     logger << "LibTidy library version = "
            << tidyLibraryVersion() << std::endl;
@@ -52,7 +46,7 @@ MainWindow::MainWindow( Options const& options )
 , makeThreadSafe( logger, options.get_use_colour() )
 , markdownView( logger, options.get_dump_html(), options.get_show_diagnostics() )
 {
-    log_components_to( logger );
+    log_library_versions_to( logger );
 
     auto const filename{ options.get_filename() };
     markdownView.render( filename );
@@ -66,7 +60,6 @@ MainWindow::MainWindow( Options const& options )
     set_title( title );
     set_child( markdownView );
     set_default_size( 1200, 800 );
-
 }
 
 //============================================================================
