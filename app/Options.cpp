@@ -1,81 +1,82 @@
 #include "Options.hpp"
+#include "NullStream.hpp"
 
 #include <iostream>
 #include <streambuf>
 
-//============================================================================
-namespace { // unnamed
-//----------------------------------------------------------------------------
+char const* argp_program_version      = "version 1.0.1";
+char const* argp_program_bug_address  = "tony@oliver.net";
 
-struct NullBuffer: std::streambuf
-{
-};
-
-NullBuffer nullbuffer;
-
-//----------------------------------------------------------------------------
-
-struct NullStream: std::ostream
-{
-    NullStream()
-    : std::ostream{ &nullbuffer }
-    {
-    }
-};
-
-NullStream nullstream;
-
-//----------------------------------------------------------------------------
-} // close unnamed namespace
 //============================================================================
 
 Options::Options( int const argc, char** const argv )
-: logger_ptr{ &nullstream }
+: logger_ptr{ &get_nullstream() }
 {
-    constexpr char arguments_doc[]   // description of non-option arguments
+    enum OptionGroup
+    {
+        GeneralGroup,
+
+        NumOptionGroups
+    };
+
+    constexpr argp_option options[]
+    {
+        { "html",           'h', nullptr, 0, "Dump HTML to stdout",                     GeneralGroup },
+        { "verbose",        'v', nullptr, 0, "Produce verbose output on stderr",        GeneralGroup },
+        { "colour",         'x', nullptr, 0, "Distinguish verbose output by colours",   GeneralGroup },
+        { "diagnostics",    'd', nullptr, 0, "Show LibTidy diagnostics on stderr",      GeneralGroup },
+        {}
+    };
+
+    constexpr char args_doc[]   // description of non-option arguments
     {
         "FILE"
     };
 
-    constexpr char program_doc[]     // description of program and its non-option arguments
+    constexpr char doc[]        // description of program and its non-option arguments
     {
         "\n"
         "mdview -- a markdown-file viewer.\n"
         "\n"
         "OPTIONS:\n"
+        //----------------------------------------
+        // formatted options will get printed here
+        //----------------------------------------
         "\v"
+        //----------------------------------------
+        // add notes (to follow options) here
+        //----------------------------------------
     };
 
-    constexpr argp_option options[]
-    {
-        { "verbose",        'v', nullptr, 0, "Produce verbose output on stderr", 0 },
-        { "html",           'h', nullptr, 0, "Dump HTML to stdout", 0 },
-        { "colour",         'x', nullptr, 0, "Distinguish verbose output by colours", 0 },
-        { "foreground",     'f', nullptr, 0, "Do not detach (stay 'in the foreground')", 0 },
-        { "diagnostics",    'd', nullptr, 0, "Show LibTidy diagnostics on stderr", 0 },
-        {}
-    };
+    constexpr auto children     = nullptr;
+    constexpr auto help_filter  = nullptr;
+    constexpr auto argp_domain  = nullptr;
+    constexpr auto flags        = ARGP_IN_ORDER; // permit options after args
 
-    static argp const parser
+    static argp const argp
     {
         options,
-        option_parser,
-        arguments_doc,
-        program_doc,
-        nullptr,    // children
-        nullptr,    // help_filter
-        nullptr     // i18n domain
+        parser,
+        args_doc,
+        doc,
+        children,
+        help_filter,
+        argp_domain
     };
 
-    argp_parse( &parser, argc, argv, 0, nullptr, this );
+    argp_parse( &argp, argc, argv, flags, nullptr, this );
 }
 
-error_t Options::option_parser( int const key, char* const arg, argp_state* const state )
+//----------------------------------------------------------------------------
+
+error_t Options::parser( int const key, char* const arg, argp_state* const state )
 {
-    return static_cast< Options* >( state->input )->parse_option( key, arg, state );
+    return static_cast< Options* >( state->input )->option( key, arg, state );
 }
 
-error_t Options::parse_option( int const key, char* const arg, argp_state* const state )
+//----------------------------------------------------------------------------
+
+error_t Options::option( int const key, char* const arg, argp_state* const state )
 {
     auto const arg_num = state->arg_num;
 
@@ -83,7 +84,6 @@ error_t Options::parse_option( int const key, char* const arg, argp_state* const
     {
     case 'h': dump_html         = true;         break;
     case 'x': use_colour        = true;         break;
-    case 'f': foreground        = true;         break;
     case 'd': show_diagnostics  = true;         break;
     case 'v': logger_ptr        = &std::clog;   break;
 
@@ -103,32 +103,4 @@ error_t Options::parse_option( int const key, char* const arg, argp_state* const
     return 0;
 }
 
-std::string const& Options::get_filename() const
-{
-    return filename;
-}
-
-bool Options::get_dump_html() const
-{
-    return dump_html;
-}
-
-bool Options::get_use_colour() const
-{
-    return use_colour;
-}
-
-bool Options::get_foreground() const
-{
-    return foreground;
-}
-
-bool Options::get_show_diagnostics() const
-{
-    return show_diagnostics;
-}
-
-std::ostream& Options::get_logger() const
-{
-    return *logger_ptr;
-}
+//============================================================================

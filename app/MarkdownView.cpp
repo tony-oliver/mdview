@@ -109,13 +109,10 @@ std::string make_css()
 } // close unnamed namespace
 //============================================================================
 
-MarkdownView::MarkdownView( std::string const& filename,
-                            std::ostream& logger,
+MarkdownView::MarkdownView( std::ostream& logger,
                             bool const dump_html,
                             bool const show_diagnostics )
-
-: filename{ filename }
-, logger{ logger }
+: logger{ logger }
 , dump_html{ dump_html }
 , show_diagnostics{ show_diagnostics }
 , watcher( logger )
@@ -124,7 +121,7 @@ MarkdownView::MarkdownView( std::string const& filename,
 
 //----------------------------------------------------------------------------
 
-void MarkdownView::render()
+void MarkdownView::render( std::string const& filename )
 {
     std::string html;
 
@@ -149,7 +146,7 @@ void MarkdownView::render()
 
         if ( !watcher.running() )
         {
-            watcher.watchFile( filename, [ this ]{ render(); } );
+            watcher.watchFile( filename, [ & ]{ render( filename ); } );
 
             watcher.start();
         }

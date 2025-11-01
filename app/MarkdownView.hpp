@@ -9,7 +9,6 @@
 
 class MarkdownView: public WebKit::WebView
 {
-    std::string const& filename;
     std::ostream& logger;
     bool const dump_html;
     bool const show_diagnostics;
@@ -18,12 +17,11 @@ class MarkdownView: public WebKit::WebView
 
 public:
 
-    MarkdownView(   std::string const& filename,
-                    std::ostream& logger,
+    MarkdownView(   std::ostream& logger,
                     bool dump_html = false,
                     bool show_diagnostics = false );
 
-    void render();
+    void render( std::string const& filename );
 
 private:
 

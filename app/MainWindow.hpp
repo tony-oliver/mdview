@@ -20,8 +20,6 @@ private:
 
     awo::SignalHandler  signalHandler;
 
-    Options const&      options;
-    std::string const&  filename;
     std::ostream&       logger;
     ThreadSafeOStream   makeThreadSafe;
     MarkdownView        markdownView;

@@ -8,6 +8,7 @@ add_executable(	mdview
                 WebView.cpp
                 HTMLTidier.cpp
                 MainWindow.cpp
+                NullStream.cpp
                 ThreadLoop.cpp
                 FileWatcher.cpp
                 MDConverter.cpp

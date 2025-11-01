@@ -48,17 +48,17 @@ void log_components_to( std::ostream& logger )
 //============================================================================
 
 MainWindow::MainWindow( Options const& options )
-: options{ options }
-, filename{ options.get_filename() }
-, logger{ options.get_logger() }
+: logger{ options.get_logger() }
 , makeThreadSafe( logger, options.get_use_colour() )
-, markdownView( filename, logger, options.get_dump_html(), options.get_show_diagnostics() )
+, markdownView( logger, options.get_dump_html(), options.get_show_diagnostics() )
 {
-    signalHandler.registerAction( [ & ]
-    {
-        logger << "Calling Gtk::Widget::hide() on main window" << std::endl;
-        hide(); // less error-prone than close()
-    } );
+    log_components_to( logger );
+
+    auto const filename{ options.get_filename() };
+    markdownView.render( filename );
+
+    // Arrange to close this main window when any critical signal is encountered.
+    signalHandler.registerAction( [ & ]{ hide(); } );
 
     auto title = appname;
     if ( !filename.empty() ) title += " - " + filename;
@@ -67,9 +67,6 @@ MainWindow::MainWindow( Options const& options )
     set_child( markdownView );
     set_default_size( 1200, 800 );
 
-    log_components_to( logger );
-
-    markdownView.render();
 }
 
 //============================================================================

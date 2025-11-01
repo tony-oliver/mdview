@@ -24,7 +24,7 @@ uninstall:							${BUILDDIR}/install_manifest.txt
 									@[[ -f $< ]] && sudo xargs -r rm -fv < $< && sudo rm -fv $< || true
 
 run: 								all
-									@${BUILDDIR}/app/${TARGET} -fv ${TESTFILE}
+									@${BUILDDIR}/app/${TARGET} -v ${TESTFILE}
 
 clean:								# no dependencies
 									@rm -frv ${BUILDDIR}
