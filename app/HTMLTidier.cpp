@@ -15,9 +15,8 @@ HTMLTidier::Buffer::~Buffer()
     tidyBufFree( this );
 }
 
-HTMLTidier::HTMLTidier( std::ostream& logger )
+HTMLTidier::HTMLTidier()
 : tidyDoc{ tidyCreate() }
-, logger{ logger }
 {
 }
 
@@ -71,7 +70,7 @@ std::string HTMLTidier::tidyupHTML( std::string const& html )
     setIntegerOption( TidyIndentSpaces, 2 );
     setIntegerOption( TidyWrapLen, 132 );
 
-    ingestMarkdown( html );                            // Parse the input into the document
+    ingestMarkdown( html );                         // Parse the input into the document
     cleanAndRepair();                               // Fix errors and re-format the document
     saveToBuffer( output );                         // Pretty-print to the output buffer
 

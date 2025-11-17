@@ -12,8 +12,6 @@
 namespace { // unnamed
 //----------------------------------------------------------------------------
 
-constexpr bool debug = true;
-
 bool is_attached_to_terminal( std::streambuf const* const stream_buffer )
 {
     std::map< std::streambuf const*, int const > const streambuf_map

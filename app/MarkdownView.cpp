@@ -110,18 +110,19 @@ std::string make_css()
 //============================================================================
 
 MarkdownView::MarkdownView( std::ostream& logger,
+                            std::string const& filename,
                             bool const dump_html,
                             bool const show_diagnostics )
-: logger{ logger }
-, dump_html{ dump_html }
+: dump_html{ dump_html }
 , show_diagnostics{ show_diagnostics }
+, filename{ filename }
 , watcher( logger )
 {
 }
 
 //----------------------------------------------------------------------------
 
-void MarkdownView::render( std::string const& filename )
+void MarkdownView::render()
 {
     std::string html;
 
@@ -137,8 +138,8 @@ void MarkdownView::render( std::string const& filename )
         |*  Convert the markdown text to HTML.  *|
         \*--------------------------------------*/
 
-        MDConverter const md_converter( MD_DIALECT_GITHUB );
-        html = md_converter.convert( markdown );
+        MDConverter const html_from_markdown( MD_DIALECT_GITHUB );
+        html = html_from_markdown.convert( markdown );
 
         /*----------------------------------------------------------------------*\
         |*  Repeat this operation whenever the markdown file contents change.   *|
@@ -146,7 +147,7 @@ void MarkdownView::render( std::string const& filename )
 
         if ( !watcher.running() )
         {
-            watcher.watchFile( filename, [ & ]{ render( filename ); } );
+            watcher.watchFile( filename, [ & ]{ render(); } );
 
             watcher.start();
         }
@@ -191,7 +192,7 @@ void MarkdownView::postProcess( std::string& html )
     wrap_html( style, "style" );
     html.insert( 0, style );
 
-    HTMLTidier tidier( logger );
+    HTMLTidier tidier;
     html = tidier.tidyupHTML( html );
 
     if ( show_diagnostics )

@@ -1,6 +1,8 @@
 #include "ThreadLoop.hpp"
 #include "StringUtils.hpp"
 
+#include <magic_enum/magic_enum.hpp>
+
 #include <unistd.h>         // pipe(), close()
 #include <poll.h>           // poll_fd{}, poll()
 
@@ -58,8 +60,10 @@ ThreadLoop::ThreadLoop( std::ostream& logger )
     auto const pipe_result = pipe( stop_pipe.data() );
     checkForPosixError( pipe_result, "pipe()" );
 
-    logger << "Stop-pipe: writing-fd = " << stop_pipe[ WriteEnd ]
-           << "; reading-fd = " << stop_pipe[ ReadEnd ] << std::endl;
+    for ( auto const pipe_end: { ReadEnd, WriteEnd } )
+    {
+        logger << "stop_pipe[ " << magic_enum::enum_name( pipe_end ) << " ] = fd " << stop_pipe[ pipe_end ] << std::endl;
+    }
 
     logger << "ThreadLoop ctor done." << std::endl;
 }
@@ -72,7 +76,7 @@ ThreadLoop::~ThreadLoop()
 
     stop();
 
-    closeStopPipe( ReadEnd, "ReadEnd" );
+    closeStopPipe( ReadEnd );
 
     logger << "ThreadLoop dtor done." << std::endl;
 }
@@ -108,7 +112,7 @@ void ThreadLoop::stop()
         logger << "Setting stopping = true" << std::endl;
         stopping = true;
 
-        closeStopPipe( WriteEnd, "WriteEnd" );
+        closeStopPipe( WriteEnd );
 
         logger << "Waiting for polling-thread to finish" << std::endl;
         polling_thread.join();
@@ -122,10 +126,10 @@ void ThreadLoop::stop()
 
 //----------------------------------------------------------------------------
 
-void ThreadLoop::closeStopPipe( PipeEnd const pipeEnd, std::string const& endName )
+void ThreadLoop::closeStopPipe( PipeEnd const pipe_end )
 {
-    auto const fd = stop_pipe[ pipeEnd ];
-    logger << "Closing stop_pipe[" << endName << "] = fd " << fd << " ... ";
+    auto const fd = stop_pipe[ pipe_end ];
+    logger << "Closing stop_pipe[ " << magic_enum::enum_name( pipe_end ) << " ] = fd " << fd << " ... ";
     auto const close_result = close( fd );
     checkForPosixError( close_result, "close()" );
 }

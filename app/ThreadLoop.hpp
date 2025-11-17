@@ -44,10 +44,9 @@ private:
     void executeActionForFD( int fd );
 
     enum PipeEnd { ReadEnd, WriteEnd, NumPipeEnds };
-    using Pipe = std::array< int, NumPipeEnds >;
-    Pipe stop_pipe;
+    std::array< int, NumPipeEnds > stop_pipe;
 
-    void closeStopPipe( PipeEnd end, std::string const& endName );
+    void closeStopPipe( PipeEnd pipe_end );
 
     std::atomic_bool stopping = false;
     std::thread polling_thread;

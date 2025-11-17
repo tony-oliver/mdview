@@ -7,7 +7,7 @@
 Once installed on your system, it is invoked thus:
 
 ```
-$ mdview <filename>
+mdview <filename>
 ```
 
 which parses the (markdown) content of the named file, converts it to HTML and displays the latter in an HTML widget.
@@ -39,7 +39,7 @@ It has been built and tested (so far) on the following platform(s):
 * Fedora 39 (built using `g++ v13`).
 * Fedora 41 (built using `g++ v14`).
 * Fedora 42 (built using `g++ v15`).
-* Fedora 43 (built using `g++ v15.2`).
+* Fedora 43 (built using `g++ v15.2.1` and `clang++ v21.1.5`).
 
 ## Dependencies
 
@@ -52,7 +52,7 @@ The default C++ compiler must be capable of supporting the C++20 standard, for `
 
 This program uses the `gtkmm-4.0` package for its windowing framework (which wraps the C-only `GTK4+` package into C++ classes). 
 
-For an HTML-viewing widget within the `GTK4+` framework, we use the WebKit-GTK bindings.
+For an HTML-viewing widget within the `GTK4+` framework, we use the WebKit-GTK 6.0 bindings.
 
 The original choice for the Markdown-to-HTML converter was to use the [cmark](https://github.com/commonmark/cmark) package
 (the reference implementation of a [CommonMark](https://commonmark.org) converter).
@@ -61,12 +61,12 @@ Unfortunately, many markdown files are authored using certain *de facto* markdow
 that are not covered in Common Markdown.
 So, eventually, the `md4c` package was settled on (which can easily be configured to operate in Github Markdown mode).
 
-For tidying-up the generated HTML, `libtidy` gets the job.
+For tidying-up the generated HTML, `libtidy` gets the job, and for preparing enum-names for debug-output, `magic_enum` is used.
 
 Under Fedora, installation of these packages is as simple as
 
 ```
-$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel
+sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel magic_enum-devel
 ```
 
 (For Linux flavours other than Fedora, the appropriate package management tool should be used
@@ -83,6 +83,7 @@ Here are the versions of these external components that `mdview` was originally 
 | `webkit6.0-devel`	| HTML-rendering GTK+ widget	| 2.46.5   | 2.50.0
 | `md4c-devel`			| Markdown-to-HTML converter	| 0.5.1    | 0.5.2
 | `libtidy-devel`	 	| HTML fixer and reformatter	| 5.8.0    | 5.8.0
+| `magic_enum-devel` 	| C++ enum introspection		| 0.9.7    | 0.9.7
 
 ## Building
 
@@ -91,19 +92,19 @@ Here are the versions of these external components that `mdview` was originally 
 Firstly, download a copy of the repo and navigate into its source root:
 
 ```
-$ git clone https://github.com/tony-oliver/mdview && cd mdview
+git clone https://github.com/tony-oliver/mdview && cd mdview
 ```
 
 The top-level Makefile is used for co-ordinating the build process, thus:
 
 ```
-$ make
+make
 ```
 
 or
 
 ```
-$ make all
+make all
 ```
 
 which will create the executable `build/app/mdview`.
@@ -113,7 +114,7 @@ which will create the executable `build/app/mdview`.
 Simple testing (displaying this `README.md` file) can be run as a confidence test after building:
 
 ```
-$ make run
+make run
 ```
 
 In particular, we expect *tables* to be rendered correctly, such as the one
@@ -124,13 +125,13 @@ in the Packages section, above.
 Installation (to `/usr/local`) is accomplished with
 
 ```
-$ make install
+make install
 ```
 
 and uninstallation with
 
 ```
-$ make uninstall
+make uninstall
 ```
 
 *(provided the project has not been cleaned; see below).*
@@ -140,18 +141,18 @@ $ make uninstall
 Project cleanup can be performed with
 
 ```
-$ make clean
+make clean
 ```
 
 ### Quick build
 
 ```
-$ pushd /tmp
-$ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel
-$ git clone https://github.com/tony-oliver/mdview && cd mdview
-$ make install
-$ cd .. && rm -rf mdview
-$ popd
+pushd /tmp
+sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel magic_enum-devel
+git clone https://github.com/tony-oliver/mdview && cd mdview
+make install
+cd .. && rm -rf mdview
+popd
 ```
 
 (The notes in the `Packages` section, above, also apply here).

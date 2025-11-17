@@ -18,6 +18,10 @@ add_executable(	mdview
                 ThreadSafeOStream.cpp
                 )
 
+pkg_search_module( MAGIC_ENUM REQUIRED magic_enum )
+target_compile_options( mdview PUBLIC ${MAGIC_ENUM_CFLAGS} )
+target_link_libraries( mdview PUBLIC ${MAGIC_ENUM_LDFLAGS} )
+
 pkg_search_module( TIDY REQUIRED tidy )
 target_compile_options( mdview PUBLIC ${TIDY_CFLAGS} )
 target_link_libraries( mdview PUBLIC ${TIDY_LDFLAGS} )

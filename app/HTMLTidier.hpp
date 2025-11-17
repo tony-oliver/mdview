@@ -10,7 +10,6 @@
 class HTMLTidier
 {
     TidyDoc tidyDoc;
-    std::ostream& logger;
 
     struct Buffer: TidyBuffer
     {
@@ -23,7 +22,7 @@ class HTMLTidier
 
 public:
 
-    HTMLTidier( std::ostream& logger );
+    HTMLTidier();
     ~HTMLTidier();
 
     std::string tidyupHTML( std::string const& untidyHtml );

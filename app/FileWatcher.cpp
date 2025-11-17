@@ -10,6 +10,7 @@
 #include <vector>           // std::vector<>{}
 #include <iomanip>          // std::quoted<>{}
 #include <ostream>          // std::endl(), operator<<()
+#include <iostream>          // std::cout (DEBUG only)
 #include <algorithm>        // std::find_if<>()
 #include <stdexcept>        // std::logic_error{}
 #include <string_view>      // std::string_view{}
@@ -169,11 +170,14 @@ void FileWatcher::executeActionForWD( int const event_wd )
 {
     std::lock_guard const locker( file_watchers_mutex );
 
+    std::cout << "FileWatcher::executeActionForWD( int const event_wd = " << event_wd << ")" << std::endl;
+
     // Find the entry (in the file_watchers map) corrensponding to this wd.
     auto const p = std::ranges::find_if( file_watchers, [ event_wd ]( auto const& map_entry )
     {
         auto const& [ filename, wdaction ] = map_entry;
         auto const& [ wd, action ] = wdaction;
+        std::cout << "filename = " << std::quoted( filename ) << ", wd = " << wd << std::endl;
 
         return wd == event_wd;
     } );

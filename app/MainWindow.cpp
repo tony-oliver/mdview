@@ -1,8 +1,9 @@
 #include "MainWindow.hpp"
 
-#include <gtkmm/version.h>
-#include <webkit/webkit.h>  // WEBKIT_*_VERSION, webkit_get_*_version()
-#include "tidy.h"           // tidyLibraryVersion()
+#include <gtkmm/version.h>              // GTKMM_*_VERSION
+#include <webkit/webkit.h>              // WEBKIT_*_VERSION, webkit_get_*_version()
+#include "tidy.h"                       // tidyLibraryVersion()
+#include <magic_enum/magic_enum.hpp>    // MAGIC_ENUM_VERSION_*
 
 //============================================================================
 namespace { // unnamed
@@ -14,7 +15,9 @@ constexpr std::string appname = "mdview";
 
 void log_library_versions_to( std::ostream& logger )
 {
-    logger << "-------------------------------" << std::endl;
+    static std::string const delimiter = "--------------------------------";
+
+    logger << delimiter << std::endl;
 
     logger << "GTKmm header version = "
            << GTKMM_MAJOR_VERSION << "."
@@ -34,7 +37,12 @@ void log_library_versions_to( std::ostream& logger )
     logger << "LibTidy library version = "
            << tidyLibraryVersion() << std::endl;
 
-    logger << "-------------------------------" << std::endl;
+    logger << "MagicEnum header version = "
+           << MAGIC_ENUM_VERSION_MAJOR << "."
+           << MAGIC_ENUM_VERSION_MINOR << "."
+           << MAGIC_ENUM_VERSION_PATCH << std::endl;
+
+    logger << delimiter << std::endl;
 }
 
 //----------------------------------------------------------------------------
@@ -43,13 +51,13 @@ void log_library_versions_to( std::ostream& logger )
 
 MainWindow::MainWindow( Options const& options )
 : logger{ options.get_logger() }
+, filename{ options.get_filename() }
 , makeThreadSafe( logger, options.get_use_colour() )
-, markdownView( logger, options.get_dump_html(), options.get_show_diagnostics() )
+, markdownView( logger, filename, options.get_dump_html(), options.get_show_diagnostics() )
 {
     log_library_versions_to( logger );
 
-    auto const filename{ options.get_filename() };
-    markdownView.render( filename );
+    markdownView.render();
 
     // Arrange to close this main window when any critical signal is encountered.
     signalHandler.registerAction( [ & ]{ hide(); } );
