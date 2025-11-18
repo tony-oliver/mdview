@@ -4,7 +4,7 @@
 #include <iostream>
 #include <streambuf>
 
-char const* argp_program_version      = "version 1.0.1";
+char const* argp_program_version      = "version 1.1.0";
 char const* argp_program_bug_address  = "tony@oliver.net";
 
 //============================================================================
@@ -23,8 +23,8 @@ Options::Options( int const argc, char** const argv )
     {
         { "html",           'h', nullptr, 0, "Dump HTML to stdout",                     GeneralGroup },
         { "verbose",        'v', nullptr, 0, "Produce verbose output on stderr",        GeneralGroup },
-        { "colour",         'x', nullptr, 0, "Distinguish verbose output by colours",   GeneralGroup },
         { "diagnostics",    'd', nullptr, 0, "Show LibTidy diagnostics on stderr",      GeneralGroup },
+        { "colour",         'c', nullptr, 0, "Distinguish verbose output by colours",   GeneralGroup },
         {}
     };
 
@@ -84,7 +84,7 @@ error_t Options::option( int const key, char* const arg, argp_state* const state
     switch ( key )
     {
     case 'h': dump_html         = true;         break;
-    case 'x': use_colour        = true;         break;
+    case 'c': use_colour        = true;         break;
     case 'd': show_diagnostics  = true;         break;
     case 'v': logger_ptr        = &std::clog;   break;
 

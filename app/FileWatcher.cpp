@@ -10,7 +10,6 @@
 #include <vector>           // std::vector<>{}
 #include <iomanip>          // std::quoted<>{}
 #include <ostream>          // std::endl(), operator<<()
-#include <iostream>          // std::cout (DEBUG only)
 #include <algorithm>        // std::find_if<>()
 #include <stdexcept>        // std::logic_error{}
 #include <string_view>      // std::string_view{}
@@ -187,7 +186,7 @@ void FileWatcher::executeActionForWD( int const event_wd )
         auto const& [ filename, wdaction ] = *p;
         auto const& [ wd, action ] = wdaction;
 
-        std::cout << "wd " << wd << " corresponds to file " << std::quoted( filename ) << std::endl;
+        logger << "wd " << wd << " corresponds to file " << std::quoted( filename ) << std::endl;
 
         std::invoke( action );
     }
