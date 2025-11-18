@@ -55,9 +55,8 @@ MainWindow::MainWindow( Options const& options )
 , makeThreadSafe( logger, options.get_use_colour() )
 , markdownView( logger, filename, options.get_dump_html(), options.get_show_diagnostics() )
 {
+    // Print out versions of third-party components used.
     log_library_versions_to( logger );
-
-    markdownView.render();
 
     // Arrange to close this main window when any critical signal is encountered.
     signalHandler.registerAction( [ & ]{ hide(); } );

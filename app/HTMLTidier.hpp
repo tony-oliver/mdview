@@ -8,36 +8,46 @@
 
 class HTMLTidier
 {
-    TidyDoc tidy_doc;
+    // The handle referencing this instance of libtidy:
+
+    TidyDoc const html_tidier;
+
+    // The concrete text-buffer class used here:
 
     struct Buffer: TidyBuffer
     {
         Buffer();
         ~Buffer();
-    };
 
-    Buffer output_buffer;
-    Buffer diagnostics_buffer;
+        void clear();
+        operator std::string() const;
+    };
 
 public:
 
     HTMLTidier();
     ~HTMLTidier();
 
-    std::string tidyupHTML( std::string const& untidyHtml );
+    // Encapsulated libtidy primitives:
+
+    bool setBooleanOption( TidyOptionId option_id, Bool new_value );
+    int setIntegerOption(  TidyOptionId option_id,  int new_value );
+
+    int saveErrorsToBuffer( Buffer& buffer );
+    int saveOutputToBuffer( Buffer& buffer );
+
+    int ingestContent( std::string const& content );
+    int cleanAndRepair();
+
+    // High-level operations:
+
+    std::string tidyupHTML( std::string const& html );
     std::string getDiagnostics() const;
 
 private:
 
-    int setErrorBuffer( Buffer& buffer );
-    int setIntegerOption(  TidyOptionId option_id, int new_value );
-    bool setBooleanOption( TidyOptionId option_id, Bool new_value );
-
-    int ingestContent( std::string const& content );
-    int cleanAndRepair();
-    int saveToBuffer( Buffer& buffer );
-
-    std::string contentsOfBuffer( Buffer const& buffer ) const;
+    Buffer output_buffer;
+    Buffer diagnostics_buffer;
 };
 
 #endif // INCLUDED_HTML_TIDIER_HPP

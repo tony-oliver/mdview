@@ -187,7 +187,7 @@ void FileWatcher::executeActionForWD( int const event_wd )
         auto const& [ filename, wdaction ] = *p;
         auto const& [ wd, action ] = wdaction;
 
-        std::cout << "filename = " << std::quoted( filename ) << std::endl;
+        std::cout << "wd " << wd << " corresponds to file " << std::quoted( filename ) << std::endl;
 
         std::invoke( action );
     }

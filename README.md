@@ -82,7 +82,7 @@ Here are the versions of these external components that `mdview` was originally 
 | `gtkmm4.0-devel`	| GTKmm GUI framework			| 4.16.0   | 4.20.0
 | `webkit6.0-devel`	| HTML-rendering GTK+ widget	| 2.46.5   | 2.50.1
 | `md4c-devel`			| Markdown-to-HTML converter	| 0.5.1    | 0.5.2
-| `libtidy-devel`	 	| HTML fixer and reformatter	| 5.8.0    | 5.8.0
+| `libtidy-devel`	 	| HTML fixer and reformatter	| 5.6.0    | 5.8.0
 | `magic_enum-devel` 	| C++ enum introspection		| 0.9.7    | 0.9.7
 
 ## Building

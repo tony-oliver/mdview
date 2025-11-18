@@ -118,6 +118,7 @@ MarkdownView::MarkdownView( std::ostream& logger,
 , filename{ filename }
 , watcher( logger )
 {
+    render(); // first-time render
 }
 
 //----------------------------------------------------------------------------
@@ -192,12 +193,19 @@ void MarkdownView::postProcess( std::string& html )
     wrap_html( style, "style" );
     html.insert( 0, style );
 
-    HTMLTidier tidier;
-    html = tidier.tidyupHTML( html );
+    HTMLTidier html_tidier;
+    html = html_tidier.tidyupHTML( html );
 
     if ( show_diagnostics )
     {
-        std::cerr << "LIBTIDY DIAGNOSTICS:\n" << tidier.getDiagnostics() << std::endl;
+        auto const diagnostics = html_tidier.getDiagnostics();
+
+        if ( !diagnostics.empty() )
+        {
+            std::cerr << std::endl;
+            std::cerr << "LIBTIDY DIAGNOSTICS:" << std::endl;
+            std::cerr << diagnostics << std::endl;
+        }
     }
 }
 

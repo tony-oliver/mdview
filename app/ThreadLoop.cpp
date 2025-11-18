@@ -179,13 +179,13 @@ void ThreadLoop::pollingLoop()
         {
             std::vector< pollfd > pollfds;
 
-            logger << "Adding stop-fd " << stop_pipe[ ReadEnd ] << " to pollfds[]" << std::endl;
+            logger << "Adding stop_pipe[ ReadEnd ] = fd " << stop_pipe[ ReadEnd ] << " to pollfds[]" << std::endl;
             pollfds.emplace_back( stop_pipe[ ReadEnd ], POLLIN, 0 );
 
-            for ( auto const& [ fd, action ]: action_table )
+            for ( auto const& [ inotify_fd, action ]: action_table )
             {
-                logger << "Adding registered fd " << fd << " to pollfds[]" << std::endl;
-                pollfds.emplace_back( fd, POLLIN, 0 );
+                logger << "Adding inotify_fd = fd " << inotify_fd << " to pollfds[]" << std::endl;
+                pollfds.emplace_back( inotify_fd, POLLIN, 0 );
             }
 
             logger << "Calling poll()" << std::endl;
