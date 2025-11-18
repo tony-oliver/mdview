@@ -69,6 +69,8 @@ FileWatcher::FileWatcher( std::ostream& logger )
     logger << "FileWatcher ctor done." << std::endl;
 }
 
+//----------------------------------------------------------------------------
+
 FileWatcher::~FileWatcher()
 {
     logger << "FileWatcher dtor entered..." << std::endl;
@@ -88,6 +90,8 @@ FileWatcher::~FileWatcher()
     logger << "FileWatcher dtor done." << std::endl;
 }
 
+//============================================================================
+
 void FileWatcher::watchFile( std::string const& filename, Action const& action )
 {
     std::lock_guard const locker( file_watchers_mutex );
@@ -106,6 +110,8 @@ void FileWatcher::watchFile( std::string const& filename, Action const& action )
         file_watchers[ filename ] = { wd, action };
     }
 }
+
+//----------------------------------------------------------------------------
 
 void FileWatcher::ignoreFile( std::string const& filename )
 {
@@ -129,6 +135,8 @@ void FileWatcher::ignoreFile( std::string const& filename )
     }
 }
 
+//----------------------------------------------------------------------------
+
 bool FileWatcher::isWatching( std::string const& filename )
 {
     std::lock_guard const locker( file_watchers_mutex );
@@ -137,6 +145,8 @@ bool FileWatcher::isWatching( std::string const& filename )
 
     return p != file_watchers.end();
 }
+
+//============================================================================
 
 void FileWatcher::handleINotification()
 {
@@ -165,6 +175,8 @@ void FileWatcher::handleINotification()
     executeActionForWD( inotifyEvent.wd );
 }
 
+//----------------------------------------------------------------------------
+
 void FileWatcher::executeActionForWD( int const event_wd )
 {
     std::lock_guard const locker( file_watchers_mutex );
@@ -191,3 +203,5 @@ void FileWatcher::executeActionForWD( int const event_wd )
         std::invoke( action );
     }
 }
+
+//============================================================================
