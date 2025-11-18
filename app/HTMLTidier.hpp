@@ -5,11 +5,10 @@
 #include "tidybuffio.h"
 
 #include <string>
-#include <ostream>
 
 class HTMLTidier
 {
-    TidyDoc tidyDoc;
+    TidyDoc tidy_doc;
 
     struct Buffer: TidyBuffer
     {
@@ -17,8 +16,8 @@ class HTMLTidier
         ~Buffer();
     };
 
-    Buffer output;
-    Buffer errbuf;
+    Buffer output_buffer;
+    Buffer diagnostics_buffer;
 
 public:
 
@@ -31,12 +30,14 @@ public:
 private:
 
     int setErrorBuffer( Buffer& buffer );
-    int setIntegerOption(  TidyOptionId optionID, int newValue );
-    bool setBooleanOption( TidyOptionId optionID, Bool newValue );
+    int setIntegerOption(  TidyOptionId option_id, int new_value );
+    bool setBooleanOption( TidyOptionId option_id, Bool new_value );
 
-    int ingestMarkdown( std::string const& string );
+    int ingestContent( std::string const& content );
     int cleanAndRepair();
     int saveToBuffer( Buffer& buffer );
+
+    std::string contentsOfBuffer( Buffer const& buffer ) const;
 };
 
 #endif // INCLUDED_HTML_TIDIER_HPP

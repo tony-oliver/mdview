@@ -1,13 +1,8 @@
 #include "HTMLTidier.hpp"
 
-#include <cstdlib>
-
-#include <iomanip>
-#include <ostream>
-
 HTMLTidier::Buffer::Buffer()
-: TidyBuffer{}
 {
+    tidyBufInit( this );
 }
 
 HTMLTidier::Buffer::~Buffer()
@@ -16,73 +11,72 @@ HTMLTidier::Buffer::~Buffer()
 }
 
 HTMLTidier::HTMLTidier()
-: tidyDoc{ tidyCreate() }
+: tidy_doc{ tidyCreate() }
 {
 }
 
 HTMLTidier::~HTMLTidier()
 {
-    tidyRelease( tidyDoc );
+    tidyRelease( tidy_doc );
 }
 
 int HTMLTidier::setErrorBuffer( Buffer& buffer )
 {
-    return tidySetErrorBuffer( tidyDoc, &buffer );
+    return tidySetErrorBuffer( tidy_doc, &buffer );
 }
 
-int HTMLTidier::setIntegerOption(  TidyOptionId const optionID, int const newValue )
+int HTMLTidier::setIntegerOption(  TidyOptionId const option_id, int const new_value )
 {
-    return tidyOptSetInt( tidyDoc, optionID, newValue );
+    return tidyOptSetInt( tidy_doc, option_id, new_value );
 }
 
-bool HTMLTidier::setBooleanOption( TidyOptionId const optionID, Bool const newValue )
+bool HTMLTidier::setBooleanOption( TidyOptionId const option_id, Bool const new_value )
 {
-    return tidyOptSetBool( tidyDoc, optionID, newValue );
+    return tidyOptSetBool( tidy_doc, option_id, new_value );
 }
 
-int HTMLTidier::ingestMarkdown( std::string const& string )
+int HTMLTidier::ingestContent( std::string const& content )
 {
-    return tidyParseString( tidyDoc, string.c_str() );
+    return tidyParseString( tidy_doc, content.c_str() );
 }
 
 int HTMLTidier::cleanAndRepair()
 {
-    return tidyCleanAndRepair( tidyDoc );
+    return tidyCleanAndRepair( tidy_doc );
 }
 
 int HTMLTidier::saveToBuffer( Buffer& buffer )
 {
-    return tidySaveBuffer( tidyDoc, &buffer );
+    return tidySaveBuffer( tidy_doc, &buffer );
 }
 
 std::string HTMLTidier::tidyupHTML( std::string const& html )
 {
-    std::string tidiedHtml;
-
-    setErrorBuffer( errbuf );                       // Capture diagnostics rather than displaying them
-
-    setBooleanOption( TidyMark, no );               // Don't add LibTidy-specific comments to HTML
-    setBooleanOption( TidyHtmlOut, yes );           // Convert to HTML
-    setBooleanOption( TidyForceOutput, yes );       // Even if there were errors
+    setBooleanOption( TidyMark, no );               // Don't add LibTidy-specific comments to output
+    setBooleanOption( TidyHtmlOut, yes );           // Convert to HTML ...
+    setBooleanOption( TidyForceOutput, yes );       // ... even if there were errors
     setIntegerOption( TidyIndentAttributes, yes );
     setIntegerOption( TidyIndentContent, yes );
     setIntegerOption( TidyIndentCdata, yes );
     setIntegerOption( TidyIndentSpaces, 2 );
     setIntegerOption( TidyWrapLen, 132 );
 
-    ingestMarkdown( html );                         // Parse the input into the document
+    setErrorBuffer( diagnostics_buffer );           // Capture diagnostics rather than displaying them
+    ingestContent( html );                          // Parse the input into the document
     cleanAndRepair();                               // Fix errors and re-format the document
-    saveToBuffer( output );                         // Pretty-print to the output buffer
-
-    auto const outstr = reinterpret_cast< char const* >( output.bp );
-    if ( outstr != nullptr ) tidiedHtml = outstr;
-    return tidiedHtml;
+    saveToBuffer( output_buffer );                  // Pretty-print to the output buffer
+    return contentsOfBuffer( output_buffer );
 }
 
 std::string HTMLTidier::getDiagnostics() const
 {
-    std::string diagnostics;
-    auto const errstr = reinterpret_cast< char const* >( errbuf.bp );
-    if ( errstr != nullptr ) diagnostics = errstr;
-    return diagnostics;
+    return contentsOfBuffer( diagnostics_buffer );
+}
+
+std::string HTMLTidier::contentsOfBuffer( Buffer const& buffer ) const
+{
+    std::string contents;
+    auto const data_pointer = reinterpret_cast< char const* >( buffer.bp );
+    if ( data_pointer != nullptr ) contents = data_pointer;
+    return contents;
 }

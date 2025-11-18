@@ -170,23 +170,24 @@ void FileWatcher::executeActionForWD( int const event_wd )
 {
     std::lock_guard const locker( file_watchers_mutex );
 
-    std::cout << "FileWatcher::executeActionForWD( int const event_wd = " << event_wd << ")" << std::endl;
-
     // Find the entry (in the file_watchers map) corrensponding to this wd.
-    auto const p = std::ranges::find_if( file_watchers, [ event_wd ]( auto const& map_entry )
+
+    auto const p = std::ranges::find_if( file_watchers, [ & ]( auto const& map_entry )
     {
         auto const& [ filename, wdaction ] = map_entry;
         auto const& [ wd, action ] = wdaction;
-        std::cout << "filename = " << std::quoted( filename ) << ", wd = " << wd << std::endl;
 
         return wd == event_wd;
     } );
 
-    // If we found it, extract and execute the registered action for that wd's file.
+    // If we found it, extract and execute the registered action for this wd's file.
+
     if ( p != file_watchers.end() )
     {
         auto const& [ filename, wdaction ] = *p;
         auto const& [ wd, action ] = wdaction;
+
+        std::cout << "filename = " << std::quoted( filename ) << std::endl;
 
         std::invoke( action );
     }
