@@ -1,6 +1,9 @@
 TARGET =							mdview
 LIBRARY =							lib${TARGET}.so
+
 BUILDDIR = 							build
+INSTALLDIR =						/usr/local
+
 TESTFILE =							README.md
 
 #===========================================================================#
@@ -11,7 +14,7 @@ TESTFILE =							README.md
 
 .PHONY:								all
 all: 								${BUILDDIR}
-									@cmake --build ${BUILDDIR} -j 32
+									@cmake --build ${BUILDDIR} -j
 
 #-----------------------------------------------------------------------------
 
@@ -35,7 +38,8 @@ stripped:							all
 
 .PHONY:								install
 install: 							stripped
-									@cmake --install ${BUILDDIR}
+									@sudo cmake --install ${BUILDDIR}
+	                               	@sudo ldconfig ${INSTALLDIR}/lib64
 
 #-----------------------------------------------------------------------------
 
