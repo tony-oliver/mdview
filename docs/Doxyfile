@@ -1,0 +1,12 @@
+PROJECT_NAME	    = mdview
+PROJECT_BRIEF       = "A GTKmm widget for rendering files with markdown content"
+
+INPUT               = @SOURCE_FILES@
+FILE_PATTERNS       = *.hpp
+RECURSIVE           = YES
+
+EXTRACT_ALL         = YES
+EXTRACT_STATIC      = YES
+
+SORT_MEMBER_DOCS    = NO
+GENERATE_LATEX      = NO

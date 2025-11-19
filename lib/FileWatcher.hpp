@@ -1,16 +1,12 @@
 #ifndef INCLUDED_MDVIEW_FILE_WATCHER_HPP
 #define INCLUDED_MDVIEW_FILE_WATCHER_HPP
 
-#include "Options.hpp"      // for Options{}
-#include "ThreadLoop.hpp"   // for awo::ThreadLoop{}
+#include "ThreadLoop.hpp"   // awo::ThreadLoop{}
 
-#include <map>          // std::map<>{}
-#include <array>        // std::array<>{}
-#include <atomic>       // std::atomic_bool
-#include <string>       // std::string{}
-#include <thread>       // std::thread{}
-#include <utility>      // std::pair<>{}
-#include <functional>   // std::function<>{}
+#include <map>              // std::map<>{}
+#include <string>           // std::string{}
+#include <utility>          // std::pair<>{}
+#include <functional>       // std::function<>{}
 
 class FileWatcher: public awo::ThreadLoop
 {

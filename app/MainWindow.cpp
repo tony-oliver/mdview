@@ -1,21 +1,20 @@
 #include "MainWindow.hpp"
 
-#include <gtkmm/version.h>              // GTKMM_*_VERSION
-#include <webkit/webkit.h>              // WEBKIT_*_VERSION, webkit_get_*_version()
-#include "tidy.h"                       // tidyLibraryVersion()
 #include <magic_enum/magic_enum.hpp>    // MAGIC_ENUM_VERSION_*
+#include <ncurses/ncurses.h>            // NCURSES_VERSION_*, ncurses_version()
+#include <webkit/webkit.h>              // WEBKIT_*_VERSION, webkit_get_*_version()
+#include <tidy.h>                       // tidyLibraryVersion()
 
 //============================================================================
 namespace { // unnamed
 //----------------------------------------------------------------------------
 
-constexpr std::string appname = "mdview";
-
-//----------------------------------------------------------------------------
-
 void log_library_versions_to( std::ostream& logger )
 {
-    static std::string const delimiter = "--------------------------------";
+    static std::string const delimiter
+    {
+        "----------------------------------------------"
+    };
 
     logger << delimiter << std::endl;
 
@@ -42,6 +41,14 @@ void log_library_versions_to( std::ostream& logger )
            << MAGIC_ENUM_VERSION_MINOR << "."
            << MAGIC_ENUM_VERSION_PATCH << std::endl;
 
+    logger << "NCurses header version = "
+           << NCURSES_VERSION_MAJOR << "."
+           << NCURSES_VERSION_MINOR << "."
+           << NCURSES_VERSION_PATCH << std::endl;
+
+    logger << "NCurses library version = "
+           << curses_version() << std::endl;
+
     logger << delimiter << std::endl;
 }
 
@@ -61,10 +68,15 @@ MainWindow::MainWindow( Options const& options )
     // Arrange to close this main window when any critical signal is encountered.
     signalHandler.registerAction( [ & ]{ hide(); } );
 
-    auto title = appname;
-    if ( !filename.empty() ) title += " - " + filename;
+    // Determine appropriate title of this window.
+    auto const prgname = g_get_prgname();
 
-    set_title( title );
+    if ( ( prgname != nullptr ) && !filename.empty() )
+    {
+        set_title( prgname + ( " - " + filename ) );
+     }
+
+    // Set window parameters, just prior to the application displaying it.
     set_child( markdownView );
     set_default_size( 1200, 800 );
 }

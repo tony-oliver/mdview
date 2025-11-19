@@ -6,7 +6,7 @@
 #include "SignalHandler.hpp"        // for awo::SignalHandler{}
 #include "ThreadSafeOStream.hpp"    // for ThreadSafeOStream{}
 
-#include <gtkmm/window.h>           // for Gtk::Window{}
+#include <gtkmm.h>                  // for Gtk::Window{}
 
 #include <string>
 
@@ -25,9 +25,7 @@ private:
     ThreadSafeOStream   makeThreadSafe;
     MarkdownView        markdownView;
 
-    void postProcess( std::string& html );
-
-    void displayMarkdownFile();
+    std::string determine_window_title() const;
 };
 
 #endif // INCLUDED_MDVIEW_MAIN_WINDOW_HPP

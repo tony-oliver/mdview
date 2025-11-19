@@ -63,10 +63,12 @@ So, eventually, the `md4c` package was settled on (which can easily be configure
 
 For tidying-up the generated HTML, `libtidy` gets the job, and for preparing enum-names for debug-output, `magic_enum` is used.
 
+The Terminfo library (installed as part of the ncurses package) is employed to colour-code different threads' verbose output.
+
 Under Fedora, installation of these packages is as simple as
 
 ```
-sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel magic_enum-devel
+sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel magic_enum-devel ncurses-devel
 ```
 
 (For Linux flavours other than Fedora, the appropriate package management tool should be used
@@ -77,13 +79,14 @@ non-`dnf` package managers (*e.g.* `apt`).
 
 Here are the versions of these external components that `mdview` was originally built against:
 
-| Component 			| Description 					| Original | Current
-| --------------------: | :---------------------------- | :------: | :-----: 
-| `gtkmm4.0-devel`	| GTKmm GUI framework			| 4.16.0   | 4.20.0
-| `webkit6.0-devel`	| HTML-rendering GTK+ widget	| 2.46.5   | 2.50.1
-| `md4c-devel`			| Markdown-to-HTML converter	| 0.5.1    | 0.5.2
-| `libtidy-devel`	 	| HTML fixer and reformatter	| 5.6.0    | 5.8.0
-| `magic_enum-devel` 	| C++ enum introspection		| 0.9.7    | 0.9.7
+| Component 			| Description 					| Original 	| Current
+| --------------------: | :---------------------------- | :-------: | :-----: 
+| `gtkmm4.0-devel`	| GTKmm GUI framework			| 4.16.0	| 4.20.0
+| `webkit6.0-devel`	| HTML-rendering GTK+ widget	| 2.46.5	| 2.50.1
+| `md4c-devel`			| Markdown-to-HTML converter	| 0.5.1		| 0.5.2
+| `libtidy-devel`	 	| HTML fixer and reformatter	| 5.6.0		| 5.8.0
+| `magic_enum-devel` 	| C++ enum introspection		| 0.9.7		| 0.9.7
+| `ncurses-devel`		| Character terminal control	| 6.4		| 6.5
 
 ## Building
 
@@ -147,12 +150,12 @@ make clean
 ### Quick build
 
 ```
-pushd /tmp
-sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel magic_enum-devel
+sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel magic_enum-devel ncurses-devel
+pushd /tmp >/dev/null
 git clone https://github.com/tony-oliver/mdview && cd mdview
 make install
 cd .. && rm -rf mdview
-popd
+popd >/dev/null
 ```
 
 (The notes in the `Packages` section, above, also apply here).

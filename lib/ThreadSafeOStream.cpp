@@ -1,8 +1,9 @@
 #include "ThreadSafeOStream.hpp"
 
-#include <unistd.h>
-#include <ncurses/term.h>   // tparm(), tigetstr()
-#include <ncurses/curses.h> // COLOR_GREEN, etc.
+#include <unistd.h>         // isatty()
+
+#include <ncurses/term.h>   // setupterm(), tparm(), tigetstr()
+#include <ncurses/curses.h> // COLOR_CYAN, etc.
 
 #include <iomanip>
 #include <iostream>
