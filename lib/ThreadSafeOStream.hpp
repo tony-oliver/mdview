@@ -31,8 +31,8 @@ private:
     // Logging and colour management (when enabled and permitted)
 
     bool const using_colours = false;
-    std::map< std::thread::id, std::size_t > colours_in_use;
-    std::size_t get_colour_no_for( std::thread::id thread_id );
+    std::map< std::thread::id, std::size_t > thread_colours;
+    std::size_t get_colour_for_thread( std::thread::id thread_id );
 
     // The thread-specific text buffers and helper function(s)
 

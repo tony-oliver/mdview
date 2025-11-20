@@ -1,13 +1,11 @@
 #include "ThreadSafeOStream.hpp"
 
-#include <unistd.h>         // isatty()
+#include <term.h>           // setupterm(), tparm(), tigetstr()
+#include <curses.h>         // COLOR_CYAN, etc.
 
-#include <ncurses/term.h>   // setupterm(), tparm(), tigetstr()
-#include <ncurses/curses.h> // COLOR_CYAN, etc.
+#include <unistd.h>         // isatty(), STDOUT_FILENO, STDERR_FILENO, gettid()
 
-#include <iomanip>
-#include <iostream>
-#include <iterator>
+#include <iostream>         // std::cout, std::cerr, std::clog
 
 //============================================================================
 namespace { // unnamed
@@ -26,6 +24,21 @@ bool is_attached_to_terminal( std::streambuf const* const stream_buffer )
     auto const fd = ( p == streambuf_map.end() )? -1: p->second;
     return isatty( fd );
 }
+
+//----------------------------------------------------------------------------
+
+constexpr int colours[]
+{
+    COLOR_CYAN,
+    COLOR_MAGENTA,
+    COLOR_GREEN,
+    COLOR_BLUE,
+    COLOR_YELLOW,
+    COLOR_RED,
+    COLOR_WHITE,
+};
+
+constexpr auto num_actual_colours = std::size( colours );
 
 //----------------------------------------------------------------------------
 } // close unnamed namespace
@@ -53,6 +66,8 @@ ThreadSafeOStream::ThreadSafeOStream( std::ostream& stream, bool const use_colou
     pubsetbuf( nullptr, 0 );
 }
 
+//----------------------------------------------------------------------------
+
 ThreadSafeOStream::~ThreadSafeOStream()
 {
     std::unique_lock const locker( buffers_mutex );
@@ -68,12 +83,16 @@ ThreadSafeOStream::~ThreadSafeOStream()
     host_ostream.rdbuf( underlying_streambuf );
 }
 
+//----------------------------------------------------------------------------
+
 auto ThreadSafeOStream::overflow( int_type const ch ) -> int_type
 {
     char const c = ch;
     xsputn( &c, 1 );
     return ch;
 }
+
+//----------------------------------------------------------------------------
 
 std::streamsize ThreadSafeOStream::xsputn( char const* const s, std::streamsize const count )
 {
@@ -95,14 +114,16 @@ std::streamsize ThreadSafeOStream::xsputn( char const* const s, std::streamsize 
     return count;
 }
 
+//----------------------------------------------------------------------------
+
 void ThreadSafeOStream::flushBuffer( std::thread::id const thread_id, std::string& buffer, std::streamsize const length )
 {
     if ( using_colours )
     {
-        auto const colour_no = get_colour_no_for( thread_id );
+        auto const colour = get_colour_for_thread( thread_id );
 
         std::string terminal_str;
-        terminal_str += tparm( tigetstr( "setaf" ), colour_no );
+        terminal_str += tparm( tigetstr( "setaf" ), colour );
         terminal_str += tparm( tigetstr( "bold" ) );
         underlying_streambuf->sputn( terminal_str.data(), terminal_str.size() );
     }
@@ -121,46 +142,32 @@ void ThreadSafeOStream::flushBuffer( std::thread::id const thread_id, std::strin
     buffer.erase( 0, length );
 }
 
-std::size_t ThreadSafeOStream::get_colour_no_for( std::thread::id const thread_id )
+//----------------------------------------------------------------------------
+
+std::size_t ThreadSafeOStream::get_colour_for_thread( std::thread::id const thread_id )
 {
-    int colour_no;
+    // If we've seen this thread before, return the colour we allocated.
+    auto const p = thread_colours.find( thread_id );
 
-    auto const p = colours_in_use.find( thread_id );
-
-    if ( p != colours_in_use.end() )
+    if ( p != thread_colours.end() )
     {
-        colour_no = p->second;
-    }
-    else
-    {
-        auto const num_colours_used = colours_in_use.size();
-
-        constexpr int colours[] =
-        {
-            COLOR_CYAN,
-            COLOR_MAGENTA,
-            COLOR_GREEN,
-            COLOR_BLUE,
-            COLOR_YELLOW,
-            COLOR_RED,
-            COLOR_WHITE,
-        };
-
-        constexpr auto max_num_colours = std::size( colours );
-
-        if ( num_colours_used < max_num_colours )
-        {
-            colour_no = colours[ num_colours_used ];
-        }
-        else
-        {
-            auto const hash = std::hash< std::thread::id >{}( thread_id );
-            auto const colour_index = hash % max_num_colours;
-            colour_no = colours[ colour_index ];
-        }
-
-        colours_in_use[ thread_id ] = colour_no;
+        return p->second;
     }
 
-    return colour_no;
+    // If insufficient threads have been allocated colours to have
+    // exhausted the colour-list, allocate the next one available.
+    auto colour_index = thread_colours.size();
+
+    if ( colour_index >= num_actual_colours )
+    {
+        // All the colours have been used at least once;
+        // "randomly" select one to be re-used for this thread.
+
+        auto const hash = std::hash< std::thread::id >{}( thread_id );
+        colour_index = hash % num_actual_colours;
+    }
+
+    return thread_colours[ thread_id ] = colours[ colour_index ];
 }
+
+//============================================================================
