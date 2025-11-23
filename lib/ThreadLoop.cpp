@@ -182,23 +182,26 @@ void ThreadLoop::pollingLoop()
             logger << "Adding stop_pipe[ ReadEnd ] = fd " << stop_pipe[ ReadEnd ] << " to pollfds[]" << std::endl;
             pollfds.emplace_back( stop_pipe[ ReadEnd ], POLLIN, 0 );
 
-            for ( auto const& [ inotify_fd, action ]: action_table )
+            for ( auto const& [ registered_fd, action ]: action_table )
             {
-                logger << "Adding inotify_fd = fd " << inotify_fd << " to pollfds[]" << std::endl;
-                pollfds.emplace_back( inotify_fd, POLLIN, 0 );
+                logger << "Adding registered fd " << registered_fd << " to pollfds[]" << std::endl;
+                pollfds.emplace_back( registered_fd, POLLIN, 0 );
             }
 
             logger << "Calling poll()" << std::endl;
+
             //-------------------------------------------------------------------------
             auto const poll_result = poll( pollfds.data(), pollfds.size(), no_timeout );
             //-------------------------------------------------------------------------
-            if ( stopping ) break;
+
             if ( checkForPosixError( poll_result, "poll()" ) ) continue; // loop again if we got an EINTR "error"
 
             // Now go through the pollfds to see which one(s) triggered the poll() to return
 
             for ( auto const& pollfd: pollfds )
             {
+                if ( stopping ) break;
+
                 if ( pollfd.revents != 0 )
                 {
                     logger << "pollfds[ fd = " << pollfd.fd << " ].revents == " << pollEventsToString( pollfd.revents ) << std::endl;
@@ -208,8 +211,6 @@ void ThreadLoop::pollingLoop()
                         logger << "POLLIN flag found in revents." << std::endl;
 
                         // This pollfd has read-events to be serviced.
-
-                        if ( pollfd.fd == stop_pipe[ ReadEnd ] ) break; // Halt this loop so the 'stopping' flag can be re-checked
 
                         executeActionForFD( pollfd.fd );
                     }

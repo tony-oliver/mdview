@@ -51,7 +51,7 @@ uninstall:							${BUILDDIR}/install_manifest.txt
 
 .PHONY:								run-test
 run-test: 							all
-									@${BUILDDIR}/app/${TARGET} -vdc ${TESTFILE}
+									@${BUILDDIR}/app/${TARGET} ${TESTFILE}
 
 #-----------------------------------------------------------------------------
 

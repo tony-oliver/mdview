@@ -22,7 +22,7 @@ struct NullStream: std::ostream
     }
 };
 
-NullStream nullstream;
+//NullStream nullstream;
 
 //----------------------------------------------------------------------------
 } // close unnamed namespace
@@ -30,5 +30,6 @@ NullStream nullstream;
 
 std::ostream& get_nullstream()
 {
+    static std::ostream nullstream( &nullbuffer );
     return nullstream;
 }
