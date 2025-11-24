@@ -3,6 +3,8 @@
 
 #include "WebView.hpp"
 #include "FileWatcher.hpp"
+#include "SearchDialog.hpp"
+#include "FindController.hpp"
 
 #include <string>       // std::string{}
 #include <ostream>      // std::ostream{}
@@ -12,7 +14,11 @@ class MarkdownView: public WebKit::WebView
     bool const dump_html;
     bool const show_diagnostics;
     std::string const& filename;
-    FileWatcher watcher;
+    FileWatcher file_watcher;
+    std::shared_ptr< Gtk::EventControllerKey > keypress_tracker;
+    WebKit::FindController find_controller;
+    SearchDialog search_dialog;
+
 
 public:
 
@@ -25,7 +31,14 @@ public:
 
 private:
 
-    void postProcess( std::string& html );
+    void post_process( std::string& html );
+
+    std::string determine_window_title() const;
+
+    bool on_key_pressed( unsigned keyval, unsigned keycode, Gdk::ModifierType state );
+
+    void launch_search_dialog();
+    void on_search();
 };
 
 #endif // INCLUDED_MARKDOWN_VIEW_HPP

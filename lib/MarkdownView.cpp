@@ -4,6 +4,7 @@
 
 #include <fstream>          // std::ifstream{}
 #include <istream>          // std::istream{}
+#include <iomanip>          // std::quoted<>()
 #include <ostream>          // std::ostream{}
 #include <iostream>         // std::cout, std::cerr
 #include <iterator>         // std::istreambuf_iterator<>{}
@@ -116,9 +117,62 @@ MarkdownView::MarkdownView( std::ostream& logger,
 : dump_html{ dump_html }
 , show_diagnostics{ show_diagnostics }
 , filename{ filename }
-, watcher( logger )
+, file_watcher( logger )
+, keypress_tracker{ Gtk::EventControllerKey::create() }
+, find_controller{ get_find_controller() }
 {
+    add_controller( keypress_tracker );
+    keypress_tracker->signal_key_pressed().connect( sigc::mem_fun( *this, &MarkdownView::on_key_pressed ), false );
+
+    search_dialog.set_search_action( [ & ]{ on_search(); } );
+
     render(); // first-time render
+}
+
+//----------------------------------------------------------------------------
+
+bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */, Gdk::ModifierType state )
+{
+    bool dealt_with_key = false;
+
+    switch ( keyval )
+    {
+    case GDK_KEY_f:
+
+        if ( state == Gdk::ModifierType::CONTROL_MASK )
+        {
+            launch_search_dialog();
+
+            dealt_with_key = true;
+        }
+
+        break;
+
+    case GDK_KEY_F3:
+
+        if ( state == Gdk::ModifierType::SHIFT_MASK )
+        {
+            find_controller.search_previous();
+        }
+        else
+        {
+            find_controller.search_next();
+        }
+
+        dealt_with_key = true;
+        break;
+
+    case GDK_KEY_Escape:
+
+        if ( state == Gdk::ModifierType::NO_MODIFIER_MASK )
+        {
+            find_controller.search_finish();
+        }
+
+        break;
+    }
+
+    return dealt_with_key;
 }
 
 //----------------------------------------------------------------------------
@@ -146,11 +200,11 @@ void MarkdownView::render()
         |*  Repeat this operation whenever the markdown file contents change.   *|
         \*----------------------------------------------------------------------*/
 
-        if ( !watcher.running() )
+        if ( !file_watcher.running() )
         {
-            watcher.watchFile( filename, [ & ]{ render(); } );
+            file_watcher.watchFile( filename, [ & ]{ render(); } );
 
-            watcher.start();
+            file_watcher.start();
         }
     }
     catch ( std::exception const& e )
@@ -171,7 +225,7 @@ void MarkdownView::render()
     |*  Add missing elements to the HTML and write out (if requested)   *|
     \*------------------------------------------------------------------*/
 
-    postProcess( html );
+    post_process( html );
 
     if ( dump_html )
     {
@@ -187,7 +241,7 @@ void MarkdownView::render()
 
 //----------------------------------------------------------------------------
 
-void MarkdownView::postProcess( std::string& html )
+void MarkdownView::post_process( std::string& html )
 {
     auto style = make_css();
     wrap_html( style, "style" );
@@ -207,6 +261,24 @@ void MarkdownView::postProcess( std::string& html )
             std::cerr << diagnostics << std::endl;
         }
     }
+}
+
+//----------------------------------------------------------------------------
+
+void MarkdownView::launch_search_dialog()
+{
+    search_dialog.set_visible( true );  // show the search-dialog
+    search_dialog.present();            // and bring it to the front
+}
+
+//----------------------------------------------------------------------------
+
+void MarkdownView::on_search()
+{
+    search_dialog.set_visible( false );
+
+    find_controller.search( search_dialog.get_search_text(),
+                            search_dialog.get_find_options() );
 }
 
 //============================================================================

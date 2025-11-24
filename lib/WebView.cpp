@@ -24,5 +24,12 @@ void WebView::load_html( std::string const& content, std::string const& base_uri
 }
 
 //----------------------------------------------------------------------------
+
+WebKitFindController* WebView::get_find_controller()
+{
+    return webkit_web_view_get_find_controller( WEBKIT_WEB_VIEW( gobj() ) );
+}
+
+//----------------------------------------------------------------------------
 } // close namespace WebKit
 //============================================================================

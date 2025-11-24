@@ -1,10 +1,5 @@
 #include "MDConverter.hpp"
 
-// DEBUG!!!
-#include <iomanip>
-#include <ostream>
-#include <iostream>
-
 //============================================================================
 namespace { // unnamed
 //----------------------------------------------------------------------------

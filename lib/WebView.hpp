@@ -22,6 +22,8 @@ public:
     void load_html( std::string const& content,
                     std::string const& base_uri = {} );
 
+    WebKitFindController* get_find_controller();
+
 private:
 
     operator WebKitWebView*();
