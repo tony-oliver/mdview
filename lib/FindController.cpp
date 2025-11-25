@@ -14,7 +14,7 @@ FindController::FindController( WebKitFindController* find_controller )
 //----------------------------------------------------------------------------
 
 void FindController::search( std::string const& search_text,
-                             std::uint32_t find_options,
+                             WebKitFindOptions const find_options,
                              unsigned const max_match_count )
 {
     webkit_find_controller_search( find_controller, search_text.c_str(),
@@ -37,9 +37,9 @@ std::string FindController::get_search_text() const
 
 //----------------------------------------------------------------------------
 
-std::uint32_t FindController::get_options() const
+WebKitFindOptions FindController::get_options() const
 {
-    return webkit_find_controller_get_options( find_controller );
+    return static_cast< WebKitFindOptions >( webkit_find_controller_get_options( find_controller ) );
 }
 
 //----------------------------------------------------------------------------

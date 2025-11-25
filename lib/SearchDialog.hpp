@@ -9,8 +9,10 @@
 #include <string>           // std::string{}
 #include <functional>       // std::function<>{}
 
-class SearchDialog: public Gtk::Window
+class SearchDialog: public Gtk::Dialog // Gtk::Window
 {
+    std::shared_ptr< Gtk::EventControllerLegacy > event_tracker;
+
     Gtk::Box find_box;
     Gtk::Label find_label;
     Gtk::Entry find_entry;
@@ -28,8 +30,6 @@ class SearchDialog: public Gtk::Window
 
     Gtk::Box layout_box;
 
-    std::shared_ptr< Gtk::EventControllerLegacy > event_tracker;
-
     using SearchAction = std::function< void() >;
     SearchAction search_action;
 
@@ -37,7 +37,7 @@ class SearchDialog: public Gtk::Window
 
 public:
 
-    SearchDialog();
+    explicit SearchDialog( Gtk::Window& parent );
 
     void set_search_action( SearchAction action );
 
@@ -51,8 +51,8 @@ private:
     void on_find_button_pressed();
     void on_close_button_pressed();
 
-    bool handle_event( std::shared_ptr< Gdk::Event const > const& event );
-    bool handle_keypress( unsigned const keyval, unsigned keycode, Gdk::ModifierType state );
+    bool on_raw_event( std::shared_ptr< Gdk::Event const > const& event );
+    bool on_key_event( unsigned const keyval, unsigned keycode, Gdk::ModifierType state );
 };
 
 #endif // INCLUDED_SEARCH_DIALOG_HPP

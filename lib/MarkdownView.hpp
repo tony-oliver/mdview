@@ -18,15 +18,17 @@ class MarkdownView: public WebKit::WebView
     std::shared_ptr< Gtk::EventControllerKey > keypress_tracker;
     WebKit::FindController find_controller;
     SearchDialog search_dialog;
-
+    Gtk::Window* parent = nullptr;
 
 public:
 
-    MarkdownView(   std::ostream& logger,
+    MarkdownView(   Gtk::Window& parent,
+                    std::ostream& logger,
                     std::string const& filename,
                     bool dump_html = false,
                     bool show_diagnostics = false );
 
+    void set_parent( Gtk::Window* window );
     void render();
 
 private:

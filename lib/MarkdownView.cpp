@@ -110,7 +110,8 @@ std::string make_css()
 } // close unnamed namespace
 //============================================================================
 
-MarkdownView::MarkdownView( std::ostream& logger,
+MarkdownView::MarkdownView( Gtk::Window& parent,
+                            std::ostream& logger,
                             std::string const& filename,
                             bool const dump_html,
                             bool const show_diagnostics )
@@ -120,6 +121,7 @@ MarkdownView::MarkdownView( std::ostream& logger,
 , file_watcher( logger )
 , keypress_tracker{ Gtk::EventControllerKey::create() }
 , find_controller{ get_find_controller() }
+, search_dialog( parent )
 {
     add_controller( keypress_tracker );
     keypress_tracker->signal_key_pressed().connect( sigc::mem_fun( *this, &MarkdownView::on_key_pressed ), false );

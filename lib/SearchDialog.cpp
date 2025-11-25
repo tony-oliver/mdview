@@ -6,10 +6,17 @@
 #include <cstdint>      // std::uint32_t
 #include <utility>      // std::to_underlying<>()
 
+// DEBUG!!!
+#include <cassert>
+#include <iomanip>
+#include <ostream>
+#include <iostream>
+
 //============================================================================
 
-SearchDialog::SearchDialog()
-: find_box(             Gtk::Orientation::HORIZONTAL, 5 )
+SearchDialog::SearchDialog( Gtk::Window& parent )
+: event_tracker(        Gtk::EventControllerLegacy::create() )
+, find_box(             Gtk::Orientation::HORIZONTAL, 5 )
 , find_label(           "Find:" )
 , option_box(           Gtk::Orientation::VERTICAL )
 , case_insensitive(     "Case-insensitive" )
@@ -21,10 +28,9 @@ SearchDialog::SearchDialog()
 , find_button(          "Find" )
 , close_button(         "Close" )
 , layout_box(           Gtk::Orientation::VERTICAL, 5 )
-, event_tracker(        Gtk::EventControllerLegacy::create() )
 {
     add_controller( event_tracker );
-    event_tracker ->signal_event().connect( sigc::mem_fun( *this, &SearchDialog::handle_event ), false );
+    event_tracker ->signal_event().connect( sigc::mem_fun( *this, &SearchDialog::on_raw_event ), false );
 
     find_entry.set_expand();
     find_entry.signal_changed().connect( sigc::mem_fun( *this, &SearchDialog::on_search_text_changed ) );
@@ -61,8 +67,10 @@ SearchDialog::SearchDialog()
 
     set_child( layout_box );
     set_title( "Search" );
+
+    set_transient_for( parent );
     set_hide_on_close();
-    set_modal();
+//    set_modal();
 }
 
 //----------------------------------------------------------------------------
@@ -160,16 +168,15 @@ void SearchDialog::on_close_button_pressed()
 
 //----------------------------------------------------------------------------
 
-bool SearchDialog::handle_event( std::shared_ptr< Gdk::Event const > const& event )
+bool SearchDialog::on_raw_event( std::shared_ptr< Gdk::Event const > const& event )
 {
     bool event_handled = false;
-    auto const event_type = event->get_event_type();
 
-    if ( event_type == Gdk::Event::Type::KEY_RELEASE )
+    if ( event->get_event_type() == Gdk::Event::Type::KEY_RELEASE )
     {
-        event_handled = handle_keypress( event->get_keyval(),
-                                        event->get_keycode(),
-                                        event->get_consumed_modifiers() );
+        event_handled = on_key_event( event->get_keyval(),
+                                      event->get_keycode(),
+                                      event->get_consumed_modifiers() );
     }
 
     return event_handled;
@@ -177,11 +184,11 @@ bool SearchDialog::handle_event( std::shared_ptr< Gdk::Event const > const& even
 
 //----------------------------------------------------------------------------
 
-bool SearchDialog::handle_keypress( unsigned const keyval,
-                                    unsigned /* const keycode */,
-                                    Gdk::ModifierType const state )
+bool SearchDialog::on_key_event( unsigned const keyval,
+                                 unsigned /* const keycode */,
+                                 Gdk::ModifierType const state )
 {
-    bool key_handled = false;
+    bool event_handled = false;
 
     if ( state == Gdk::ModifierType::NO_MODIFIER_MASK )
     {
@@ -195,18 +202,18 @@ bool SearchDialog::handle_keypress( unsigned const keyval,
                 find_button.activate();
             }
 
-            key_handled = true;
+            event_handled = true;
             break;
 
         case GDK_KEY_Escape:
 
             close_button.activate();
-            key_handled = true;
+            event_handled = true;
             break;
         }
     }
 
-    return key_handled;
+    return event_handled;
 }
 
 //============================================================================

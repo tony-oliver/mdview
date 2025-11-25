@@ -5,7 +5,6 @@
 
 #include <limits>       // std::numeric_limits{}
 #include <string>       // std::string{}
-#include <cstdint>      // std::uint32_t
 
 //============================================================================
 namespace WebKit {
@@ -22,15 +21,15 @@ public:
     FindController( WebKitFindController* find_controller );
 
     void count_matches( std::string const& search_text,
-                        std::uint32_t find_options,
+                        WebKitFindOptions find_options,
                         unsigned max_match_count = limitless_search );
 
     void search( std::string const& search_text,
-                 std::uint32_t find_options,
+                 WebKitFindOptions find_options,
                  unsigned max_match_count = limitless_search );
 
     std::string get_search_text() const;
-    std::uint32_t get_options() const;
+    WebKitFindOptions get_options() const;
     unsigned get_max_match_count() const;
 
     void search_next();

@@ -60,7 +60,7 @@ MainWindow::MainWindow( Options const& options )
 : logger{ options.get_logger() }
 , filename{ options.get_filename() }
 , makeThreadSafe( logger, options.get_use_colour() )
-, markdownView( logger, filename, options.get_dump_html(), options.get_show_diagnostics() )
+, markdownView( *this, logger, filename, options.get_dump_html(), options.get_show_diagnostics() )
 {
     // Print out versions of third-party components used.
     log_library_versions_to( logger );
