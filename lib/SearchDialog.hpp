@@ -17,12 +17,16 @@ class SearchDialog: public Gtk::Dialog // Gtk::Window
     Gtk::Label find_label;
     Gtk::Entry find_entry;
 
-    Gtk::Frame option_frame;
-    Gtk::Box option_box;
+    Gtk::Frame direction_frame;
+    Gtk::Box direction_box;
+    Gtk::CheckButton forward_button;
+    Gtk::CheckButton backward_button;
+
+    Gtk::Frame options_frame;
+    Gtk::Box options_box;
     Gtk::CheckButton case_insensitive;
     Gtk::CheckButton match_at_word_starts;
     Gtk::CheckButton capitals_in_words;
-    Gtk::CheckButton search_backwards;
     Gtk::CheckButton search_wraps_around;
 
     Gtk::Box button_box;

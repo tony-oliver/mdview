@@ -1,6 +1,7 @@
 #include "MarkdownView.hpp"
 #include "MDConverter.hpp"
 #include "HTMLTidier.hpp"
+#include "KeyMatch.hpp"
 
 #include <fstream>          // std::ifstream{}
 #include <istream>          // std::istream{}
@@ -51,7 +52,7 @@ std::string make_css()
         code
         {
             color: mediumblue;
-            // font-size: larger;
+            font-size: larger;
         }
 
         pre
@@ -133,48 +134,20 @@ MarkdownView::MarkdownView( Gtk::Window& parent,
 
 //----------------------------------------------------------------------------
 
-bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */, Gdk::ModifierType state )
+bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */, Gdk::ModifierType const state )
 {
-    bool dealt_with_key = false;
-
-    switch ( keyval )
+    static KeyMatch const key_matches[] =
     {
-    case GDK_KEY_f:
+        { GDK_KEY_f,        Gdk::ModifierType::CONTROL_MASK,        [ & ]{ launch_search_dialog();              } },
+        { GDK_KEY_F3,       Gdk::ModifierType::NO_MODIFIER_MASK,    [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_F3,       Gdk::ModifierType::SHIFT_MASK,          [ & ]{ find_controller.search_previous();   } },
+        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK,    [ & ]{ find_controller.search_finish();     } },
+        { GDK_KEY_Left,     Gdk::ModifierType::ALT_MASK,            [ & ]{ go_back();                           } },
+        { GDK_KEY_Right,    Gdk::ModifierType::ALT_MASK,            [ & ]{ go_forward();                        } },
+        {}
+    };
 
-        if ( state == Gdk::ModifierType::CONTROL_MASK )
-        {
-            launch_search_dialog();
-
-            dealt_with_key = true;
-        }
-
-        break;
-
-    case GDK_KEY_F3:
-
-        if ( state == Gdk::ModifierType::SHIFT_MASK )
-        {
-            find_controller.search_previous();
-        }
-        else
-        {
-            find_controller.search_next();
-        }
-
-        dealt_with_key = true;
-        break;
-
-    case GDK_KEY_Escape:
-
-        if ( state == Gdk::ModifierType::NO_MODIFIER_MASK )
-        {
-            find_controller.search_finish();
-        }
-
-        break;
-    }
-
-    return dealt_with_key;
+    return match_key( keyval, state, key_matches );
 }
 
 //----------------------------------------------------------------------------

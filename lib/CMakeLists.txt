@@ -11,6 +11,7 @@ pkg_check_modules(		LIB_MODULES REQUIRED
 
 add_library( 			mdview-lib SHARED
 			 			WebView.cpp
+			 			KeyMatch.cpp
 			 			HTMLTidier.cpp
 			 			NullStream.cpp
 			 			ThreadLoop.cpp

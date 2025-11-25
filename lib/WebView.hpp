@@ -22,6 +22,12 @@ public:
     void load_html( std::string const& content,
                     std::string const& base_uri = {} );
 
+    bool can_go_back();
+    bool can_go_forward();
+
+    void go_back();
+    void go_forward();
+
     WebKitFindController* get_find_controller();
 
 private:

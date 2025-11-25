@@ -16,7 +16,8 @@ It also watches for changes in the markdown file-contents and keeps the rendered
 
 ## Background
 
-Some few years ago, as `github` became immensely popular, I found that project sources (either `git` repositories or
+Some few years ago, as [github](https://github.com) became immensely popular, I found that project sources
+(either [git](https://git-scm.com) repositories or
 tarballs) carried a `README.md` file, instead of the traditional ASCII `README` file.
 
 It frustrated me that there was no standard tool to render and display such markdown files (apart from text editors,
@@ -24,11 +25,14 @@ clumsily showing the rendered version side-by-side with the marked-down source t
 
 Finally, I got around to developing such a tool: this program, `mdview`.
 
-This was an ideal hobby project on which to learn the features and limitations of `gtkmm-4`
-(having used only `gtkmm-3` on my previoius C++ GUI-based projects).
+This was an ideal hobby project on which to learn the features and limitations of [gtkmm-4](https://gtkmm.gnome.org)
+(having used only `gtkmm-3` on my previous C++ GUI-based projects).
 
-It also gave me a good look at how `inotify` monitors (and reports) changes to files, as well as
+It also gave me a good look at how [inotify](https://en.wikipedia.org/wiki/Inotify)
+monitors (and reports) changes to files, as well as
 how to make the displayed HTML use the visual styles adopted by GitHub and by markdown editors.
+
+UPDATE: I've now added a search facility, using the `find_controller` facilities in `WebKitWebView`.
 
 ## Packaging
 
@@ -36,21 +40,19 @@ This project is available from its own `git` [repository](https://github.com/ton
 
 It has been built and tested (so far) on the following platform(s):
 
-* Fedora 39 (built using `g++ v13`).
-* Fedora 41 (built using `g++ v14`).
-* Fedora 42 (built using `g++ v15`).
 * Fedora 43 (built using `g++ v15.2.1` and `clang++ v21.1.5`).
 
 ## Dependencies
 
 ### Compiler
 
-The default C++ compiler must be capable of supporting the C++20 standard, for `std::ranges` support,
-(through the options `-std=c++20 -pedantic`).
+The default C++ compiler must be capable of supporting the C++23 standard, for `std::ranges` and
+`std::to_underlying` support (through the options `-std=c++23 -pedantic`).
 
 ### Packages
 
-This program uses the `gtkmm-4.0` package for its windowing framework (which wraps the C-only `GTK4+` package into C++ classes). 
+This program uses the `gtkmm-4.0` package for its windowing framework
+(which wraps the C-only [GTK4+](https://docs.gtk.org/gtk4) package into C++ classes). 
 
 For an HTML-viewing widget within the `GTK4+` framework, we use the WebKit-GTK 6.0 bindings.
 
@@ -59,11 +61,13 @@ The original choice for the Markdown-to-HTML converter was to use the [cmark](ht
 Unfortunately, many markdown files are authored using certain *de facto* markdown extensions (mainly parts of Github Markdown, *e.g.*
 [tables](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables))
 that are not covered in Common Markdown.
-So, eventually, the `md4c` package was settled on (which can easily be configured to operate in Github Markdown mode).
+So, eventually, the [md4c](https://github.com/mity/md4c) package was settled on (which can easily be configured to operate in Github Markdown mode).
 
-For tidying-up the generated HTML, `libtidy` gets the job, and for preparing enum-names for debug-output, `magic_enum` is used.
+For tidying-up the generated HTML, [libtidy](https://www.html-tidy.org/developer) gets the job,
+and for preparing enum-names for debug-output, [magic_enum](https://github.com/Neargye/magic_enum) is used.
 
-The Terminfo library (installed as part of the ncurses package) is employed to colour-code different threads' verbose output.
+The Terminfo library (installed as part of the [ncurses](https://invisible-island.net/ncurses) package)
+is employed to colour-code different threads' verbose output.
 
 Under Fedora, installation of these packages is as simple as
 

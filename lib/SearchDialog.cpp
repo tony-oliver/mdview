@@ -1,4 +1,5 @@
 #include "SearchDialog.hpp"
+#include "KeyMatch.hpp"
 
 #include <magic_enum/magic_enum.hpp>
 #include <magic_enum/magic_enum_flags.hpp>
@@ -6,23 +7,21 @@
 #include <cstdint>      // std::uint32_t
 #include <utility>      // std::to_underlying<>()
 
-// DEBUG!!!
-#include <cassert>
-#include <iomanip>
-#include <ostream>
-#include <iostream>
-
 //============================================================================
 
 SearchDialog::SearchDialog( Gtk::Window& parent )
 : event_tracker(        Gtk::EventControllerLegacy::create() )
 , find_box(             Gtk::Orientation::HORIZONTAL, 5 )
 , find_label(           "Find:" )
-, option_box(           Gtk::Orientation::VERTICAL )
+, direction_frame(      "Direction:" )
+, direction_box(        Gtk::Orientation::HORIZONTAL, 5 )
+, forward_button(       "Forward" )
+, backward_button(      "Backward" )
+, options_frame(        "Options:" )
+, options_box(          Gtk::Orientation::VERTICAL )
 , case_insensitive(     "Case-insensitive" )
 , match_at_word_starts( "Match at word-starts" )
 , capitals_in_words(    "Words start at capitals within words" )
-, search_backwards(     "Search backwards" )
 , search_wraps_around(  "Wrap search" )
 , button_box(           Gtk::Orientation::HORIZONTAL, 5 )
 , find_button(          "Find" )
@@ -34,6 +33,9 @@ SearchDialog::SearchDialog( Gtk::Window& parent )
 
     find_entry.set_expand();
     find_entry.signal_changed().connect( sigc::mem_fun( *this, &SearchDialog::on_search_text_changed ) );
+
+    forward_button.set_active();
+    backward_button.set_group( forward_button );
 
     match_at_word_starts.signal_toggled().connect( sigc::mem_fun( *this, &SearchDialog::on_word_starts_toggled ) );
     capitals_in_words.set_sensitive( false );
@@ -49,13 +51,19 @@ SearchDialog::SearchDialog( Gtk::Window& parent )
     find_box.append( find_label );
     find_box.append( find_entry );
 
-    option_frame.set_child( option_box );
-    option_box.set_margin( 5 );
-    option_box.append( case_insensitive );
-    option_box.append( match_at_word_starts );
-    option_box.append( capitals_in_words );
-    option_box.append( search_backwards );
-    option_box.append( search_wraps_around );
+    direction_box.set_margin( 5 );
+    direction_box.append( forward_button );
+    direction_box.append( backward_button );
+    direction_frame.set_margin( 5 );
+    direction_frame.set_child( direction_box );
+
+    options_box.set_margin( 5 );
+    options_box.append( case_insensitive );
+    options_box.append( match_at_word_starts );
+    options_box.append( capitals_in_words );
+    options_box.append( search_wraps_around );
+    options_frame.set_margin( 5 );
+    options_frame.set_child( options_box );
 
     button_box.set_margin( 5 );
     button_box.append( find_button );
@@ -63,7 +71,8 @@ SearchDialog::SearchDialog( Gtk::Window& parent )
 
     layout_box.set_margin( 5 );
     layout_box.append( find_box );
-    layout_box.append( option_frame ); //option_box );
+    layout_box.append( direction_frame );
+    layout_box.append( options_frame );
     layout_box.append( button_box );
 
     set_child( layout_box );
@@ -109,7 +118,7 @@ WebKitFindOptions SearchDialog::get_find_options() const
         }
     }
 
-    if ( search_backwards.get_active() )
+    if ( backward_button.get_active() )
     {
         find_options |= WEBKIT_FIND_OPTIONS_BACKWARDS;
     }
@@ -189,32 +198,15 @@ bool SearchDialog::on_key_event( unsigned const keyval,
                                  unsigned /* const keycode */,
                                  Gdk::ModifierType const state )
 {
-    bool event_handled = false;
-
-    if ( state == Gdk::ModifierType::NO_MODIFIER_MASK )
+    static KeyMatch const key_matches[] =
     {
-        switch ( keyval )
-        {
-        case GDK_KEY_Return:
-        case GDK_KEY_KP_Enter:
+        { GDK_KEY_Return,   Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ if ( find_button.is_sensitive() ) find_button.activate(); } },
+        { GDK_KEY_KP_Enter, Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ if ( find_button.is_sensitive() ) find_button.activate(); } },
+        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ close_button.activate(); } },
+        {}
+    };
 
-            if ( find_button.is_sensitive() )
-            {
-                find_button.activate();
-            }
-
-            event_handled = true;
-            break;
-
-        case GDK_KEY_Escape:
-
-            close_button.activate();
-            event_handled = true;
-            break;
-        }
-    }
-
-    return event_handled;
+    return match_key( keyval, state, key_matches );
 }
 
 //============================================================================
