@@ -49,6 +49,7 @@ SearchDialog::SearchDialog( Gtk::Window& parent )
     find_box.append( find_label );
     find_box.append( find_entry );
 
+    option_frame.set_child( option_box );
     option_box.set_margin( 5 );
     option_box.append( case_insensitive );
     option_box.append( match_at_word_starts );
@@ -62,7 +63,7 @@ SearchDialog::SearchDialog( Gtk::Window& parent )
 
     layout_box.set_margin( 5 );
     layout_box.append( find_box );
-    layout_box.append( option_box );
+    layout_box.append( option_frame ); //option_box );
     layout_box.append( button_box );
 
     set_child( layout_box );

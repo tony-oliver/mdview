@@ -17,6 +17,7 @@ class SearchDialog: public Gtk::Dialog // Gtk::Window
     Gtk::Label find_label;
     Gtk::Entry find_entry;
 
+    Gtk::Frame option_frame;
     Gtk::Box option_box;
     Gtk::CheckButton case_insensitive;
     Gtk::CheckButton match_at_word_starts;
