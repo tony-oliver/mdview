@@ -1,6 +1,8 @@
 #ifndef INCLUDED_SEARCH_DIALOG_HPP
 #define INCLUDED_SEARCH_DIALOG_HPP
 
+#include "SuperCheckButton.hpp"
+
 #include <gtkmm.h>          // Gtk::*
 
 #include <webkit/webkit.h>  // WebKitFindOptions
@@ -19,15 +21,15 @@ class SearchDialog: public Gtk::Dialog // Gtk::Window
 
     Gtk::Frame direction_frame;
     Gtk::Box direction_box;
-    Gtk::CheckButton forward_button;
-    Gtk::CheckButton backward_button;
+    SuperCheckButton forward_button;
+    SuperCheckButton backward_button;
 
     Gtk::Frame options_frame;
     Gtk::Box options_box;
-    Gtk::CheckButton case_insensitive;
-    Gtk::CheckButton match_at_word_starts;
-    Gtk::CheckButton capitals_in_words;
-    Gtk::CheckButton search_wraps_around;
+    SuperCheckButton case_insensitive;
+    SuperCheckButton match_at_word_starts;
+    SuperCheckButton capitals_in_words;
+    SuperCheckButton search_wraps_around;
 
     Gtk::Box button_box;
     Gtk::Button find_button;
