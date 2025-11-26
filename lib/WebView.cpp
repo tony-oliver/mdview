@@ -1,10 +1,5 @@
 #include "WebView.hpp"
 
-// DEBUG!!!
-#include <iomanip>
-#include <ostream>
-#include <iostream>
-
 //============================================================================
 namespace WebKit {
 //----------------------------------------------------------------------------
@@ -32,22 +27,14 @@ void WebView::load_html( std::string const& content, std::string const& base_uri
 
 bool WebView::can_go_back()
 {
-    auto const ok = webkit_web_view_can_go_back( *this );
-
-    std::clog << "can_go_back = " << std::boolalpha << ok << std::endl;
-
-    return ok;
+    return webkit_web_view_can_go_back( *this );
 }
 
 //----------------------------------------------------------------------------
 
 bool WebView::can_go_forward()
 {
-    auto const ok = webkit_web_view_can_go_forward( *this );
-
-    std::clog << "can_go_forward = " << std::boolalpha << ok << std::endl;
-
-    return ok;
+    return webkit_web_view_can_go_forward( *this );
 }
 
 //----------------------------------------------------------------------------
