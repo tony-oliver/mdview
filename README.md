@@ -32,7 +32,8 @@ It also gave me a good look at how [inotify](https://en.wikipedia.org/wiki/Inoti
 monitors (and reports) changes to files, as well as
 how to make the displayed HTML use the visual styles adopted by GitHub and by markdown editors.
 
-UPDATE: I've now added a search facility, using the `find_controller` facilities in `WebKitWebView`.
+UPDATE: I've now added a search facility, using the `find_controller` facilities in `WebKitWebView`
+and some fancy keypress-handling.
 
 ## Packaging
 

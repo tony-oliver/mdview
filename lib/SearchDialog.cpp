@@ -5,7 +5,6 @@
 #include <magic_enum/magic_enum_flags.hpp>
 
 #include <cstdint>      // std::uint32_t
-#include <utility>      // std::to_underlying<>()
 
 //============================================================================
 

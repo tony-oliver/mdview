@@ -3,8 +3,10 @@
 #include <magic_enum/magic_enum.hpp>
 #include <magic_enum/magic_enum_flags.hpp>
 
-#include <ostream>
-#include <iostream>
+#include <map>          // std::map<>{}
+#include <ostream>      // std::to_underlying
+#include <utility>      // std::ostream{}, std::endl()
+#include <iostream>     // std::clog
 
 //============================================================================
 namespace { // unnamed
@@ -12,16 +14,15 @@ namespace { // unnamed
 
 std::string keyvalName( unsigned const keyval )
 {
-    static std::map< unsigned, std::string > const keyvalNames
+    static std::map< unsigned, std::string > const keyval_names
     {
         #define X( keyval, keyname ) { keyval, keyname },
         #include "gdk-keynames.x-macros"
         #undef X
     };
 
-    auto const p = keyvalNames.find( keyval );
-    if ( p == keyvalNames.cend() ) return {};
-
+    auto const p = keyval_names.find( keyval );
+    if ( p == keyval_names.cend() ) return {};
     return p->second;
 }
 
@@ -30,15 +31,8 @@ std::string keyvalName( unsigned const keyval )
 std::string modifierName( Gdk::ModifierType const modifier )
 {
     auto name = magic_enum::enum_flags_name( modifier );
-
-    if ( name.empty() )
-    {
-        name = magic_enum::enum_name( modifier );
-    }
-
-    std::string const result( name.cbegin(), name.cend() );
-
-    return result;
+    if ( name.empty() ) name = magic_enum::enum_name( modifier );
+    return std::string( name.cbegin(), name.cend() );
 }
 
 //----------------------------------------------------------------------------
@@ -84,7 +78,6 @@ bool match_key( std::string const& prefix,
         if ( key_found )
         {
             match->action();
-
             break;
         }
     }
