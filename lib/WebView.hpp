@@ -33,6 +33,11 @@ public:
 private:
 
     operator WebKitWebView*();
+
+    std::string root_html;
+    std::string root_uri;
+
+    void display_root_document();
 };
 
 //----------------------------------------------------------------------------

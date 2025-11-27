@@ -20,7 +20,10 @@ WebView::operator WebKitWebView*()
 
 void WebView::load_html( std::string const& content, std::string const& base_uri )
 {
-    webkit_web_view_load_html( *this, content.c_str(), base_uri.c_str() );
+    root_html = content;
+    root_uri = base_uri;
+
+    display_root_document();
 }
 
 //----------------------------------------------------------------------------
@@ -45,6 +48,17 @@ void WebView::go_back()
     {
         webkit_web_view_go_back( *this );
     }
+    else
+    {
+        display_root_document();
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void WebView::display_root_document()
+{
+    webkit_web_view_load_html( *this, root_html.c_str(), root_uri.c_str() );
 }
 
 //----------------------------------------------------------------------------
