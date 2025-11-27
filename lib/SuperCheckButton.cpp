@@ -40,11 +40,8 @@ bool SuperCheckButton::on_key_pressed( unsigned const keyval,
 
 void SuperCheckButton::do_enter_action()
 {
-    std::cout << "do_enter_action()" << std::endl;
-
     if ( enter_action )
     {
-        std::cout << "non-empty enter_action" << std::endl;
         enter_action();
     }
 }

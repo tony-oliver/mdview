@@ -149,7 +149,7 @@ bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */
         {}
     };
 
-    return match_key( "MarkdownView::on_key_pressed(()", keyval, state, key_matches );
+    return match_key( "MarkdownView::on_key_pressed()", keyval, state, key_matches );
 }
 
 //----------------------------------------------------------------------------

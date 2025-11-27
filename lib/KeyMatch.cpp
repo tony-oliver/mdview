@@ -64,9 +64,16 @@ void announce_key( std::string const& prefix, unsigned const keyval, Gdk::Modifi
 } // close unnamed namespace
 //============================================================================
 
-bool match_key( std::string const& prefix, unsigned const keyval, Gdk::ModifierType const state, KeyMatch const* const matches )
+bool match_key( std::string const& prefix,
+                unsigned const keyval,
+                Gdk::ModifierType const state,
+                KeyMatch const* const matches,
+                bool const verbose )
 {
-    announce_key( prefix, keyval, state );
+    if ( verbose )
+    {
+        announce_key( prefix, keyval, state );
+    }
 
     bool key_found = false;
 
