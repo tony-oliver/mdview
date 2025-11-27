@@ -136,6 +136,8 @@ MarkdownView::MarkdownView( Gtk::Window& parent,
 
 bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */, Gdk::ModifierType const state )
 {
+    // Making this table static relies on there only ever being one MarkdownView instance.
+
     static KeyMatch const key_matches[] =
     {
         { GDK_KEY_f,        Gdk::ModifierType::CONTROL_MASK,        [ & ]{ launch_search_dialog();              } },
@@ -147,7 +149,7 @@ bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */
         {}
     };
 
-    return match_key( keyval, state, key_matches );
+    return match_key( "MarkdownView::on_key_pressed(()", keyval, state, key_matches );
 }
 
 //----------------------------------------------------------------------------

@@ -15,19 +15,21 @@ SearchDialog::SearchDialog( Gtk::Window& parent )
 , find_label(           "Find:" )
 , direction_frame(      "Direction:" )
 , direction_box(        Gtk::Orientation::HORIZONTAL, 5 )
-, forward_button(       "Forward" )
-, backward_button(      "Backward" )
+, forward_button(       "Forward",                              [ & ]{ on_find_button_pressed(); } )
+, backward_button(      "Backward",                             [ & ]{ on_find_button_pressed(); } )
 , options_frame(        "Options:" )
 , options_box(          Gtk::Orientation::VERTICAL )
-, case_insensitive(     "Case-insensitive" )
-, match_at_word_starts( "Match at word-starts" )
-, capitals_in_words(    "Words start at capitals within words" )
-, search_wraps_around(  "Wrap search" )
+, case_insensitive(     "Case-insensitive",                     [ & ]{ on_find_button_pressed(); } )
+, match_at_word_starts( "Match at word-starts",                 [ & ]{ on_find_button_pressed(); } )
+, capitals_in_words(    "Words start at capitals within words", [ & ]{ on_find_button_pressed(); } )
+, search_wraps_around(  "Wrap search",                          [ & ]{ on_find_button_pressed(); } )
 , button_box(           Gtk::Orientation::HORIZONTAL, 5 )
 , find_button(          "Find" )
 , close_button(         "Close" )
 , layout_box(           Gtk::Orientation::VERTICAL, 5 )
 {
+    // We have to use the raw event handler (rather than a key-tracker handler) in order that
+    // the search-text entry-box will still be escapable on detection of the Return key.
     add_controller( event_tracker );
     event_tracker ->signal_event().connect( sigc::mem_fun( *this, &SearchDialog::on_raw_event ), false );
 
@@ -163,9 +165,12 @@ void SearchDialog::on_word_starts_toggled()
 
 void SearchDialog::on_find_button_pressed()
 {
-    if ( search_action )
+    if ( find_button.is_sensitive() )
     {
-        std::invoke( search_action );
+        if ( search_action )
+        {
+            std::invoke( search_action );
+        }
     }
 }
 
@@ -173,7 +178,10 @@ void SearchDialog::on_find_button_pressed()
 
 void SearchDialog::on_close_button_pressed()
 {
-    set_visible( false );
+    if ( close_button.is_sensitive() )
+    {
+        set_visible( false );
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -184,9 +192,9 @@ bool SearchDialog::on_raw_event( std::shared_ptr< Gdk::Event const > const& even
 
     if ( event->get_event_type() == Gdk::Event::Type::KEY_RELEASE )
     {
-        event_handled = on_key_event( event->get_keyval(),
-                                      event->get_keycode(),
-                                      event->get_consumed_modifiers() );
+        event_handled = on_key_released( event->get_keyval(),
+                                         event->get_keycode(),
+                                         event->get_consumed_modifiers() );
     }
 
     return event_handled;
@@ -194,19 +202,41 @@ bool SearchDialog::on_raw_event( std::shared_ptr< Gdk::Event const > const& even
 
 //----------------------------------------------------------------------------
 
-bool SearchDialog::on_key_event( unsigned const keyval,
-                                 unsigned /* const keycode */,
-                                 Gdk::ModifierType const state )
+bool SearchDialog::on_key_released( unsigned const keyval,
+                                    unsigned /* const keycode */,
+                                    Gdk::ModifierType const state )
 {
+    // Making this table static relies on there only ever being one SearchDialog instance.
+
     static KeyMatch const key_matches[] =
     {
-        { GDK_KEY_Return,   Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ if ( find_button.is_sensitive() ) find_button.activate(); } },
-        { GDK_KEY_KP_Enter, Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ if ( find_button.is_sensitive() ) find_button.activate(); } },
-        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ close_button.activate(); } },
+        { GDK_KEY_Return,   Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ push_find_button(); } },
+        { GDK_KEY_KP_Enter, Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ push_find_button(); } },
+        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK, [ & ]{ push_close_button(); } },
         {}
     };
 
-    return match_key( keyval, state, key_matches );
+    return match_key( "SearchDialog::on_key_released()", keyval, state, key_matches );
+}
+
+//----------------------------------------------------------------------------
+
+void SearchDialog::push_find_button()
+{
+    if ( find_button.is_sensitive() )
+    {
+        find_button.activate();
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void SearchDialog::push_close_button()
+{
+    if ( close_button.is_sensitive() )
+    {
+        close_button.activate();
+    }
 }
 
 //============================================================================

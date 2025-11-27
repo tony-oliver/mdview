@@ -3,6 +3,7 @@
 
 #include <gtkmm.h>
 
+#include <string>
 #include <functional>
 
 struct KeyMatch
@@ -12,6 +13,6 @@ struct KeyMatch
     std::function< void() > action;
 };
 
-bool match_key( unsigned keyval, Gdk::ModifierType state, KeyMatch const* matches );
+bool match_key( std::string const& prefix, unsigned keyval, Gdk::ModifierType state, KeyMatch const* matches );
 
 #endif // INCLUDED_KEY_MATCH_HPP

@@ -21,6 +21,7 @@ add_library( 			mdview-lib SHARED
 			 			MarkdownView.cpp
 			 			SearchDialog.cpp
 			 			FindController.cpp
+			 			SuperCheckButton.cpp
 			 			ThreadSafeOStream.cpp
              			)
 

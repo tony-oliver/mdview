@@ -7,7 +7,6 @@
 
 #include <webkit/webkit.h>  // WebKitFindOptions
 
-#include <memory>           // std::shared_ptr<>}{
 #include <string>           // std::string{}
 #include <functional>       // std::function<>{}
 
@@ -59,7 +58,10 @@ private:
     void on_close_button_pressed();
 
     bool on_raw_event( std::shared_ptr< Gdk::Event const > const& event );
-    bool on_key_event( unsigned const keyval, unsigned keycode, Gdk::ModifierType state );
+    bool on_key_released( unsigned const keyval, unsigned keycode, Gdk::ModifierType state );
+
+    void push_find_button();
+    void push_close_button();
 };
 
 #endif // INCLUDED_SEARCH_DIALOG_HPP
