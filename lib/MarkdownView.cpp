@@ -140,12 +140,16 @@ bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */
 
     static KeyMatch const key_matches[] =
     {
-        { GDK_KEY_f,        Gdk::ModifierType::CONTROL_MASK,        [ & ]{ launch_search_dialog();              } },
-        { GDK_KEY_F3,       Gdk::ModifierType::NO_MODIFIER_MASK,    [ & ]{ find_controller.search_next();       } },
-        { GDK_KEY_F3,       Gdk::ModifierType::SHIFT_MASK,          [ & ]{ find_controller.search_previous();   } },
-        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK,    [ & ]{ find_controller.search_finish();     } },
-        { GDK_KEY_Left,     Gdk::ModifierType::ALT_MASK,            [ & ]{ go_back();                           } },
-        { GDK_KEY_Right,    Gdk::ModifierType::ALT_MASK,            [ & ]{ go_forward();                        } },
+        { GDK_KEY_f,        Gdk::ModifierType::CONTROL_MASK,                                [ & ]{ launch_search_dialog();              } },
+        { GDK_KEY_F3,       Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_F3,       Gdk::ModifierType::SHIFT_MASK,                                  [ & ]{ find_controller.search_previous();   } },
+        { GDK_KEY_n,        Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_N,        Gdk::ModifierType::SHIFT_MASK,                                  [ & ]{ find_controller.search_previous();   } },
+        { GDK_KEY_n,        Gdk::ModifierType::ALT_MASK,                                    [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_N,        Gdk::ModifierType::ALT_MASK | Gdk::ModifierType::SHIFT_MASK,    [ & ]{ find_controller.search_previous();   } },
+        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_finish();     } },
+        { GDK_KEY_Left,     Gdk::ModifierType::ALT_MASK,                                    [ & ]{ go_back();                           } },
+        { GDK_KEY_Right,    Gdk::ModifierType::ALT_MASK,                                    [ & ]{ go_forward();                        } },
         {}
     };
 
