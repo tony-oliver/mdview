@@ -33,14 +33,16 @@ public:
 
 private:
 
-    void post_process( std::string& html );
-
     std::string determine_window_title() const;
 
-    bool on_key_pressed( unsigned keyval, unsigned keycode, Gdk::ModifierType state );
+    void post_process_html( std::string& html );
 
     void launch_search_dialog();
     void on_search();
+
+    bool on_key_pressed( unsigned keyval, unsigned keycode, Gdk::ModifierType state );
+
+    virtual void on_load_changed( WebKitLoadEvent load_event ) override;
 };
 
 #endif // INCLUDED_MARKDOWN_VIEW_HPP

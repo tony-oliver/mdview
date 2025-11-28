@@ -134,30 +134,6 @@ MarkdownView::MarkdownView( Gtk::Window& parent,
 
 //----------------------------------------------------------------------------
 
-bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */, Gdk::ModifierType const state )
-{
-    // Making this table static relies on there only ever being one MarkdownView instance.
-
-    static KeyMatch const key_matches[] =
-    {
-        { GDK_KEY_f,        Gdk::ModifierType::CONTROL_MASK,                                [ & ]{ launch_search_dialog();              } },
-        { GDK_KEY_F3,       Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_next();       } },
-        { GDK_KEY_F3,       Gdk::ModifierType::SHIFT_MASK,                                  [ & ]{ find_controller.search_previous();   } },
-        { GDK_KEY_n,        Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_next();       } },
-        { GDK_KEY_N,        Gdk::ModifierType::SHIFT_MASK,                                  [ & ]{ find_controller.search_previous();   } },
-        { GDK_KEY_n,        Gdk::ModifierType::ALT_MASK,                                    [ & ]{ find_controller.search_next();       } },
-        { GDK_KEY_N,        Gdk::ModifierType::ALT_MASK | Gdk::ModifierType::SHIFT_MASK,    [ & ]{ find_controller.search_previous();   } },
-        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_finish();     } },
-        { GDK_KEY_Left,     Gdk::ModifierType::ALT_MASK,                                    [ & ]{ go_back();                           } },
-        { GDK_KEY_Right,    Gdk::ModifierType::ALT_MASK,                                    [ & ]{ go_forward();                        } },
-        {}
-    };
-
-    return match_key( "MarkdownView::on_key_pressed()", keyval, state, key_matches );
-}
-
-//----------------------------------------------------------------------------
-
 void MarkdownView::render()
 {
     std::string html;
@@ -206,7 +182,7 @@ void MarkdownView::render()
     |*  Add missing elements to the HTML and write out (if requested)   *|
     \*------------------------------------------------------------------*/
 
-    post_process( html );
+    post_process_html( html );
 
     if ( dump_html )
     {
@@ -222,7 +198,7 @@ void MarkdownView::render()
 
 //----------------------------------------------------------------------------
 
-void MarkdownView::post_process( std::string& html )
+void MarkdownView::post_process_html( std::string& html )
 {
     auto style = make_css();
     wrap_html( style, "style" );
@@ -249,7 +225,6 @@ void MarkdownView::post_process( std::string& html )
 void MarkdownView::launch_search_dialog()
 {
     search_dialog.set_visible( true );  // show the search-dialog
-    search_dialog.present();            // and bring it to the front
 }
 
 //----------------------------------------------------------------------------
@@ -260,6 +235,38 @@ void MarkdownView::on_search()
 
     find_controller.search( search_dialog.get_search_text(),
                             search_dialog.get_find_options() );
+}
+
+//----------------------------------------------------------------------------
+
+bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */, Gdk::ModifierType const state )
+{
+    // Making this table static relies on there only ever being one MarkdownView instance.
+
+    static KeyMatch const key_matches[] =
+    {
+        { GDK_KEY_f,        Gdk::ModifierType::CONTROL_MASK,                                [ & ]{ launch_search_dialog();              } },
+        { GDK_KEY_F3,       Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_F3,       Gdk::ModifierType::SHIFT_MASK,                                  [ & ]{ find_controller.search_previous();   } },
+        { GDK_KEY_n,        Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_N,        Gdk::ModifierType::SHIFT_MASK,                                  [ & ]{ find_controller.search_previous();   } },
+        { GDK_KEY_n,        Gdk::ModifierType::ALT_MASK,                                    [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_N,        Gdk::ModifierType::ALT_MASK | Gdk::ModifierType::SHIFT_MASK,    [ & ]{ find_controller.search_previous();   } },
+        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_finish();     } },
+        { GDK_KEY_Left,     Gdk::ModifierType::ALT_MASK,                                    [ & ]{ go_back();                           } },
+        { GDK_KEY_Right,    Gdk::ModifierType::ALT_MASK,                                    [ & ]{ go_forward();                        } },
+        {}
+    };
+
+    return match_key( "MarkdownView::on_key_pressed()", keyval, state, key_matches );
+}
+
+//----------------------------------------------------------------------------
+
+void MarkdownView::on_load_changed( WebKitLoadEvent /* load_event */ )
+{
+    // By overriding this virtual function, we prevent the base class
+    // (WebKit::WebView) from logging the load-changed event to std::clog.
 }
 
 //============================================================================

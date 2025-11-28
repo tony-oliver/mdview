@@ -19,8 +19,7 @@ public:
 
     // Functionality wrapping webkit_web_view_XXX() functions:
 
-    void load_html( std::string const& content,
-                    std::string const& base_uri = {} );
+    void load_html( std::string const& content );
 
     bool can_go_back();
     bool can_go_forward();
@@ -28,16 +27,25 @@ public:
     void go_back();
     void go_forward();
 
+    bool is_loading();
+    std::string get_uri();
     WebKitFindController* get_find_controller();
+
+    virtual void on_load_changed( WebKitLoadEvent load_event );
 
 private:
 
     operator WebKitWebView*();
 
     std::string root_html;
-    std::string root_uri;
 
     void display_root_document();
+
+    // signal handlers:
+
+    static void load_changed_handler( WebKitWebView* self,
+                                      WebKitLoadEvent load_event,
+                                      void* user_data );
 };
 
 //----------------------------------------------------------------------------
