@@ -21,7 +21,7 @@ all: 								${BUILDDIR}
 .PHONY:								verbose
  verbose:							${BUILDDIR}
 									@cmake --build ${BUILDDIR} -v
-
+									
 #-----------------------------------------------------------------------------
 
 ${BUILDDIR}:						# no dependencies
@@ -31,8 +31,8 @@ ${BUILDDIR}:						# no dependencies
 
 .PHONY:								stripped
 stripped:							all
-									@strip -s ${BUILDDIR}/app/${TARGET}
-									@strip -s ${BUILDDIR}/lib/${LIBRARY}
+									@strip -sv ${BUILDDIR}/app/${TARGET}
+									@strip -sv ${BUILDDIR}/lib/${LIBRARY}
 
 #-----------------------------------------------------------------------------
 

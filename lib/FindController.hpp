@@ -34,21 +34,7 @@ public:
 
     void search_next();
     void search_previous();
-
     void search_finish();
-
-    // Signal handlers
-
-    static void counted_matches(        WebKitFindController* self,
-                                        unsigned match_count,
-                                        void* user_data );
-
-    static void found_text(             WebKitFindController* self,
-                                        unsigned match_count,
-                                        void* user_data );
-
-    static void failed_to_find_text(    WebKitFindController* self,
-                                        void* user_data );
 };
 
 //----------------------------------------------------------------------------

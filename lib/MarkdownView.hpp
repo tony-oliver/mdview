@@ -16,6 +16,7 @@ class MarkdownView: public WebKit::WebView
     std::string const& filename;
     FileWatcher file_watcher;
     std::shared_ptr< Gtk::EventControllerKey > keypress_tracker;
+    std::shared_ptr< Gtk::GestureClick > click_tracker;
     WebKit::FindController find_controller;
     SearchDialog search_dialog;
     Gtk::Window* parent = nullptr;
@@ -34,15 +35,13 @@ public:
 private:
 
     std::string determine_window_title() const;
-
     void post_process_html( std::string& html );
 
     void launch_search_dialog();
     void on_search();
 
     bool on_key_pressed( unsigned keyval, unsigned keycode, Gdk::ModifierType state );
-
-    virtual void on_load_changed( WebKitLoadEvent load_event ) override;
+    void on_unpaired_button_release( double x, double y, unsigned button, Gdk::EventSequence* sequence );
 };
 
 #endif // INCLUDED_MARKDOWN_VIEW_HPP

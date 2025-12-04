@@ -1,7 +1,7 @@
 #include "Options.hpp"          // Options{}
 #include "MainWindow.hpp"       // MainWindow{}
 
-#include <gtkmm/application.h>  // Gtk::Application{}
+#include <gtkmm.h>              // Gtk::Application{}
 
 //============================================================================
 

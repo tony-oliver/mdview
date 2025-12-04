@@ -1,4 +1,4 @@
-project( mdview-library CXX )
+project( mdview-library LANGUAGES CXX )
 
 pkg_check_modules(		LIB_MODULES REQUIRED
 						tidy
@@ -25,8 +25,9 @@ add_library( 			mdview-lib SHARED
 			 			ThreadSafeOStream.cpp
              			)
 
-set_target_properties( 	mdview-lib PROPERTIES OUTPUT_NAME mdview )
 target_compile_options( mdview-lib PUBLIC ${LIB_MODULES_CFLAGS} )
 target_link_libraries( 	mdview-lib PUBLIC ${LIB_MODULES_LDFLAGS} )
+
+set_target_properties( 	mdview-lib PROPERTIES OUTPUT_NAME mdview )
 
 install( TARGETS mdview-lib RUNTIME DESTINATION lib )

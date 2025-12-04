@@ -1,4 +1,4 @@
-project( mdview-application CXX )
+project( mdview-application LANGUAGES CXX )
 
 pkg_check_modules(		APP_MODULES REQUIRED
 						gtkmm-4.0
@@ -12,10 +12,10 @@ add_executable(			mdview-app
                 		SignalHandler.cpp
                 		)
 
-set_target_properties( 	mdview-app PROPERTIES OUTPUT_NAME mdview )
 target_compile_options( mdview-app PUBLIC ${APP_MODULES_CFLAGS} )
 target_link_libraries( 	mdview-app PUBLIC ${APP_MODULES_LDFLAGS} )
-
 target_link_libraries( 	mdview-app PUBLIC mdview-lib )
+
+set_target_properties( 	mdview-app PROPERTIES OUTPUT_NAME mdview )
 
 install( TARGETS mdview-app RUNTIME DESTINATION bin )

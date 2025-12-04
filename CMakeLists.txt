@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 4.0 FATAL_ERROR )
 
-project( mdview CXX )
+project( mdview LANGUAGES CXX )
 
 include( FindPkgConfig )
 
@@ -12,6 +12,8 @@ add_compile_options( -pedantic )
 add_compile_options( -Wall -Wextra )
 add_compile_options( -O2 )
 add_compile_options( -g3 )
+add_compile_options( -fPIC )
+add_compile_options( -march=native )
 
 include_directories( lib )
 

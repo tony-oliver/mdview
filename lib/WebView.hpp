@@ -31,21 +31,22 @@ public:
     std::string get_uri();
     WebKitFindController* get_find_controller();
 
-    virtual void on_load_changed( WebKitLoadEvent load_event );
-
 private:
 
     operator WebKitWebView*();
 
+    static std::string const root_doc_uri;
     std::string root_html;
 
     void display_root_document();
 
     // signal handlers:
 
-    static void load_changed_handler( WebKitWebView* self,
+    static void load_changed_handler( WebKitWebView*  self,
                                       WebKitLoadEvent load_event,
-                                      void* user_data );
+                                      void*           user_data );
+
+    void on_load_changed( WebKitLoadEvent load_event );
 };
 
 //----------------------------------------------------------------------------

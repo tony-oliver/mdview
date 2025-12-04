@@ -16,6 +16,16 @@
 namespace { // unnamed
 //----------------------------------------------------------------------------
 
+enum MouseButton
+{
+    Primary     = GDK_BUTTON_PRIMARY,
+    Secondary   = GDK_BUTTON_SECONDARY,
+    Middle      = GDK_BUTTON_MIDDLE,
+    GoBack      = 8,
+};
+
+//----------------------------------------------------------------------------
+
 std::string extract_file_contents( std::string const& filename )
 {
 
@@ -121,11 +131,15 @@ MarkdownView::MarkdownView( Gtk::Window& parent,
 , filename{ filename }
 , file_watcher( logger )
 , keypress_tracker{ Gtk::EventControllerKey::create() }
+, click_tracker{ Gtk::GestureClick::create() }
 , find_controller{ get_find_controller() }
 , search_dialog( parent )
 {
     add_controller( keypress_tracker );
     keypress_tracker->signal_key_pressed().connect( sigc::mem_fun( *this, &MarkdownView::on_key_pressed ), false );
+
+    add_controller( click_tracker );
+    click_tracker->signal_unpaired_release().connect( sigc::mem_fun( *this, &MarkdownView::on_unpaired_button_release ) );
 
     search_dialog.set_search_action( [ & ]{ on_search(); } );
 
@@ -261,12 +275,18 @@ bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */
     return match_key( "MarkdownView::on_key_pressed()", keyval, state, key_matches );
 }
 
+
 //----------------------------------------------------------------------------
 
-void MarkdownView::on_load_changed( WebKitLoadEvent /* load_event */ )
+void MarkdownView::on_unpaired_button_release( [[maybe_unused]] double const x,
+                                               [[maybe_unused]] double const y,
+                                               unsigned const button,
+                                               [[maybe_unused]] Gdk::EventSequence* const sequence )
 {
-    // By overriding this virtual function, we prevent the base class
-    // (WebKit::WebView) from logging the load-changed event to std::clog.
+    if ( button == MouseButton::GoBack )
+    {
+        go_back();
+    }
 }
 
 //============================================================================
