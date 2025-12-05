@@ -1,17 +1,5 @@
 #include "WebView.hpp"
 
-#include <magic_enum/magic_enum.hpp>
-
-#include <cstdint>
-
-//#define LOG_LOAD_CHANGED_EVENTS
-
-#ifdef LOG_LOAD_CHANGED_EVENTS
-#include <iomanip>
-#include <ostream>
-#include <iostream>
-#endif
-
 //============================================================================
 namespace WebKit {
 //----------------------------------------------------------------------------
@@ -23,11 +11,6 @@ std::string const WebView::root_doc_uri{ "about:blank" };
 WebView::WebView()
 : Gtk::Widget{ webkit_web_view_new() }
 {
-    g_signal_connect( *this,
-                      "load-changed",
-                      G_CALLBACK( load_changed_handler ),
-                      this );
-
 }
 
 //----------------------------------------------------------------------------
@@ -41,9 +24,25 @@ WebView::operator WebKitWebView*()
 
 void WebView::load_html( std::string const& content )
 {
+    std::lock_guard const locker( doc_mutex );
+
     root_html = content;
 
-    display_root_document();
+    auto const uri = get_uri();
+
+    if ( uri.empty() || ( get_uri() == root_doc_uri ) )
+    {
+        display_root_document();
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void WebView::display_root_document()
+{
+    std::lock_guard const locker( doc_mutex );
+
+    webkit_web_view_load_html( *this, root_html.c_str(), nullptr );
 }
 
 //----------------------------------------------------------------------------
@@ -114,34 +113,6 @@ WebKitFindController* WebView::get_find_controller()
     return webkit_web_view_get_find_controller( *this );
 }
 
-//----------------------------------------------------------------------------
-
-void WebView::display_root_document()
-{
-    webkit_web_view_load_html( *this, root_html.c_str(), nullptr );
-}
-
-//============================================================================
-
-void WebView::load_changed_handler( WebKitWebView*  /* const self */,
-                                    WebKitLoadEvent const load_event,
-                                    void*           const user_data )
-{
-    static_cast< WebView* >( user_data )->on_load_changed( load_event );
-}
-
-//----------------------------------------------------------------------------
-
-void WebView::on_load_changed( [[maybe_unused]] WebKitLoadEvent const load_event )
-{
-#ifdef LOG_LOAD_CHANGED_EVENTS
-    if ( load_event == WEBKIT_LOAD_STARTED ) std::clog << std::endl;
-
-    std::clog   << __FUNCTION__
-                << "( load_event = " << magic_enum::enum_name( load_event ) << " )"
-                << ": uri = " << std::quoted( get_uri() ) << std::endl;
-#endif
-}
 //----------------------------------------------------------------------------
 } // close namespace WebKit
 //============================================================================

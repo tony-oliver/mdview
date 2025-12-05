@@ -4,6 +4,7 @@
 #include <gtkmm.h>          // Gtk::Widget{}
 #include <webkit/webkit.h>  // WebKitWebView{}
 
+#include <mutex>            // std::recursive_mutex{}
 #include <string>           // std::string{}
 
 //============================================================================
@@ -20,6 +21,7 @@ public:
     // Functionality wrapping webkit_web_view_XXX() functions:
 
     void load_html( std::string const& content );
+    void display_root_document();
 
     bool can_go_back();
     bool can_go_forward();
@@ -31,22 +33,16 @@ public:
     std::string get_uri();
     WebKitFindController* get_find_controller();
 
+protected:
+
+    static std::string const root_doc_uri;
+
 private:
 
     operator WebKitWebView*();
 
-    static std::string const root_doc_uri;
+    std::recursive_mutex doc_mutex;
     std::string root_html;
-
-    void display_root_document();
-
-    // signal handlers:
-
-    static void load_changed_handler( WebKitWebView*  self,
-                                      WebKitLoadEvent load_event,
-                                      void*           user_data );
-
-    void on_load_changed( WebKitLoadEvent load_event );
 };
 
 //----------------------------------------------------------------------------

@@ -19,7 +19,6 @@ class MarkdownView: public WebKit::WebView
     std::shared_ptr< Gtk::GestureClick > click_tracker;
     WebKit::FindController find_controller;
     SearchDialog search_dialog;
-    Gtk::Window* parent = nullptr;
 
 public:
 
@@ -29,16 +28,15 @@ public:
                     bool dump_html = false,
                     bool show_diagnostics = false );
 
-    void set_parent( Gtk::Window* window );
-    void render();
+    void load_root_document();
 
 private:
 
     std::string determine_window_title() const;
     void post_process_html( std::string& html );
 
+    void on_search_requested();
     void launch_search_dialog();
-    void on_search();
 
     bool on_key_pressed( unsigned keyval, unsigned keycode, Gdk::ModifierType state );
     void on_unpaired_button_release( double x, double y, unsigned button, Gdk::EventSequence* sequence );

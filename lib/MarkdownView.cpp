@@ -141,14 +141,14 @@ MarkdownView::MarkdownView( Gtk::Window& parent,
     add_controller( click_tracker );
     click_tracker->signal_unpaired_release().connect( sigc::mem_fun( *this, &MarkdownView::on_unpaired_button_release ) );
 
-    search_dialog.set_search_action( [ & ]{ on_search(); } );
+    search_dialog.set_search_action( [ & ]{ on_search_requested(); } );
 
-    render(); // first-time render
+    load_root_document();
 }
 
 //----------------------------------------------------------------------------
 
-void MarkdownView::render()
+void MarkdownView::load_root_document()
 {
     std::string html;
 
@@ -173,7 +173,7 @@ void MarkdownView::render()
 
         if ( !file_watcher.running() )
         {
-            file_watcher.watchFile( filename, [ & ]{ render(); } );
+            file_watcher.watchFile( filename, [ & ]{ load_root_document(); } );
 
             file_watcher.start();
         }
@@ -243,7 +243,7 @@ void MarkdownView::launch_search_dialog()
 
 //----------------------------------------------------------------------------
 
-void MarkdownView::on_search()
+void MarkdownView::on_search_requested()
 {
     search_dialog.set_visible( false );
 

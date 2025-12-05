@@ -35,6 +35,23 @@ how to make the displayed HTML use the visual styles adopted by GitHub and by ma
 UPDATE: I've now added a search facility, using the `find_controller` facilities in `WebKitWebView`
 and some fancy keypress-handling.
 
+## Usage
+
+| Key combination 			| Action 																|
+| ------------------------- | --------------------------------------------------------------------- |
+| PgUp/PgDown 				| Scroll through the document as expected.								|
+| Home/End (*without* Ctrl) | Go to top/bottom of document. 										|
+| ^F 						| Brings up *Search* dialog (in which Enter = find; Escape = close).	|
+| F3 						| Find next.															|
+| Shift+F3 					| Find previous.														|
+| n 						| Find next.															|
+| N 						| Find previous.														|
+| Alt+n 					| Find next.															|
+| Alt+N 					| Find previous.														|
+| Escape 					| Clear highlighted search items.										|
+| Alt+Left 					| Go back (after clicking hyperlink).									|
+| Alt+Right 				| Go forward (when hyperlink remembered).								|
+
 ## Packaging
 
 This project is available from its own `git` [repository](https://github.com/tony-oliver/mdview).
@@ -47,8 +64,7 @@ It has been built and tested (so far) on the following platform(s):
 
 ### Compiler
 
-The default C++ compiler must be capable of supporting the C++23 standard, for `std::ranges` and
-`std::to_underlying` support (through the options `-std=c++23 -pedantic`).
+The default C++ compiler must be capable of supporting the C++23 standard, through the options `-std=c++23 -pedantic`.
 
 ### Packages
 
@@ -76,7 +92,7 @@ Under Fedora, installation of these packages is as simple as
 sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel magic_enum-devel ncurses-devel
 ```
 
-(For Linux flavours other than Fedora, the appropriate package management tool should be used
+(Note: for Linux flavours other than Fedora, the appropriate package management tool should be used
 instead of `dnf`, *e.g.* `yum`, `apt`, `pkg`, *etc.*).
 
 Also note that some package names will end `-dev` (instead of `-devel`) when using certain
@@ -142,7 +158,7 @@ and uninstallation with
 make uninstall
 ```
 
-*(provided the project has not been cleaned; see below).*
+*(provided the project has not been 'cleaned'; see below).*
  
 ---
 
@@ -164,4 +180,3 @@ popd >/dev/null
 ```
 
 (The notes in the `Packages` section, above, also apply here).
-
