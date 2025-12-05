@@ -58,7 +58,7 @@ This project is available from its own `git` [repository](https://github.com/ton
 
 It has been built and tested (so far) on the following platform(s):
 
-* Fedora 43 (built using `g++ v15.2.1` and `clang++ v21.1.5`).
+* Fedora 43 (built using `g++ v15.2.1` and `clang++ v21.1.6`).
 
 ## Dependencies
 
