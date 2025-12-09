@@ -49,12 +49,6 @@ void wrap_html( std::string& html, std::string const& tag )
 
 //----------------------------------------------------------------------------
 
-// Items to address:
-//
-// Font-size for <code> elements    (left alone in Eclipse; 'larger' in github)
-// Font-colour for <code> elements  ('mediumblue' in Eclipse; left alone in github)
-// Text-decoration for <a> elemnts  (underline always/on hover)
-
 std::string make_css()
 {
     return
@@ -62,7 +56,7 @@ std::string make_css()
         code
         {
             color: mediumblue;
-            font-size: larger;
+            #font-size: larger;
         }
 
         pre
@@ -102,6 +96,11 @@ std::string make_css()
         {
             font-weight: bold;
         }
+
+        tr:nth-child( even ) td
+        {
+            background-color: whitesmoke;
+        }
         
         a
         {
@@ -111,7 +110,6 @@ std::string make_css()
 
         a:hover
         {
-            cursor: grab;
             text-decoration: underline !important;
         } 
     )";

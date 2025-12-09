@@ -1,8 +1,6 @@
 #include "MainWindow.hpp"
 
-namespace { // unnamed
-std::string path = "/usr/local/lib64/";
-} // close unnamed namespace
+//============================================================================
 
 MainWindow::MainWindow( Options const& options )
 : logger{ options.get_logger() }
@@ -13,17 +11,9 @@ MainWindow::MainWindow( Options const& options )
     // Arrange to close this main window when any critical signal is encountered.
     signal_handler.registerAction( [ & ]{ hide(); } );
 
-    // Determine appropriate title of this window.
-    auto const prgname = g_get_prgname();
-
-    if ( ( prgname != nullptr ) && !filename.empty() )
-    {
-        set_title( prgname + ( " - " + filename ) );
-     }
-
-    // Set window parameters, just prior to the application displaying it.
     set_child( markdown_view );
     set_default_size( 1200, 800 );
+    set_title( g_get_prgname() + ( " - " + filename ) );
 }
 
 //============================================================================

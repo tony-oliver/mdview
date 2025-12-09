@@ -18,7 +18,7 @@ It also watches for changes in the markdown file-contents and keeps the rendered
 
 Some few years ago, as [github](https://github.com) became immensely popular, I found that project sources
 (either [git](https://git-scm.com) repositories or
-tarballs) carried a `README.md` file, instead of the traditional ASCII `README` file.
+tarballs) started carrying a `README.md` file, instead of the traditional ASCII `README`.
 
 It frustrated me that there was no standard tool to render and display such markdown files (apart from text editors,
 clumsily showing the rendered version side-by-side with the marked-down source text).
@@ -54,7 +54,7 @@ and some fancy keypress-handling.
 
 ## Packaging
 
-This project is available from its own `git` [repository](https://github.com/tony-oliver/mdview).
+This project's source code is available from its own `git` [repository](https://github.com/tony-oliver/mdview).
 
 It has been built and tested (so far) on the following platform(s):
 
@@ -64,14 +64,15 @@ It has been built and tested (so far) on the following platform(s):
 
 ### Compiler
 
-The default C++ compiler must be capable of supporting the C++23 standard, through the options `-std=c++23 -pedantic`.
+The default C++ compiler must be capable of supporting the C++23 standard, through the options<br/>
+`-std=c++23 -pedantic`.
 
 ### Packages
 
 This program uses the `gtkmm-4.0` package for its windowing framework
 (which wraps the C-only [GTK4+](https://docs.gtk.org/gtk4) package into C++ classes). 
 
-For an HTML-viewing widget within the `GTK4+` framework, we use the WebKit-GTK 6.0 bindings.
+For an HTML-viewing widget within the `GTK4+` framework, we use the WebKitGTK-6.0 bindings.
 
 The original choice for the Markdown-to-HTML converter was to use the [cmark](https://github.com/commonmark/cmark) package
 (the reference implementation of a [CommonMark](https://commonmark.org) converter).
@@ -100,14 +101,14 @@ non-`dnf` package managers (*e.g.* `apt`).
 
 Here are the versions of these external components that `mdview` was originally built against:
 
-| Component 			| Description 					| Original 	| Current
-| --------------------: | :---------------------------- | :-------: | :-----: 
-| `gtkmm4.0-devel`	| GTKmm GUI framework			| 4.16.0	| 4.20.0
-| `webkit6.0-devel`	| HTML-rendering GTK+ widget	| 2.46.5	| 2.50.1
-| `md4c-devel`			| Markdown-to-HTML converter	| 0.5.1		| 0.5.2
-| `libtidy-devel`	 	| HTML fixer and reformatter	| 5.6.0		| 5.8.0
-| `magic_enum-devel` 	| C++ enum introspection		| 0.9.7		| 0.9.7
-| `ncurses-devel`		| Character terminal control	| 6.4		| 6.5
+| Component 				| Description 					| Original 	| Current
+| ------------------------: | :---------------------------- | :-------: | :-----: 
+| `gtkmm4.0-devel`		| GTKmm GUI framework			| 4.16.0	| 4.20.0
+| `webkitgtk6.0-devel`	| HTML-rendering GTK+ widget	| 2.46.5	| 2.50.1
+| `md4c-devel`				| Markdown-to-HTML converter	| 0.5.1		| 0.5.2
+| `libtidy-devel`	 		| HTML fixer and reformatter	| 5.6.0		| 5.8.0
+| `magic_enum-devel` 		| C++ enum introspection		| 0.9.7		| 0.9.7
+| `ncurses-devel`			| Character terminal control	| 6.4		| 6.5
 
 ## Building
 
