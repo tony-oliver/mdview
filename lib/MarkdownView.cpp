@@ -9,6 +9,7 @@
 #include <ostream>          // std::ostream{}
 #include <iostream>         // std::cout, std::cerr
 #include <iterator>         // std::istreambuf_iterator<>{}
+#include <algorithm>        // std::upper_bound<>()
 #include <exception>        // std::exception{}
 #include <system_error>     // std::system_error{}, std::generic_category()
 
@@ -22,6 +23,30 @@ enum MouseButton
     Secondary   = GDK_BUTTON_SECONDARY,
     Middle      = GDK_BUTTON_MIDDLE,
     GoBack      = 8,
+    GoForward   = 9,
+};
+
+//----------------------------------------------------------------------------
+
+// These are the allowable +/- zoom levels in Firefox.
+constexpr double const zoom_levels[]
+{
+    0.30,
+    0.50,
+    0.67,
+    0.80,
+    0.90,
+    1.00,
+    1.10,
+    1.20,
+    1.33,
+    1.50,
+    1.70,
+    2.00,
+    2.40,
+    3.00,
+    4.00,
+    5.00,
 };
 
 //----------------------------------------------------------------------------
@@ -241,6 +266,38 @@ void MarkdownView::launch_search_dialog()
 
 //----------------------------------------------------------------------------
 
+void MarkdownView::zoom_in()
+{
+    std::clog << "MarkdownView::zoom_in()" << std::endl;
+
+    auto const current_level = get_zoom_level();
+    std::clog << "current_level = " << current_level << std::endl;
+
+    auto p = std::ranges::find( zoom_levels, current_level );
+
+    if ( ++p != std::cend( zoom_levels ) )
+    {
+        set_zoom_level( *p );
+    }
+}
+
+//----------------------------------------------------------------------------
+
+void MarkdownView::zoom_out()
+{
+    auto const current_level = get_zoom_level();
+    std::clog << "current_level = " << current_level << std::endl;
+
+    auto p = std::ranges::find( zoom_levels, current_level );
+
+    if ( p != std::cbegin( zoom_levels ) )
+    {
+        set_zoom_level( *--p );
+    }
+}
+
+//----------------------------------------------------------------------------
+
 void MarkdownView::on_search_requested()
 {
     search_dialog.set_visible( false );
@@ -255,18 +312,36 @@ bool MarkdownView::on_key_pressed( unsigned const keyval, unsigned /* keycode */
 {
     // Making this table static relies on there only ever being one MarkdownView instance.
 
+    constexpr auto Unmodified = Gdk::ModifierType::NO_MODIFIER_MASK;
+    constexpr auto Shift = Gdk::ModifierType::SHIFT_MASK;
+    constexpr auto Ctrl = Gdk::ModifierType::CONTROL_MASK;
+    constexpr auto Alt = Gdk::ModifierType::ALT_MASK;
+
     static KeyMatch const key_matches[] =
     {
-        { GDK_KEY_f,        Gdk::ModifierType::CONTROL_MASK,                                [ & ]{ launch_search_dialog();              } },
-        { GDK_KEY_F3,       Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_next();       } },
-        { GDK_KEY_F3,       Gdk::ModifierType::SHIFT_MASK,                                  [ & ]{ find_controller.search_previous();   } },
-        { GDK_KEY_n,        Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_next();       } },
-        { GDK_KEY_N,        Gdk::ModifierType::SHIFT_MASK,                                  [ & ]{ find_controller.search_previous();   } },
-        { GDK_KEY_n,        Gdk::ModifierType::ALT_MASK,                                    [ & ]{ find_controller.search_next();       } },
-        { GDK_KEY_N,        Gdk::ModifierType::ALT_MASK | Gdk::ModifierType::SHIFT_MASK,    [ & ]{ find_controller.search_previous();   } },
-        { GDK_KEY_Escape,   Gdk::ModifierType::NO_MODIFIER_MASK,                            [ & ]{ find_controller.search_finish();     } },
-        { GDK_KEY_Left,     Gdk::ModifierType::ALT_MASK,                                    [ & ]{ go_back();                           } },
-        { GDK_KEY_Right,    Gdk::ModifierType::ALT_MASK,                                    [ & ]{ go_forward();                        } },
+        { GDK_KEY_f,            Ctrl,           [ & ]{ launch_search_dialog();              } },
+        { GDK_KEY_Escape,       Unmodified,     [ & ]{ find_controller.search_finish();     } },
+
+        { GDK_KEY_F3,           Unmodified,     [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_F3,           Shift,          [ & ]{ find_controller.search_previous();   } },
+
+        { GDK_KEY_n,            Unmodified,     [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_N,            Shift,          [ & ]{ find_controller.search_previous();   } },
+
+        { GDK_KEY_n,            Alt,            [ & ]{ find_controller.search_next();       } },
+        { GDK_KEY_N,            Alt | Shift,    [ & ]{ find_controller.search_previous();   } },
+
+        { GDK_KEY_Left,         Alt,            [ & ]{ go_back();                           } },
+        { GDK_KEY_Right,        Alt,            [ & ]{ go_forward();                        } },
+
+        { GDK_KEY_equal,        Ctrl,           [ & ]{ zoom_in();                           } },
+        { GDK_KEY_plus,         Shift | Ctrl,   [ & ]{ zoom_in();                           } },
+        { GDK_KEY_KP_Add,       Ctrl,           [ & ]{ zoom_in();                           } },
+
+        { GDK_KEY_minus,        Ctrl,           [ & ]{ zoom_out();                          } },
+        { GDK_KEY_underscore,   Shift | Ctrl,   [ & ]{ zoom_out();                          } },
+        { GDK_KEY_KP_Subtract,  Ctrl,           [ & ]{ zoom_out();                          } },
+
         {}
     };
 
@@ -281,9 +356,10 @@ void MarkdownView::on_unpaired_button_release( [[maybe_unused]] double const x,
                                                unsigned const button,
                                                [[maybe_unused]] Gdk::EventSequence* const sequence )
 {
-    if ( button == MouseButton::GoBack )
+    switch ( button )
     {
-        go_back();
+    case MouseButton::GoBack:       go_back();      break;
+    case MouseButton::GoForward:    go_forward();   break;
     }
 }
 

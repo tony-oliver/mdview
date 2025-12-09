@@ -35,6 +35,9 @@ private:
     std::string determine_window_title() const;
     void post_process_html( std::string& html );
 
+    void zoom_in();
+    void zoom_out();
+
     void on_search_requested();
     void launch_search_dialog();
 

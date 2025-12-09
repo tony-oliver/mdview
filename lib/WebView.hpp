@@ -33,6 +33,9 @@ public:
     std::string get_uri();
     WebKitFindController* get_find_controller();
 
+    double get_zoom_level();
+    void set_zoom_level( double level );
+
 protected:
 
     static std::string const root_doc_uri;

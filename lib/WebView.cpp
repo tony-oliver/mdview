@@ -114,5 +114,19 @@ WebKitFindController* WebView::get_find_controller()
 }
 
 //----------------------------------------------------------------------------
+
+double WebView::get_zoom_level()
+{
+    return webkit_web_view_get_zoom_level( *this );
+}
+
+//----------------------------------------------------------------------------
+
+void WebView::set_zoom_level( [[maybe_unused]] double const level )
+{
+    webkit_web_view_set_zoom_level( *this, level );
+}
+
+//----------------------------------------------------------------------------
 } // close namespace WebKit
 //============================================================================

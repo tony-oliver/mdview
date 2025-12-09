@@ -38,19 +38,28 @@ and some fancy keypress-handling.
 ## Usage
 
 | Key combination 			| Action 																|
-| ------------------------- | --------------------------------------------------------------------- |
+| :------------------------ | :-------------------------------------------------------------------- |
 | PgUp/PgDown 				| Scroll through the document as expected.								|
 | Home/End (*without* Ctrl) | Go to top/bottom of document. 										|
 | ^F 						| Brings up *Search* dialog (in which Enter = find; Escape = close).	|
 | F3 						| Find next.															|
-| Shift+F3 					| Find previous.														|
+| Shift + F3				| Find previous.														|
 | n 						| Find next.															|
 | N 						| Find previous.														|
-| Alt+n 					| Find next.															|
-| Alt+N 					| Find previous.														|
+| Alt + n 					| Find next.															|
+| Alt + N 					| Find previous.														|
 | Escape 					| Clear highlighted search items.										|
-| Alt+Left 					| Go back (after clicking hyperlink).									|
-| Alt+Right 				| Go forward (when hyperlink remembered).								|
+| Alt+LeftArrow				| Go back (after clicking hyperlink).									|
+| Alt + RightArrow			| Go forward (when hyperlink remembered).								|
+| Ctrl + Plus				| Zoom in.																|
+| Ctrl + Minus				| Zoom out.																|
+
+In addition, `mdview` responds to extended mouse buttons, as follows:
+
+| Button clicked	| Action 									|
+| :---------------: | :---------------------------------------- |
+|	Button 8		| Go back (after clicking hyperlink).		|
+|	Button 9		| Go forward (when hyperlink remembered).	|
 
 ## Packaging
 
