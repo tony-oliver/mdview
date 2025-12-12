@@ -10,6 +10,7 @@ pkg_check_modules(		LIB_MODULES REQUIRED
 						)
 
 add_library( 			mdview-lib SHARED
+						argp_version.cpp
 			 			WebView.cpp
 			 			KeyMatch.cpp
 			 			HTMLTidier.cpp

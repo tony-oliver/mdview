@@ -19,9 +19,9 @@ namespace { // unnamed
 
 enum MouseButton
 {
-    Primary     = GDK_BUTTON_PRIMARY,
-    Secondary   = GDK_BUTTON_SECONDARY,
-    Middle      = GDK_BUTTON_MIDDLE,
+    Primary     = GDK_BUTTON_PRIMARY,   // button 1
+    Secondary   = GDK_BUTTON_SECONDARY, // button 3
+    Middle      = GDK_BUTTON_MIDDLE,    // button 2
     GoBack      = 8,
     GoForward   = 9,
 };
