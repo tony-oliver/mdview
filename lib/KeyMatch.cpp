@@ -4,7 +4,7 @@
 #include <magic_enum/magic_enum_flags.hpp>
 
 #include <map>          // std::map<>{}
-#include <ostream>      // std::to_underlying
+#include <ostream>      // std::to_underlying()
 #include <utility>      // std::ostream{}, std::endl()
 #include <iostream>     // std::clog
 

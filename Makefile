@@ -39,7 +39,7 @@ stripped:							all
 .PHONY:								install
 install: 							stripped
 									@sudo cmake --install ${BUILDDIR}
-									@sudo sed -ie "s/YYYYMMDDhhmmss/$(shell date -u +%Y%m%d%H%M%S)/" ${INSTALLDIR}/lib64/$(LIBRARY)
+									@sudo sed -i -e "s/YYYYMMDDhhmmss/$(shell date -u +%Y%m%d%H%M%S)/" ${INSTALLDIR}/lib64/$(LIBRARY)
 	                               	@sudo ldconfig ${INSTALLDIR}/lib64
 
 #-----------------------------------------------------------------------------
@@ -64,4 +64,4 @@ view-docs:							all
 
 .PHONY:								clean
 clean:								# no dependencies
-									@rm -frv ${BUILDDIR}
+									@rm -frv ${BUILDDIR} lib/gdk-keynames.x-macros

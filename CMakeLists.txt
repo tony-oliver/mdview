@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 4.0 FATAL_ERROR )
 
-project( mdview LANGUAGES CXX )
+project( mdview CXX )
 
 include( FindPkgConfig )
 

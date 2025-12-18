@@ -1,4 +1,4 @@
-project( mdview-application LANGUAGES CXX )
+project( mdview-application CXX )
 
 pkg_check_modules(		APP_MODULES REQUIRED
 						gtkmm-4.0
