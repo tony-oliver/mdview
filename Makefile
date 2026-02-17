@@ -3,6 +3,7 @@ LIBRARY =							lib${TARGET}.so
 
 BUILDDIR = 							build
 INSTALLDIR =						/usr/local
+LIBDIR =							lib64
 
 TESTFILE =							README.md
 
@@ -25,7 +26,7 @@ all: 								${BUILDDIR}
 #-----------------------------------------------------------------------------
 
 ${BUILDDIR}:						# no dependencies
-									@cmake -DCMAKE_INSTALL_LIBDIR=lib64 -B ${BUILDDIR}
+									@cmake -DCMAKE_INSTALL_LIBDIR=${LIBDIR} -B ${BUILDDIR}
 
 #-----------------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ stripped:							all
 install: 							stripped
 									@sudo cmake --install ${BUILDDIR}
 									@sudo sed -i -e "s/YYYYMMDDhhmmss/$(shell date -u +%Y%m%d%H%M%S)/" ${INSTALLDIR}/lib64/$(LIBRARY)
-	                               	@sudo ldconfig ${INSTALLDIR}/lib64
+	                               	@sudo ldconfig ${INSTALLDIR}/${LIBDIR}
 
 #-----------------------------------------------------------------------------
 
@@ -58,7 +59,7 @@ run-test: 							all
 
 .PHONY:								view-docs
 view-docs:							all
-									xdg-open ${BUILDDIR}/docs/html/index.html 
+									@xdg-open ${BUILDDIR}/docs/html/index.html 
 
 #-----------------------------------------------------------------------------
 

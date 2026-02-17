@@ -4,14 +4,19 @@ import sys
 
 mapped = {}
 
-with open( sys.argv[ 1 ] ) as input:
-    for line in input:
-        if line.startswith( '#define ' ):
-            define, name, number = line.split()
-            value = int( number, 0 )
+try:
+    with open( sys.argv[ 1 ] ) as input:
+        for line in input:
+            if line.startswith( '#define ' ):
+                define, name, number = line.split()
+                value = int( number, 0 )
 
-            if value < 0x80 or value >> 8 == 0xFF:
-               mapped[ value ] = name
+                if ( value < 0x80 )          \
+                or ( ( value >> 8 ) == 0xFF ):
+                    mapped[ value ] = name
 
-for value, name in sorted( mapped.items() ):
-    print( f'X( 0x{value:04X}, "{name}" )' )
+    for value, name in sorted( mapped.items() ):
+        print( f'X( 0x{value:04X}, "{name}" )' )
+
+except Exception as exception:
+    print( exception )

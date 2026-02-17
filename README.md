@@ -49,7 +49,7 @@ and some fancy keypress-handling.
 | Alt + n 					| Find next.															|
 | Alt + N 					| Find previous.														|
 | Escape 					| Clear highlighted search items.										|
-| Alt+LeftArrow				| Go back (after clicking hyperlink).									|
+| Alt+LeftArrow				| Go back (after clicking a hyperlink).									|
 | Alt + RightArrow			| Go forward (when hyperlink remembered).								|
 | Ctrl + Plus				| Zoom in.																|
 | Ctrl + Minus				| Zoom out.																|
@@ -58,7 +58,7 @@ In addition, `mdview` responds to extended mouse buttons, as follows:
 
 | Button clicked	| Action 									|
 | :---------------: | :---------------------------------------- |
-|	Button 8		| Go back (after clicking hyperlink).		|
+|	Button 8		| Go back (after clicking a hyperlink).		|
 |	Button 9		| Go forward (when hyperlink remembered).	|
 
 ## Packaging
@@ -79,9 +79,9 @@ The default C++ compiler must be capable of supporting the C++23 standard, throu
 ### Packages
 
 This program uses the `gtkmm-4.0` package for its windowing framework
-(which wraps the C-only [GTK4+](https://docs.gtk.org/gtk4) package into C++ classes). 
+(which wraps the C-language [GTK4+](https://docs.gtk.org/gtk4) package into C++ classes). 
 
-For an HTML-viewing widget within the `GTK4+` framework, we use the WebKitGTK-6.0 bindings.
+For an HTML-viewing widget within the `GTK4+` framework, we use the [WebKitGTK-6.0](https://webkitgtk.org/) bindings.
 
 The original choice for the Markdown-to-HTML converter was to use the [cmark](https://github.com/commonmark/cmark) package
 (the reference implementation of a [CommonMark](https://commonmark.org) converter).
@@ -105,10 +105,10 @@ sudo dnf install -y gtkmm4.0-devel webkitgtk6.0-devel md4c-devel libtidy-devel m
 (Note: for Linux flavours other than Fedora, the appropriate package management tool should be used
 instead of `dnf`, *e.g.* `yum`, `apt`, `pkg`, *etc.*).
 
-Also note that some package names will end `-dev` (instead of `-devel`) when using certain
+Also note that some development package names will end with `-dev` (instead of `-devel`) when using certain
 non-`dnf` package managers (*e.g.* `apt`).
 
-Here are the versions of these external components that `mdview` was originally built against:
+Here are the versions of these external components that `mdview` was originally/currently built against:
 
 | Component 				| Description 					| Original 	| Current
 | ------------------------: | :---------------------------- | :-------: | :-----: 

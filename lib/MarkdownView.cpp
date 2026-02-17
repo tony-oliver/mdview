@@ -268,8 +268,6 @@ void MarkdownView::launch_search_dialog()
 
 void MarkdownView::zoom_in()
 {
-    std::clog << "MarkdownView::zoom_in()" << std::endl;
-
     auto const current_level = get_zoom_level();
     std::clog << "current_level = " << current_level << std::endl;
 
