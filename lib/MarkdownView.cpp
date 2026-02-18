@@ -268,10 +268,7 @@ void MarkdownView::launch_search_dialog()
 
 void MarkdownView::zoom_in()
 {
-    auto const current_level = get_zoom_level();
-    std::clog << "current_level = " << current_level << std::endl;
-
-    auto p = std::ranges::find( zoom_levels, current_level );
+    auto p = std::ranges::find( zoom_levels, get_zoom_level() );
 
     if ( ++p != std::cend( zoom_levels ) )
     {
@@ -283,10 +280,7 @@ void MarkdownView::zoom_in()
 
 void MarkdownView::zoom_out()
 {
-    auto const current_level = get_zoom_level();
-    std::clog << "current_level = " << current_level << std::endl;
-
-    auto p = std::ranges::find( zoom_levels, current_level );
+    auto p = std::ranges::find( zoom_levels, get_zoom_level() );
 
     if ( p != std::cbegin( zoom_levels ) )
     {
