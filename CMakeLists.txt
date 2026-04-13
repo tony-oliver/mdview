@@ -3,6 +3,8 @@ cmake_minimum_required( VERSION 4.0 FATAL_ERROR )
 project( mdview CXX )
 
 include( FindPkgConfig )
+include( GNUInstallDirs )
+include( CMakePrintHelpers )
 
 set(	CMAKE_CXX_STANDARD_REQUIRED On	)
 set(	CMAKE_CXX_STANDARD			23	)
@@ -20,3 +22,7 @@ include_directories( lib )
 add_subdirectory( app )
 add_subdirectory( lib )
 add_subdirectory( docs )
+
+cmake_print_variables( CMAKE_INSTALL_PREFIX )
+cmake_print_variables( CMAKE_INSTALL_LIBDIR )
+cmake_print_variables( CMAKE_INSTALL_FULL_LIBDIR )

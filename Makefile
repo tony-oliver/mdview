@@ -1,7 +1,7 @@
 TARGET =							mdview
 LIBRARY =							lib${TARGET}.so
 
-GENERATOR =							-G Ninja
+#GENERATOR =							-G Ninja
 BUILDDIR = 							build
 INSTALLDIR =						/usr/local
 LIBDIR =							lib64
@@ -42,7 +42,7 @@ stripped:							all
 install: 							stripped
 									@sudo cmake --install ${BUILDDIR}
 									@sudo sed -i -e "s/YYYYMMDDhhmmss/$(shell date -u +%Y%m%d%H%M%S)/" ${INSTALLDIR}/${LIBDIR}/$(LIBRARY)
-									@sudo ./ldupdate ${INSTALLDIR}/${LIBDIR}
+									@sudo ldconfig ${INSTALLDIR}/${LIBDIR}
 
 #-----------------------------------------------------------------------------
 

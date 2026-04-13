@@ -19,3 +19,4 @@ target_link_libraries( 	mdview-app PUBLIC mdview-lib )
 set_target_properties( 	mdview-app PROPERTIES OUTPUT_NAME mdview )
 
 install( TARGETS mdview-app RUNTIME DESTINATION bin )
+install( FILES awo-mdview.bash DESTINATION /etc/bash_completion.d )
