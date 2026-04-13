@@ -12,6 +12,14 @@ add_executable(			mdview-app
                 		SignalHandler.cpp
                 		)
 
+set( COMPLETION_FILE	awo-mdview.bash )
+
+add_custom_target(		ensure-completion-fresh
+						DEPENDS ${COMPLETION_FILE}
+						)
+
+add_dependencies(		mdview-app ensure-completion-fresh )
+
 target_compile_options( mdview-app PUBLIC ${APP_MODULES_CFLAGS} )
 target_link_libraries( 	mdview-app PUBLIC ${APP_MODULES_LDFLAGS} )
 target_link_libraries( 	mdview-app PUBLIC mdview-lib )
@@ -19,4 +27,4 @@ target_link_libraries( 	mdview-app PUBLIC mdview-lib )
 set_target_properties( 	mdview-app PROPERTIES OUTPUT_NAME mdview )
 
 install( TARGETS mdview-app RUNTIME DESTINATION bin )
-install( FILES awo-mdview.bash DESTINATION /etc/bash_completion.d )
+install( FILES ${COMPLETION_FILE} DESTINATION /etc/bash_completion.d )
