@@ -53,7 +53,6 @@ add_library( 			mdview-lib SHARED
 			 			WebView.cpp
 			 			KeyMatch.cpp
 			 			HTMLTidier.cpp
-			 			NullStream.cpp
 			 			ThreadLoop.cpp
 			 			FileWatcher.cpp
 			 			MDConverter.cpp
@@ -62,7 +61,6 @@ add_library( 			mdview-lib SHARED
 			 			SearchDialog.cpp
 			 			FindController.cpp
 			 			SuperCheckButton.cpp
-			 			ThreadSafeOStream.cpp
              			)
 
 # Ensure the library-build will generate the keynames-file and/or lib conf file, when required

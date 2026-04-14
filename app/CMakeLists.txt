@@ -9,7 +9,9 @@ add_executable(			mdview-app
                 		mdview.cpp
                 		Options.cpp
                 		MainWindow.cpp
+                		NullStream.cpp
                 		SignalHandler.cpp
+			 			ThreadSafeOStream.cpp
                 		)
 
 set( COMPLETION_FILE	awo-mdview.bash )

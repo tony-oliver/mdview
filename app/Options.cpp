@@ -9,25 +9,25 @@
 Options::Options( int const argc, char** const argv )
 : logger_ptr{ &get_nullstream() }
 {
-    enum OptionGroup
-    {
-        GeneralGroup,
-
-        NumOptionGroups
-    };
+    setenv( "ARGP_HELP_FMT", "header-col=2", true );
 
     constexpr argp_option options[]
     {
-        { "html",           'h', nullptr, 0, "Dump HTML to stdout",                     GeneralGroup },
-        { "verbose",        'v', nullptr, 0, "Produce verbose output on stderr",        GeneralGroup },
-        { "diagnostics",    'd', nullptr, 0, "Show LibTidy diagnostics on stderr",      GeneralGroup },
-        { "colour",         'c', nullptr, 0, "Distinguish verbose output by colours",   GeneralGroup },
+        { {},               {},  {}, {}, "Informational options:",                  {} },
+        { "html",           'h', {}, {}, "Dump generated HTML to stdout",           {} },
+
+        { {},               {},  {}, {}, "Developer options:",                      {} },
+        { "verbose",        'v', {}, {}, "Produce verbose output on stderr",        {} },
+        { "diagnostics",    'd', {}, {}, "Show LibTidy diagnostics on stderr",      {} },
+        { "colour",         'c', {}, {}, "Distinguish verbose output by colours",   {} },
+
+        { {},               {},  {}, {}, "General options:",                        -1 },
         {}
     };
 
     constexpr char args_doc[]   // description of non-option arguments
     {
-        "<MDFILE>"
+        "MDFILE"
     };
 
     constexpr char doc[]        // description of program and its non-option arguments
@@ -42,14 +42,8 @@ Options::Options( int const argc, char** const argv )
         "\v"
         "ARGUMENTS:\n"
         "\n"
-        "  <MDFILE>                   Path to file containing markdown source"
+        "  MDFILE                     File containing markdown-text"
     };
-
-    constexpr auto children     = nullptr;
-    constexpr auto help_filter  = nullptr;
-    constexpr auto argp_domain  = nullptr;
-    constexpr auto flags        = 0;
-    constexpr auto end_index    = nullptr;
 
     static argp const argp
     {
@@ -57,12 +51,18 @@ Options::Options( int const argc, char** const argv )
         parser,
         args_doc,
         doc,
-        children,
-        help_filter,
-        argp_domain
+        {},     // children,
+        {},     // help_filter,
+        {},     // argp_domain
     };
 
-    argp_parse( &argp, argc, argv, flags, end_index, this );
+    argp_parse( &argp,
+                argc,
+                argv,
+                {},     // flags
+                {},     // arg_index
+                this    // input
+                );
 }
 
 //----------------------------------------------------------------------------
