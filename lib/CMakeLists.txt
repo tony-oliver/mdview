@@ -35,7 +35,7 @@ add_custom_target(		generate-keynames
 
 #-------
 
-set( LIB_CONF_FILE		${PROJECT_BINARY_DIR}/awo-libmdview.conf )
+set( LIB_CONF_FILE		${PROJECT_BINARY_DIR}/libmdview.conf )
 
 add_custom_command(		OUTPUT ${LIB_CONF_FILE}
 						COMMAND echo

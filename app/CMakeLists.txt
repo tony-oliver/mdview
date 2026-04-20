@@ -14,7 +14,7 @@ add_executable(			mdview-app
 			 			ThreadSafeOStream.cpp
                 		)
 
-set( COMPLETION_FILE	awo-mdview.bash )
+set( COMPLETION_FILE	mdview.bash )
 
 add_custom_target(		ensure-completion-fresh
 						DEPENDS ${COMPLETION_FILE}

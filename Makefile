@@ -1,12 +1,11 @@
 TARGET =							mdview
 LIBRARY =							lib${TARGET}.so
+TESTFILE =							README.md
 
-#GENERATOR =							-G Ninja
+#GENERATOR =						-G Ninja
 BUILDDIR = 							build
 INSTALLDIR =						/usr/local
 LIBDIR =							lib64
-
-TESTFILE =							README.md
 
 #===========================================================================#
 #																			#
@@ -41,8 +40,8 @@ stripped:							all
 .PHONY:								install
 install: 							stripped
 									@sudo cmake --install ${BUILDDIR}
-									@sudo sed -i -e "s/YYYYMMDDhhmmss/$(shell date -u +%Y%m%d%H%M%S)/" ${INSTALLDIR}/${LIBDIR}/$(LIBRARY)
-									@sudo ldconfig ${INSTALLDIR}/${LIBDIR}
+									@sudo ldconfig
+									@echo "Don't forget> source /etc/bash_completion.d/mdview.bash"
 
 #-----------------------------------------------------------------------------
 
