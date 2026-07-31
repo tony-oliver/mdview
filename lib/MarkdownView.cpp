@@ -148,7 +148,8 @@ MarkdownView::MarkdownView( Gtk::Window& parent,
                             std::ostream& logger,
                             std::string const& filename,
                             bool const dump_html,
-                            bool const show_diagnostics )
+                            bool const show_diagnostics,
+                            bool const natural )
 : dump_html{ dump_html }
 , show_diagnostics{ show_diagnostics }
 , filename{ filename }
@@ -167,6 +168,11 @@ MarkdownView::MarkdownView( Gtk::Window& parent,
     search_dialog.set_search_action( [ & ]{ on_search_requested(); } );
 
     load_root_document();
+
+    if ( !natural )
+    {
+        zoom_out();
+    }
 }
 
 //----------------------------------------------------------------------------

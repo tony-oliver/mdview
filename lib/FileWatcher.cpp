@@ -8,6 +8,7 @@
 #include <array>            // std::array<>{}
 #include <cerrno>           // errno
 #include <vector>           // std::vector<>{}
+#include <climits>          // NAME_MAX
 #include <iomanip>          // std::quoted<>{}
 #include <ostream>          // std::endl(), operator<<()
 #include <algorithm>        // std::find_if<>()

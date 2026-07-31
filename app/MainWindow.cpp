@@ -6,7 +6,7 @@ MainWindow::MainWindow( Options const& options )
 : logger{ options.get_logger() }
 , filename{ options.get_filename() }
 , make_thread_safe( logger, options.get_use_colour() )
-, markdown_view( *this, logger, filename, options.get_dump_html(), options.get_show_diagnostics() )
+, markdown_view( *this, logger, filename, options.get_dump_html(), options.get_show_diagnostics(), options.get_natural() )
 {
     // Arrange to close this main window when any critical signal is encountered.
     signal_handler.registerAction( [ & ]{ hide(); } );

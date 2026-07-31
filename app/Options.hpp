@@ -14,6 +14,7 @@ class Options
     bool            dump_html           = false;
     bool            use_colour          = false;
     bool            show_diagnostics    = false;
+    bool            natural             = false;
     std::ostream*   logger_ptr          = nullptr;
 
 public:
@@ -24,6 +25,7 @@ public:
     bool                get_dump_html()         const { return dump_html; }
     bool                get_use_colour()        const { return use_colour; }
     bool                get_show_diagnostics()  const { return show_diagnostics; }
+    bool                get_natural()           const { return natural; }
     std::ostream&       get_logger()            const { return *logger_ptr; }
 
 private:

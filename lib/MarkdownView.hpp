@@ -26,7 +26,8 @@ public:
                     std::ostream& logger,
                     std::string const& filename,
                     bool dump_html = false,
-                    bool show_diagnostics = false );
+                    bool show_diagnostics = false,
+                    bool natural = false );
 
     void load_root_document();
 

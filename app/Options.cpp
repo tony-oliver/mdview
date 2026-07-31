@@ -13,15 +13,16 @@ Options::Options( int const argc, char** const argv )
 
     constexpr argp_option options[]
     {
-        { {},               {},  {}, {}, "Informational options:",                  {} },
-        { "html",           'h', {}, {}, "Dump generated HTML to stdout",           {} },
+        { {},               {},  {}, {}, "Informational options:",                      {} },
+        { "html",           'h', {}, {}, "Dump generated HTML to stdout",               {} },
 
-        { {},               {},  {}, {}, "Developer options:",                      {} },
-        { "verbose",        'v', {}, {}, "Produce verbose output on stderr",        {} },
-        { "diagnostics",    'd', {}, {}, "Show LibTidy diagnostics on stderr",      {} },
-        { "colour",         'c', {}, {}, "Distinguish verbose output by colours",   {} },
+        { {},               {},  {}, {}, "Developer options:",                          {} },
+        { "verbose",        'v', {}, {}, "Produce verbose output on stderr",            {} },
+        { "diagnostics",    'd', {}, {}, "Show LibTidy diagnostics on stderr",          {} },
+        { "colour",         'c', {}, {}, "Distinguish verbose output by colours",       {} },
+        { "natural",        'n', {}, {}, "Prevent zooming to give consistent sizes",    {} },
 
-        { {},               {},  {}, {}, "General options:",                        -1 },
+        { {},               {},  {}, {}, "General options:",                            -1 },
         {}
     };
 
@@ -83,6 +84,7 @@ error_t Options::option( int const key, char* const arg, argp_state* const state
     case 'h': dump_html         = true;         break;
     case 'c': use_colour        = true;         break;
     case 'd': show_diagnostics  = true;         break;
+    case 'n': natural           = true;         break;
     case 'v': logger_ptr        = &std::clog;   break;
 
     case ARGP_KEY_ARG:

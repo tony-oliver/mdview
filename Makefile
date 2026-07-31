@@ -41,7 +41,6 @@ stripped:							all
 install: 							stripped
 									@sudo cmake --install ${BUILDDIR}
 									@sudo ldconfig
-									@echo "Don't forget> source /etc/bash_completion.d/mdview.bash"
 
 #-----------------------------------------------------------------------------
 
